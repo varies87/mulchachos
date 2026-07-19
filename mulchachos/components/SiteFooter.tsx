@@ -20,7 +20,7 @@ export default function SiteFooter({ zips }: { zips: string[] }) {
           </div>
 
           <div>
-            <p className={MONO + " text-xs uppercase tracking-widest text-[var(--muted)]"}>
+            <p className={ MONO + " text-xs uppercase tracking-widest text-[var(--muted)]" }>
               Service area
             </p>
             <p className={"tnum mt-3 max-w-sm text-sm " + MONO}>

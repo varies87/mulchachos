@@ -124,14 +124,7 @@ export default function Estimator({
 
           <div className="space-y-3">
             {beds.map((b, i) => (
-              <BedRow
-                key={b.id}
-                bed={b}
-                index={i}
-                canRemove={beds.length > 1}
-                onEdit={edit}
-                onRemove={dropBed}
-              />
+              <BedRow key={b.id} bed={b} index={i} canRemove={beds.length > 1} onEdit={edit} onRemove={dropBed} />
             ))}
           </div>
 
@@ -148,12 +141,7 @@ export default function Estimator({
           <Step n="2" title="Which material?" />
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {materials.map((m) => (
-              <Swatch
-                key={m.id}
-                item={m}
-                on={m.id === material.id}
-                pick={setMaterial}
-              />
+              <Swatch key={m.id} item={m} on={m.id === material.id} pick={setMaterial} />
             ))}
           </div>
           <p className="mt-3 text-sm text-[var(--ink-soft)]">
@@ -163,12 +151,7 @@ export default function Estimator({
           <Step n="3" title="How deep?" />
           <div className="grid gap-3 sm:grid-cols-3">
             {DEPTHS.map((d) => (
-              <button
-                key={d.in}
-                type="button"
-                aria-pressed={depth === d.in}
-                onClick={() => setDepth(d.in)}
-                className={CARD + (depth === d.in ? ON : OFF)}>
+              <button key={d.in} type="button" aria-pressed={depth === d.in} onClick={() => setDepth(d.in)} className={CARD + (depth === d.in ? ON : OFF)}>
                 <span className={MONO + " text-sm text-[var(--clay)]"}>
                   {d.in}&quot;
                 </span>
@@ -181,36 +164,17 @@ export default function Estimator({
           </div>
 
           <div className="mt-10 border-t border-[var(--line)] pt-6">
-            <button
-              type="button"
-              onClick={() => setExtras(!extras)}
-              className={LINK}>
+            <button type="button" onClick={() => setExtras(!extras)} className={LINK}>
               {extras ? "Hide extras" : "Anything unusual? Add extras"}
             </button>
 
             {extras && (
               <div className="mt-5">
-                <Check
-                  on={access}
-                  set={setAccess}
-                  label="No truck access to the beds"
-                  note="Narrow gate, or beds behind the house."
-                />
-                <Check
-                  on={edging}
-                  set={setEdging}
-                  label="Edge and pull weeds first"
-                  note="Clean bed lines before mulch goes down."
-                />
+                <Check on={access} set={setAccess} label="No truck access to the beds" note="Narrow gate, or beds behind the house." />
+                <Check on={edging} set={setEdging} label="Edge and pull weeds first" note="Clean bed lines before mulch goes down." />
                 <label className="mt-4 block max-w-[180px]">
                   <span className={LABEL}>ZIP code</span>
-                  <input
-                    className={FIELD}
-                    inputMode="numeric"
-                    maxLength={5}
-                    placeholder="75225"
-                    value={zip}
-                    onChange={(e) =>
+                  <input className={FIELD} inputMode="numeric" maxLength={5} placeholder="75225" value={zip} onChange={(e) =>
                       setZip(e.target.value.replace(/\D/g, ""))
                     }
                   />
@@ -223,12 +187,7 @@ export default function Estimator({
         <aside className="hidden lg:sticky lg:top-8 lg:block lg:self-start">
           <div className={PANEL}>
             {ready ? (
-              <Quote
-                quote={quote}
-                material={material}
-                perYard={perYard}
-                settings={settings}
-              />
+              <Quote quote={quote} material={material} perYard={perYard} settings={settings} />
             ) : (
               <p className="text-[var(--ink-soft)]">
                 Enter a bed size and your estimate builds here.
@@ -260,33 +219,18 @@ function BedRow({
     <div className="flex items-end gap-3">
       <label className="flex-1">
         <span className={LABEL}>Bed {index + 1} length (ft)</span>
-        <input
-          className={FIELD}
-          inputMode="decimal"
-          placeholder="40"
-          value={bed.length}
-          onChange={(e) => onEdit(bed.id, "length", e.target.value)}
-        />
+        <input className={FIELD} inputMode="decimal" placeholder="40" value={bed.length} onChange={(e) => onEdit(bed.id, "length", e.target.value)} />
       </label>
 
       <span className="pb-3 text-[var(--muted)]">×</span>
 
       <label className="flex-1">
         <span className={LABEL}>Width (ft)</span>
-        <input
-          className={FIELD}
-          inputMode="decimal"
-          placeholder="6"
-          value={bed.width}
-          onChange={(e) => onEdit(bed.id, "width", e.target.value)}
-        />
+        <input className={FIELD} inputMode="decimal" placeholder="6" value={bed.width} onChange={(e) => onEdit(bed.id, "width", e.target.value)} />
       </label>
 
       {canRemove && (
-        <button
-          type="button"
-          onClick={() => onRemove(bed.id)}
-          className="pb-3 text-sm text-[var(--muted)]">
+        <button type="button" onClick={() => onRemove(bed.id)} className="pb-3 text-sm text-[var(--muted)]">
           Remove
         </button>
       )}
@@ -308,15 +252,8 @@ function Swatch({
     : "inset 0 0 0 1px rgba(69,55,56,0.12)";
 
   return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={() => pick(item)}
-      className="text-left">
-      <span
-        className="block h-20 w-full rounded-lg"
-        style={{ backgroundColor: item.swatch, boxShadow: ring }}
-      />
+    <button type="button" aria-pressed={on} onClick={() => pick(item)} className="text-left">
+      <span className="block h-20 w-full rounded-lg" style={{ backgroundColor: item.swatch, boxShadow: ring }} />
       <span className="mt-2 block text-sm font-medium">{item.name}</span>
     </button>
   );
@@ -344,12 +281,7 @@ function Check({
 }) {
   return (
     <label className="mb-4 flex cursor-pointer gap-3">
-      <input
-        type="checkbox"
-        checked={on}
-        onChange={(e) => set(e.target.checked)}
-        className="mt-1 h-4 w-4 shrink-0 accent-[var(--clay)]"
-      />
+      <input type="checkbox" checked={on} onChange={(e) => set(e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--clay)]" />
       <span>
         <span className="block font-medium">{label}</span>
         <span className="mt-0.5 block text-sm text-[var(--muted)]">
@@ -461,9 +393,7 @@ function MobileBar({
             {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
           </p>
         </div>
-        
-          href="/request-estimate"
-          className={"shrink-0 " + PILL}>
+        <a href="/request-estimate" className={"shrink-0 " + PILL}>
           Schedule
         </a>
       </div>

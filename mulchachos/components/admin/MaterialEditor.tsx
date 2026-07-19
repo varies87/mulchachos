@@ -75,10 +75,7 @@ export default function MaterialEditor({
   }
 
   return (
-    <form
-      action={submit}
-      className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5"
-    >
+    <form action={submit} className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5">
       <input type="hidden" name="id" value={isNew ? "" : m.id} />
       <input type="hidden" name="image_url" value={imageUrl ?? ""} />
       <input type="hidden" name="swatch" value={swatch} />
@@ -86,45 +83,24 @@ export default function MaterialEditor({
       <div className="grid gap-5 sm:grid-cols-[140px_1fr]">
         {/* Photo, falling back to the flat swatch color */}
         <div>
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="block h-32 w-full overflow-hidden rounded-sm transition-opacity hover:opacity-80"
-            style={{ backgroundColor: swatch }}
-            aria-label="Upload a photo of this material"
-          >
+          <button type="button" onClick={() => fileRef.current?.click()} className="block h-32 w-full overflow-hidden rounded-sm transition-opacity hover:opacity-80" style={{ backgroundColor: swatch }} aria-label="Upload a photo of this material">
             {imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={imageUrl} alt="" className="h-full w-full object-cover" />
             )}
           </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
-          />
+          <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
           <p className="mt-2 text-center text-xs text-[var(--muted)]">
             {uploading ? "Uploading…" : imageUrl ? "Click to replace" : "Click to add a photo"}
           </p>
           {imageUrl && (
-            <button
-              type="button"
-              onClick={() => setImageUrl(null)}
-              className="mt-1 w-full text-center text-xs text-[var(--muted)] underline underline-offset-2 hover:text-[var(--ink)]"
-            >
+            <button type="button" onClick={() => setImageUrl(null)} className="mt-1 w-full text-center text-xs text-[var(--muted)] underline underline-offset-2 hover:text-[var(--ink)]">
               Remove photo
             </button>
           )}
           <div className="mt-3">
             <label className={label}>Fallback color</label>
-            <input
-              type="color"
-              value={swatch}
-              onChange={(e) => setSwatch(e.target.value)}
-              className="h-8 w-full cursor-pointer rounded-sm border border-[var(--line)] bg-transparent"
-            />
+            <input type="color" value={swatch} onChange={(e) => setSwatch(e.target.value)} className="h-8 w-full cursor-pointer rounded-sm border border-[var(--line)] bg-transparent" />
           </div>
         </div>
 
@@ -136,15 +112,7 @@ export default function MaterialEditor({
             </div>
             <div>
               <label className={label}>Cost per cubic yard</label>
-              <input
-                name="cost_per_yard"
-                type="number"
-                step="0.01"
-                min="0"
-                defaultValue={m.cost_per_yard}
-                required
-                className={input}
-              />
+              <input name="cost_per_yard" type="number" step="0.01" min="0" defaultValue={m.cost_per_yard} required className={input} />
             </div>
           </div>
 
@@ -164,50 +132,27 @@ export default function MaterialEditor({
             </div>
             <div>
               <label className={label}>URL slug</label>
-              <input
-                name="slug"
-                defaultValue={m.slug}
-                placeholder="auto from name"
-                className={input}
-              />
+              <input name="slug" defaultValue={m.slug} placeholder="auto from name" className={input} />
             </div>
             <div>
               <label className={label}>Display order</label>
-              <input
-                name="sort_order"
-                type="number"
-                defaultValue={m.sort_order}
-                className={input}
-              />
+              <input name="sort_order" type="number" defaultValue={m.sort_order} className={input} />
             </div>
           </div>
 
           <div className="flex flex-wrap gap-x-6 gap-y-3 pt-1">
             <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="active"
-                defaultChecked={m.active}
-                className="h-4 w-4 accent-[var(--clay)]"
-              />
+              <input type="checkbox" name="active" defaultChecked={m.active} className="h-4 w-4 accent-[var(--clay)]" />
               Show on the site
             </label>
             <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="instant_bookable"
-                defaultChecked={m.instant_bookable}
-                className="h-4 w-4 accent-[var(--clay)]"
-              />
+              <input type="checkbox" name="instant_bookable" defaultChecked={m.instant_bookable} className="h-4 w-4 accent-[var(--clay)]" />
               Can be booked without a site visit
             </label>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button
-              disabled={pending || uploading}
-              className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
-            >
+            <button disabled={pending || uploading} className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50">
               {pending ? "Saving…" : isNew ? "Add material" : "Save changes"}
             </button>
 
@@ -215,15 +160,7 @@ export default function MaterialEditor({
             {error && <span className="text-sm text-[var(--danger)]">{error}</span>}
 
             {!isNew && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm(`Delete ${m.name}? Uncheck "Show on the site" instead if you may use it again.`)) {
-                    start(() => deleteMaterial(m.id).then(() => {}));
-                  }
-                }}
-                className="ml-auto text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--danger)]"
-              >
+              <button type="button" onClick={() => { if (confirm(`Delete ${m.name}? Uncheck "Show on the site" instead if you may use it again.`)) { start(() => deleteMaterial(m.id).then(() => {})); } }} className="ml-auto text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--danger)]">
                 Delete
               </button>
             )}

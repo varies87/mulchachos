@@ -25,22 +25,8 @@ export default function DumpReel() {
 
   return (
     <div className="relative overflow-hidden bg-[var(--paper-deep)]">
-      <video
-        ref={ref}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="/video/dump-wide.jpg"
-        aria-label="Rock and mulch being unloaded from the trailer"
-        className="h-[300px] w-full object-cover sm:h-[420px]"
-      >
-        <source
-          src="/video/dump-tall.mp4"
-          type="video/mp4"
-          media="(max-width: 640px)"
-        />
+      <video ref={ref} autoPlay muted loop playsInline preload="metadata" poster="/video/dump-wide.jpg" aria-label="Rock and mulch being unloaded from the trailer" className="h-[300px] w-full object-cover sm:h-[420px]">
+        <source src="/video/dump-tall.mp4" type="video/mp4" media="(max-width: 640px)" />
         <source src="/video/dump-wide.mp4" type="video/mp4" />
       </video>
     </div>

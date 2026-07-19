@@ -12,11 +12,7 @@ export default function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-4">
         <a href="/" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo.png"
-            alt="Preston Hollow Mulchachos"
-            className="h-14 w-auto"
-          />
+          <img src="/logo.png" alt="Preston Hollow Mulchachos" className="h-14 w-auto" />
         </a>
 
         <nav className="ml-auto flex items-center gap-5 text-sm">
@@ -25,9 +21,6 @@ export default function SiteHeader() {
           </a>
           <a href="/materials" className={"hidden sm:block " + LINK}>
             Materials
-          </a>
-          <a href="/about" className={"hidden sm:block " + LINK}>
-            Who we are
           </a>
           <a href={"tel:" + PHONE} className={CALL}>
             {PHONE}

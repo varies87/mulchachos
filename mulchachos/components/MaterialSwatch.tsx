@@ -24,23 +24,10 @@ export default function MaterialSwatch({
 }: Props) {
   const inner = (
     <>
-      <div
-        className="h-28 w-full overflow-hidden rounded-sm transition-transform duration-300 group-hover:scale-[1.03] sm:h-36"
-        style={{
-          backgroundColor: material.swatch,
-          boxShadow: selected
-            ? "inset 0 0 0 2px var(--clay)"
-            : "inset 0 0 0 1px rgba(69,55,56,0.12)",
-        }}
-      >
+      <div className="h-28 w-full overflow-hidden rounded-sm transition-transform duration-300 group-hover:scale-[1.03] sm:h-36" style={{ backgroundColor: material.swatch, boxShadow: selected ? "inset 0 0 0 2px var(--clay)" : "inset 0 0 0 1px rgba(69,55,56,0.12)", }}>
         {material.image_url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={material.image_url}
-            alt={material.name}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
+          <img src={material.image_url} alt={material.name} loading="lazy" className="h-full w-full object-cover" />
         )}
       </div>
       <div className="mt-3">

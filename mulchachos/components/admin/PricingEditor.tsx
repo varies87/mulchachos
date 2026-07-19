@@ -36,24 +36,14 @@ export default function PricingEditor({ settings }: { settings: PricingSettings 
   }
 
   return (
-    <form
-      action={submit}
-      className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5"
-    >
+    <form action={submit} className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {FIELDS.map((f) => (
           <div key={f.name}>
             <label className="mb-1.5 block text-xs uppercase tracking-wider text-[var(--muted)]">
               {f.label}
             </label>
-            <input
-              name={f.name}
-              type="number"
-              step={f.step ?? "1"}
-              min="0"
-              defaultValue={String(settings[f.name])}
-              className={input}
-            />
+            <input name={f.name} type="number" step={f.step ?? "1"} min="0" defaultValue={String(settings[f.name])} className={input} />
             <p className="mt-1 text-xs text-[var(--muted)]">{f.note}</p>
           </div>
         ))}
@@ -63,11 +53,7 @@ export default function PricingEditor({ settings }: { settings: PricingSettings 
         <label className="mb-1.5 block text-xs uppercase tracking-wider text-[var(--muted)]">
           Service ZIP codes
         </label>
-        <input
-          name="service_zips"
-          defaultValue={settings.service_zips.join(", ")}
-          className={input}
-        />
+        <input name="service_zips" defaultValue={settings.service_zips.join(", ")} className={input} />
         <p className="mt-1 text-xs text-[var(--muted)]">
           Comma separated. Anything outside these routes to a written estimate
           instead of instant booking.
@@ -75,10 +61,7 @@ export default function PricingEditor({ settings }: { settings: PricingSettings 
       </div>
 
       <div className="mt-5 flex items-center gap-4">
-        <button
-          disabled={pending}
-          className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
-        >
+        <button disabled={pending} className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50">
           {pending ? "Saving…" : "Save pricing"}
         </button>
         {saved && <span className="text-sm text-[var(--success)]">Saved and live.</span>}

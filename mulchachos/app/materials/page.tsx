@@ -57,29 +57,17 @@ function Group({ title, items }: { title: string; items: Item[] }) {
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
-      <h2
-        className={
-          MONO + " text-xs uppercase tracking-widest text-[var(--muted)]"
-        }
-      >
+      <h2 className={ MONO + " text-xs uppercase tracking-widest text-[var(--muted)]" }>
         {title}
       </h2>
 
       <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((m) => (
           <article key={m.id}>
-            <div
-              className="h-44 overflow-hidden rounded-lg"
-              style={{ backgroundColor: m.swatch }}
-            >
+            <div className="h-44 overflow-hidden rounded-lg" style={{ backgroundColor: m.swatch }}>
               {m.image_url && (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={m.image_url}
-                  alt={m.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+                <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover" />
               )}
             </div>
 

@@ -46,22 +46,9 @@ export default function VideoWall() {
   }, []);
 
   return (
-    <div
-      ref={root}
-      className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6"
-    >
+    <div ref={root} className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {CLIPS.map((n) => (
-        <video
-          key={n}
-          data-src={`/video/clip${n}.mp4`}
-          poster={`/video/clip${n}.jpg`}
-          muted
-          loop
-          playsInline
-          preload="none"
-          aria-label="Material being unloaded on a Dallas job"
-          className="aspect-[9/16] w-full rounded-lg bg-[var(--paper-deep)] object-cover"
-        />
+        <video key={n} data-src={`/video/clip${n}.mp4`} poster={`/video/clip${n}.jpg`} muted loop playsInline preload="none" aria-label="Material being unloaded on a Dallas job" className="aspect-[9/16] w-full rounded-lg bg-[var(--paper-deep)] object-cover" />
       ))}
     </div>
   );
