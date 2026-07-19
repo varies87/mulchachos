@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --soil: #191410;
+  --soil-raised: #241C16;
+  --bark: #6B4A2F;
+  --granite: #C4A57B;
+  --paper: #E8E6E0;
+  --muted: #9A9086;
+  --grass: #6E9440;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--granite);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Numbers align in the quote panel as values change. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
