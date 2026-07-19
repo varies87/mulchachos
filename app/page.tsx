@@ -4,6 +4,10 @@ import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 // Revalidate hourly; admin saves call revalidatePath for anything sooner.
 export const revalidate = 3600;
 
+const LOGO = "font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight";
+const CTA = "rounded-sm bg-[var(--granite)] px-4 py-2 font-medium text-[#231A10] transition-colors hover:bg-[#D4B98F]";
+const NAVLINK = "hidden text-[var(--muted)] hover:text-[var(--paper)] sm:block";
+
 const STEPS = [
   {
     n: "01",
@@ -37,25 +41,11 @@ export default async function Home() {
   return (
     <main>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        
-          href="/"
-          className="font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight"
-        >
-          Mulchachos
-        </a>
+        <a href="/" className={LOGO}>Mulchachos</a>
         <nav className="flex items-center gap-6 text-sm">
-          <a href="#work" className="hidden text-[var(--muted)] hover:text-[var(--paper)] sm:block">
-            Recent work
-          </a>
-          <a href="#about" className="hidden text-[var(--muted)] hover:text-[var(--paper)] sm:block">
-            About
-          </a>
-          
-            href="/estimate"
-            className="rounded-sm bg-[var(--granite)] px-4 py-2 font-medium text-[#231A10] transition-colors hover:bg-[#D4B98F]"
-          >
-            Get a price
-          </a>
+          <a href="#work" className={NAVLINK}>Recent work</a>
+          <a href="#about" className={NAVLINK}>About</a>
+          <a href="/estimate" className={CTA}>Get a price</a>
         </nav>
       </header>
 
