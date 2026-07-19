@@ -253,7 +253,12 @@ function Swatch({
 
   return (
     <button type="button" aria-pressed={on} onClick={() => pick(item)} className="text-left">
-      <span className="block h-20 w-full rounded-lg" style={{ backgroundColor: item.swatch, boxShadow: ring }} />
+      <span className="block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch, boxShadow: ring }}>
+        {item.image_url && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={item.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
+        )}
+      </span>
       <span className="mt-2 block text-sm font-medium">{item.name}</span>
     </button>
   );
