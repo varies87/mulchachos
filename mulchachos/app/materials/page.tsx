@@ -37,8 +37,8 @@ export default async function MaterialsPage() {
           What goes in the beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Prices are per cubic yard of material. Spreading,
-          delivery, and edging are quoted with the job.
+          Every price is per cubic yard, delivered and spread.
+          You are billed for the volume actually used.
         </p>
       </section>
 
