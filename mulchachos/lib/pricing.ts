@@ -51,22 +51,31 @@ export function buildQuote(input: QuoteInput): Quote {
 
   const lineItems: LineItem[] = [];
 
+  // Material rates are all-in: delivery and spreading are included. The
+  // labour and delivery lines only appear if those settings are non-zero,
+  // so nothing shows as a $0 line item.
   if (yards > 0) {
     lineItems.push({
       label: material.name,
-      detail: `${yards.toFixed(2)} yd³ at $${material.cost_per_yard}/yd³`,
+      detail: `${yards.toFixed(2)} yd³ at $${material.cost_per_yard}/yd³, delivered and spread`,
       amount: yards * material.cost_per_yard,
     });
-    lineItems.push({
-      label: "Spreading",
-      detail: `${yards.toFixed(2)} yd³ at $${s.labor_per_yard}/yd³`,
-      amount: yards * s.labor_per_yard,
-    });
-    lineItems.push({
-      label: "Delivery",
-      detail: trips > 1 ? `${trips} trips` : "1 trip",
-      amount: trips * s.delivery_fee,
-    });
+
+    if (s.labor_per_yard > 0) {
+      lineItems.push({
+        label: "Spreading",
+        detail: `${yards.toFixed(2)} yd³ at $${s.labor_per_yard}/yd³`,
+        amount: yards * s.labor_per_yard,
+      });
+    }
+
+    if (s.delivery_fee > 0) {
+      lineItems.push({
+        label: "Delivery",
+        detail: trips > 1 ? `${trips} trips` : "1 trip",
+        amount: trips * s.delivery_fee,
+      });
+    }
   }
 
   if (limitedAccess && yards > 0) {
