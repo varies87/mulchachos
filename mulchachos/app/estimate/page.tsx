@@ -4,6 +4,7 @@ import SiteHeader from "@/components/SiteHeader";
 import {
   getActiveMaterials,
   getDiscountTiers,
+  getFabricTiers,
   getPricingSettings,
 } from "@/lib/materials";
 
@@ -21,11 +22,12 @@ export default async function EstimatePage({
 }: {
   searchParams: Promise<{ material?: string }>;
 }) {
-  const [{ material }, materials, settings, tiers] = await Promise.all([
+  const [{ material }, materials, settings, tiers, fabricTiers] = await Promise.all([
     searchParams,
     getActiveMaterials(),
     getPricingSettings(),
     getDiscountTiers(),
+    getFabricTiers(),
   ]);
 
   const initial =
@@ -59,7 +61,7 @@ export default async function EstimatePage({
         </p>
       </div>
 
-      <Estimator materials={materials} settings={settings} tiers={tiers} initial={initial} />
+      <Estimator materials={materials} settings={settings} tiers={tiers} fabricTiers={fabricTiers} initial={initial} />
     </main>
   );
 }

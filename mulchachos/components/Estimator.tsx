@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { DiscountTier, Material, PricingSettings } from "@/lib/materials";
+import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
 import InquiryForm from "./InquiryForm";
 import { buildQuote, money } from "@/lib/pricing";
 
@@ -54,11 +54,13 @@ export default function Estimator({
   materials,
   settings,
   tiers,
+  fabricTiers,
   initial,
 }: {
   materials: Material[];
   settings: PricingSettings;
   tiers: DiscountTier[];
+  fabricTiers: FabricTier[];
   initial: Material;
 }) {
   const [material, setMaterial] = useState<Material>(initial);
@@ -70,6 +72,7 @@ export default function Estimator({
   const [extras, setExtras] = useState(false);
   const [access, setAccess] = useState(false);
   const [edging, setEdging] = useState(false);
+  const [fabric, setFabric] = useState(false);
 
   const squareFeet = beds.reduce(
     (s, b) => s + (Number(b.length) || 0) * (Number(b.width) || 0),
@@ -90,13 +93,15 @@ export default function Estimator({
         material,
         settings,
         tiers,
+        fabricTiers,
+        weedFabric: fabric,
         squareFeet,
         depthInches: depth,
         zip,
         limitedAccess: access,
         edgingFeet,
       }),
-    [material, settings, tiers, squareFeet, depth, zip, access, edgingFeet]
+    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth, zip, access, edgingFeet]
   );
 
   const ready = squareFeet > 0;
@@ -171,6 +176,9 @@ export default function Estimator({
               </button>
             ))}
           </div>
+
+          <Step n="4" title="Weed fabric?" />
+          <Check on={fabric} set={setFabric} label="Lay heavy duty weed fabric first" note={material.category === "rock" ? "Strongly recommended under rock. Stone does not break down, so weeds that come up stay up." : "Optional under mulch. Most beds do better letting mulch feed the soil."} />
 
           <div className="mt-10 border-t border-[var(--line)] pt-6">
             <button type="button" onClick={() => setExtras(!extras)} className={LINK}>

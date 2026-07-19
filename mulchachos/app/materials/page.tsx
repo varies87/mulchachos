@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+import WeedFabric from "@/components/WeedFabric";
 import SiteFooter from "@/components/SiteFooter";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
@@ -44,6 +45,8 @@ export default async function MaterialsPage() {
 
       <Group title="Mulch" items={mulch} />
       <Group title="Rock and granite" items={rock} />
+
+      <WeedFabric />
 
       <SiteFooter zips={settings.service_zips} />
     </main>

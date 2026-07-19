@@ -20,6 +20,11 @@ export interface DiscountTier {
   discount_per_yard: number;
 }
 
+export interface FabricTier {
+  min_sqft: number;
+  price_per_sqft: number;
+}
+
 export interface PricingSettings {
   mulch_min_yards: number;
   rock_min_yards: number;
@@ -73,6 +78,16 @@ export async function getDiscountTiers(): Promise<DiscountTier[]> {
     .order("min_yards");
   if (error) throw error;
   return (data ?? []) as DiscountTier[];
+}
+
+export async function getFabricTiers(): Promise<FabricTier[]> {
+  const sb = await supabaseServer();
+  const { data, error } = await sb
+    .from("fabric_tiers")
+    .select("*")
+    .order("min_sqft");
+  if (error) throw error;
+  return (data ?? []) as FabricTier[];
 }
 
 export const slugify = (s: string) =>

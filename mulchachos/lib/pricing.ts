@@ -1,4 +1,4 @@
-import { DiscountTier, Material, PricingSettings } from "./materials";
+import { DiscountTier, FabricTier, Material, PricingSettings } from "./materials";
 
 // A cubic yard is 27 cubic feet. Spread D inches deep over A square feet:
 //   yards = A * (D / 12) / 27  =  A * D / 324
@@ -40,10 +40,23 @@ export function minYardsFor(s: PricingSettings, category: string): number {
   return category === "mulch" ? s.mulch_min_yards : s.rock_min_yards;
 }
 
+/**
+ * Weed fabric price. Takes the cheapest total available at any tier, so the
+ * bill never drops when the area grows — no cliff at 199 vs 200 sqft.
+ */
+export function fabricPrice(tiers: FabricTier[], squareFeet: number): number {
+  if (squareFeet <= 0 || tiers.length === 0) return 0;
+  return Math.min(
+    ...tiers.map((t) => Math.max(squareFeet, t.min_sqft) * t.price_per_sqft)
+  );
+}
+
 export interface QuoteInput {
   material: Material;
   settings: PricingSettings;
   tiers: DiscountTier[];
+  fabricTiers: FabricTier[];
+  weedFabric: boolean;
   squareFeet: number;
   depthInches: number;
   zip: string;
@@ -79,8 +92,8 @@ export interface Quote {
 }
 
 export function buildQuote(input: QuoteInput): Quote {
-  const { material, settings, tiers, squareFeet, depthInches, zip,
-          limitedAccess, edgingFeet } = input;
+  const { material, settings, tiers, fabricTiers, weedFabric, squareFeet,
+          depthInches, zip, limitedAccess, edgingFeet } = input;
   const s = settings;
 
   const rawYards = yardsNeeded(squareFeet, depthInches);
@@ -110,6 +123,15 @@ export function buildQuote(input: QuoteInput): Quote {
       detail: `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
       amount: billedYards * ratePerYard,
     });
+
+    if (weedFabric) {
+      const fab = fabricPrice(fabricTiers, squareFeet);
+      lineItems.push({
+        label: "Heavy duty weed fabric",
+        detail: `${squareFeet.toLocaleString()} sq ft at $${(fab / squareFeet).toFixed(2)}/sq ft`,
+        amount: fab,
+      });
+    }
 
     if (s.labor_per_yard > 0) {
       lineItems.push({
