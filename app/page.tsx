@@ -2,7 +2,7 @@ import MaterialSwatch from "@/components/MaterialSwatch";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
 // Revalidate hourly; admin saves call revalidatePath for anything sooner.
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 const LOGO = "font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight";
 const CTA = "rounded-sm bg-[var(--granite)] px-4 py-2 font-medium text-[#231A10] transition-colors hover:bg-[#D4B98F]";
