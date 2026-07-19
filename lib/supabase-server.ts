@@ -1,11 +1,9 @@
-import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 /**
  * Server client for server components and server actions.
- * The "server-only" import makes any accidental client import fail loudly
- * at build time instead of producing a confusing runtime error.
+ * Never import this from a client component.
  */
 export async function supabaseServer() {
   const store = await cookies();
