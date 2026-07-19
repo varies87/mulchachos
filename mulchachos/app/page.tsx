@@ -1,4 +1,5 @@
 import MaterialSwatch from "@/components/MaterialSwatch";
+import DumpReel from "@/components/DumpReel";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
 // Rendered per request so the build never touches the database.
@@ -92,7 +93,12 @@ export default async function Home() {
           minute, not a callback in three days.
         </p>
 
-        <div className="mt-14">
+      </section>
+
+      <DumpReel />
+
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <div>
           <p className="mb-5 font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest text-[var(--muted)]">
             Start with a material
           </p>
