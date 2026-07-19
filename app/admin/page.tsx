@@ -1,58 +1,68 @@
-import { getAllMaterials, getPricingSettings } from "@/lib/materials";
-import MaterialEditor from "@/components/admin/MaterialEditor";
-import PricingEditor from "@/components/admin/PricingEditor";
-import AddMaterial from "@/components/admin/AddMaterial";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { useState } from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
-export default async function AdminPage() {
-  const [materials, settings] = await Promise.all([
-    getAllMaterials(),
-    getPricingSettings(),
-  ]);
+export default function AdminLogin() {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [message, setMessage] = useState("");
 
-  const hidden = materials.filter((m) => !m.active).length;
+  async function send() {
+    if (!email.includes("@")) {
+      setState("error");
+      setMessage("Enter a valid email address.");
+      return;
+    }
+    setState("sending");
+    const { error } = await supabaseBrowser().auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/admin` },
+    });
+    if (error) {
+      setState("error");
+      setMessage(error.message);
+    } else {
+      setState("sent");
+    }
+  }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-12">
-      <section>
-        <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold tracking-tight">
-          Pricing
-        </h1>
-        <p className="mb-5 mt-2 text-sm text-[var(--muted)]">
-          These feed every quote on the site. Changes go live as soon as you save.
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight">
+        Admin sign in
+      </h1>
+
+      {state === "sent" ? (
+        <p className="mt-5 leading-relaxed text-[var(--muted)]">
+          Check {email} for a sign-in link. It expires in an hour.
         </p>
-        <PricingEditor settings={settings} />
-      </section>
-
-      <section className="mt-16">
-        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-[family-name:var(--font-display)] text-2xl font-extrabold tracking-tight">
-            Materials
-          </h2>
-          <p className="text-sm text-[var(--muted)]">
-            {materials.length - hidden} live
-            {hidden > 0 && `, ${hidden} hidden`}
+      ) : (
+        <>
+          <p className="mt-3 text-[var(--muted)]">
+            We email a one-time link. No password to remember or leak.
           </p>
-        </div>
-
-        <AddMaterial />
-
-        <div className="mt-6 space-y-4">
-          {materials.map((m) => (
-            <div key={m.id} className={m.active ? "" : "opacity-55"}>
-              <MaterialEditor material={m} />
-            </div>
-          ))}
-        </div>
-
-        {materials.length === 0 && (
-          <p className="rounded-sm border border-dashed border-white/15 p-10 text-center text-[var(--muted)]">
-            No materials yet. Add your first one and it appears on the home page
-            and the estimator immediately.
-          </p>
-        )}
-      </section>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="you@prestonhollowmulchachos.com"
+            autoComplete="email"
+            className="mt-6 w-full rounded-sm border border-white/15 bg-[var(--soil)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--granite)] focus:outline-none"
+          />
+          <button
+            onClick={send}
+            disabled={state === "sending"}
+            className="mt-3 rounded-sm bg-[var(--granite)] px-5 py-3 font-medium text-[#231A10] disabled:opacity-50"
+          >
+            {state === "sending" ? "Sending…" : "Email me a link"}
+          </button>
+          {state === "error" && (
+            <p className="mt-3 text-sm text-[#E08A6A]">{message}</p>
+          )}
+        </>
+      )}
     </main>
   );
 }
