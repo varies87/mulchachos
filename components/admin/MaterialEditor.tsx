@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { supabaseBrowser } from "@/lib/supabase";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 import { Material } from "@/lib/materials";
 import { saveMaterial, deleteMaterial } from "@/app/admin/actions";
 
