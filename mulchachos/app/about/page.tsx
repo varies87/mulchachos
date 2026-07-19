@@ -64,10 +64,7 @@ export default async function AboutPage() {
             <a href="/estimate" className={CTA}>
               Price my beds
             </a>
-            
-              href={"tel:" + PHONE}
-              className="font-medium text-[var(--clay)]"
-            >
+            <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
               or call {PHONE}
             </a>
           </div>
