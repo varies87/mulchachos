@@ -1,15 +1,53 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import MaterialSwatch from "@/components/MaterialSwatch";
 import { Material, PricingSettings } from "@/lib/materials";
 import { buildQuote, money } from "@/lib/pricing";
 
+const MONO = "font-[family-name:var(--font-mono)]";
+
 const DEPTHS = [
-  { in: 2, label: "Refresh", note: "Beds already have a base" },
-  { in: 3, label: "Standard", note: "What most jobs use" },
-  { in: 4, label: "New beds", note: "Bare soil, full coverage" },
+  { in: 2, label: "Topping up", hint: "Still has mulch" },
+  { in: 3, label: "Standard", hint: "Most jobs" },
+  { in: 4, label: "Bare soil", hint: "Starting over" },
 ];
+
+const CARD = "rounded-lg border px-4 py-3 text-left";
+const ON = " border-[var(--clay)] bg-[var(--paper-warm)]";
+const OFF = " border-[var(--line)] hover:border-[var(--line-strong)]";
+
+const FIELD =
+  "w-full rounded-lg border border-[var(--line)] " +
+  "px-3 py-2.5 focus:border-[var(--clay)] focus:outline-none " +
+  MONO;
+
+const LABEL = "mb-1.5 block text-sm text-[var(--muted)]";
+const LINK = "text-sm font-medium text-[var(--clay)]";
+
+const PILL =
+  "block rounded-full bg-[var(--clay)] px-5 py-3.5 " +
+  "text-center font-medium text-white hover:bg-[var(--clay-deep)]";
+
+const BAR =
+  "fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] " +
+  "bg-white/95 px-5 py-3 backdrop-blur lg:hidden";
+
+const PANEL =
+  "rounded-xl border border-[var(--line)] " +
+  "bg-[var(--paper-warm)] p-6";
+
+const TOTALROW =
+  "flex items-baseline justify-between " +
+  "border-t border-[var(--line)] pt-5";
+
+const ITEMS =
+  "space-y-3 border-t border-[var(--line)] py-5 text-sm";
+
+const NOTE =
+  "mt-4 rounded-lg bg-[var(--paper-deep)] p-4 text-xs " +
+  "leading-relaxed text-[var(--ink-soft)]";
+
+type Bed = { id: number; length: string; width: string };
 
 export default function Estimator({
   materials,
@@ -21,15 +59,27 @@ export default function Estimator({
   initial: Material;
 }) {
   const [material, setMaterial] = useState<Material>(initial);
-  const [length, setLength] = useState("");
-  const [width, setWidth] = useState("");
+  const [beds, setBeds] = useState<Bed[]>([
+    { id: 1, length: "", width: "" },
+  ]);
   const [depth, setDepth] = useState(3);
   const [zip, setZip] = useState("");
-  const [limitedAccess, setLimitedAccess] = useState(false);
+  const [extras, setExtras] = useState(false);
+  const [access, setAccess] = useState(false);
   const [edging, setEdging] = useState(false);
 
-  const squareFeet = (Number(length) || 0) * (Number(width) || 0);
-  const edgingFeet = edging ? 2 * ((Number(length) || 0) + (Number(width) || 0)) : 0;
+  const squareFeet = beds.reduce(
+    (s, b) => s + (Number(b.length) || 0) * (Number(b.width) || 0),
+    0
+  );
+
+  const edgingFeet = edging
+    ? beds.reduce(
+        (s, b) =>
+          s + 2 * ((Number(b.length) || 0) + (Number(b.width) || 0)),
+        0
+      )
+    : 0;
 
   const quote = useMemo(
     () =>
@@ -39,233 +89,256 @@ export default function Estimator({
         squareFeet,
         depthInches: depth,
         zip,
-        limitedAccess,
+        limitedAccess: access,
         edgingFeet,
       }),
-    [material, settings, squareFeet, depth, zip, limitedAccess, edgingFeet]
+    [material, settings, squareFeet, depth, zip, access, edgingFeet]
   );
 
-  const hasInput = squareFeet > 0;
+  const ready = squareFeet > 0;
+  const perYard = material.cost_per_yard + settings.labor_per_yard;
 
-  const field =
-    "w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--clay)] focus:outline-none";
-  const legend =
-    "mb-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest text-[var(--muted)]";
+  function edit(id: number, key: "length" | "width", v: string) {
+    const clean = v.replace(/[^\d.]/g, "");
+    setBeds(beds.map((b) => (b.id === id ? { ...b, [key]: clean } : b)));
+  }
+
+  function addBed() {
+    setBeds([...beds, { id: Date.now(), length: "", width: "" }]);
+  }
+
+  function dropBed(id: number) {
+    setBeds(beds.filter((b) => b.id !== id));
+  }
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
-      {/* ------------------------------- inputs ------------------------------- */}
-      <div>
-        <fieldset className="border-t border-[var(--line)] pt-8">
-          <legend className={legend}>Material</legend>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {materials.map((m) => (
-              <MaterialSwatch
-                key={m.id}
-                material={m}
-                selected={m.id === material.id}
-                onSelect={setMaterial}
+    <div className="mx-auto max-w-6xl px-6 pb-40 lg:pb-24">
+      <div className="grid gap-14 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+        <div>
+          <Step n="1" title="Measure your beds" />
+          <p className="-mt-2 mb-5 text-[var(--ink-soft)]">
+            Pace them off or eyeball them. Rough numbers are fine,
+            because you are billed for the volume actually spread,
+            not for this estimate.
+          </p>
+
+          <div className="space-y-3">
+            {beds.map((b, i) => (
+              <BedRow
+                key={b.id}
+                bed={b}
+                index={i}
+                canRemove={beds.length > 1}
+                onEdit={edit}
+                onRemove={dropBed}
               />
             ))}
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">{material.blurb}</p>
-        </fieldset>
 
-        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
-          <legend className={legend}>Bed size</legend>
-          <div className="flex items-end gap-3">
-            <label className="flex-1">
-              <span className="mb-1.5 block text-sm text-[var(--muted)]">Length (ft)</span>
-              <input
-                className={field}
-                inputMode="decimal"
-                value={length}
-                onChange={(e) => setLength(e.target.value.replace(/[^\d.]/g, ""))}
-                placeholder="40"
+          <button type="button" onClick={addBed} className={"mt-4 " + LINK}>
+            Add another bed
+          </button>
+
+          {ready && (
+            <p className={"mt-4 text-sm text-[var(--muted)] " + MONO}>
+              {squareFeet.toLocaleString()} sq ft total
+            </p>
+          )}
+
+          <Step n="2" title="Which material?" />
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {materials.map((m) => (
+              <Swatch
+                key={m.id}
+                item={m}
+                on={m.id === material.id}
+                pick={setMaterial}
               />
-            </label>
-            <span className="pb-3 text-[var(--muted)]">×</span>
-            <label className="flex-1">
-              <span className="mb-1.5 block text-sm text-[var(--muted)]">Width (ft)</span>
-              <input
-                className={field}
-                inputMode="decimal"
-                value={width}
-                onChange={(e) => setWidth(e.target.value.replace(/[^\d.]/g, ""))}
-                placeholder="6"
-              />
-            </label>
+            ))}
           </div>
-          <p className="mt-3 text-sm text-[var(--muted)]">
-            Several beds? Add up the areas and enter the total as one rectangle.
-            We confirm the real number on site.
+          <p className="mt-3 text-sm text-[var(--ink-soft)]">
+            {material.blurb}
           </p>
-        </fieldset>
 
-        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
-          <legend className={legend}>Depth</legend>
+          <Step n="3" title="How deep?" />
           <div className="grid gap-3 sm:grid-cols-3">
             {DEPTHS.map((d) => (
               <button
                 key={d.in}
                 type="button"
-                onClick={() => setDepth(d.in)}
                 aria-pressed={depth === d.in}
-                className={`rounded-sm border px-4 py-3 text-left transition-colors ${
-                  depth === d.in
-                    ? "border-[var(--clay)] bg-[var(--paper-warm)]"
-                    : "border-[var(--line)] hover:border-[var(--line-strong)]"
-                }`}
-              >
-                <span className="tnum font-[family-name:var(--font-mono)] text-sm text-[var(--clay)]">
+                onClick={() => setDepth(d.in)}
+                className={CARD + (depth === d.in ? ON : OFF)}>
+                <span className={MONO + " text-sm text-[var(--clay)]"}>
                   {d.in}&quot;
                 </span>
                 <span className="mt-1 block font-medium">{d.label}</span>
-                <span className="mt-0.5 block text-xs text-[var(--muted)]">{d.note}</span>
+                <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                  {d.hint}
+                </span>
               </button>
             ))}
           </div>
-        </fieldset>
 
-        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
-          <legend className={legend}>Site details</legend>
-          <label className="mb-6 block max-w-[200px]">
-            <span className="mb-1.5 block text-sm text-[var(--muted)]">ZIP code</span>
-            <input
-              className={field}
-              inputMode="numeric"
-              maxLength={5}
-              value={zip}
-              onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
-              placeholder="75225"
-            />
-          </label>
+          <div className="mt-10 border-t border-[var(--line)] pt-6">
+            <button
+              type="button"
+              onClick={() => setExtras(!extras)}
+              className={LINK}>
+              {extras ? "Hide extras" : "Anything unusual? Add extras"}
+            </button>
 
-          <Check
-            checked={limitedAccess}
-            onChange={setLimitedAccess}
-            label="No truck access to the beds"
-            note={`Gate is narrow or beds are behind the house. Adds $${settings.limited_access_surcharge}/yd³.`}
-          />
-          <Check
-            checked={edging}
-            onChange={setEdging}
-            label="Edge and pull weeds first"
-            note={`Clean bed lines before mulch goes down. $${settings.edging_per_foot}/ft.`}
-          />
-        </fieldset>
+            {extras && (
+              <div className="mt-5">
+                <Check
+                  on={access}
+                  set={setAccess}
+                  label="No truck access to the beds"
+                  note="Narrow gate, or beds behind the house."
+                />
+                <Check
+                  on={edging}
+                  set={setEdging}
+                  label="Edge and pull weeds first"
+                  note="Clean bed lines before mulch goes down."
+                />
+                <label className="mt-4 block max-w-[180px]">
+                  <span className={LABEL}>ZIP code</span>
+                  <input
+                    className={FIELD}
+                    inputMode="numeric"
+                    maxLength={5}
+                    placeholder="75225"
+                    value={zip}
+                    onChange={(e) =>
+                      setZip(e.target.value.replace(/\D/g, ""))
+                    }
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <aside className="hidden lg:sticky lg:top-8 lg:block lg:self-start">
+          <div className={PANEL}>
+            {ready ? (
+              <Quote
+                quote={quote}
+                material={material}
+                perYard={perYard}
+                settings={settings}
+              />
+            ) : (
+              <p className="text-[var(--ink-soft)]">
+                Enter a bed size and your estimate builds here.
+              </p>
+            )}
+          </div>
+        </aside>
       </div>
 
-      {/* ------------------------------- quote -------------------------------- */}
-      <aside className="lg:sticky lg:top-8 lg:self-start">
-        <div className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-6">
-          <p className={legend}>Your estimate</p>
+      {ready && <MobileBar quote={quote} perYard={perYard} />}
+    </div>
+  );
+}
 
-          {!hasInput ? (
-            <p className="text-[var(--muted)]">
-              Enter your bed length and width and the price builds here as you type.
-            </p>
-          ) : (
-            <>
-              <div className="flex items-baseline gap-2 border-b border-[var(--line)] pb-5">
-                <span className="tnum font-[family-name:var(--font-display)] text-5xl font-extrabold">
-                  {quote.yards.toFixed(2)}
-                </span>
-                <span className="font-[family-name:var(--font-mono)] text-sm text-[var(--muted)]">
-                  yd³ of {material.name.toLowerCase()}
-                </span>
-              </div>
+function BedRow({
+  bed,
+  index,
+  canRemove,
+  onEdit,
+  onRemove,
+}: {
+  bed: Bed;
+  index: number;
+  canRemove: boolean;
+  onEdit: (id: number, k: "length" | "width", v: string) => void;
+  onRemove: (id: number) => void;
+}) {
+  return (
+    <div className="flex items-end gap-3">
+      <label className="flex-1">
+        <span className={LABEL}>Bed {index + 1} length (ft)</span>
+        <input
+          className={FIELD}
+          inputMode="decimal"
+          placeholder="40"
+          value={bed.length}
+          onChange={(e) => onEdit(bed.id, "length", e.target.value)}
+        />
+      </label>
 
-              <dl className="space-y-3 py-5 text-sm">
-                {quote.lineItems.map((li) => (
-                  <div key={li.label} className="flex justify-between gap-4">
-                    <dt>
-                      {li.label}
-                      {li.detail && (
-                        <span className="mt-0.5 block text-xs text-[var(--muted)]">
-                          {li.detail}
-                        </span>
-                      )}
-                    </dt>
-                    <dd className="tnum font-[family-name:var(--font-mono)] whitespace-nowrap">
-                      {money(li.amount)}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+      <span className="pb-3 text-[var(--muted)]">×</span>
 
-              {quote.minimumApplied && (
-                <p className="mb-4 rounded-sm bg-[var(--paper-deep)] p-3 text-xs leading-relaxed text-[var(--muted)]">
-                  Job minimum of {money(settings.minimum_job)} applies. Adding beds
-                  or edging gets you more for the same trip.
-                </p>
-              )}
+      <label className="flex-1">
+        <span className={LABEL}>Width (ft)</span>
+        <input
+          className={FIELD}
+          inputMode="decimal"
+          placeholder="6"
+          value={bed.width}
+          onChange={(e) => onEdit(bed.id, "width", e.target.value)}
+        />
+      </label>
 
-              <div className="flex items-baseline justify-between border-t border-[var(--line)] pt-5">
-                <span className="font-[family-name:var(--font-display)] text-lg font-semibold">
-                  Total
-                </span>
-                <span className="tnum font-[family-name:var(--font-mono)] text-2xl">
-                  {money(quote.total)}
-                </span>
-              </div>
+      {canRemove && (
+        <button
+          type="button"
+          onClick={() => onRemove(bed.id)}
+          className="pb-3 text-sm text-[var(--muted)]">
+          Remove
+        </button>
+      )}
+    </div>
+  );
+}
 
-              {/* The branch. Deterministic jobs book themselves; the rest come to you. */}
-              {quote.instantBookable ? (
-                <div className="mt-6">
-                  <a
-                    href="/book"
-                    className="block rounded-sm bg-[var(--clay)] px-5 py-3.5 text-center font-medium text-white transition-colors hover:bg-[var(--clay-deep)]"
-                  >
-                    Book this job
-                  </a>
-                  <p className="mt-3 text-center text-xs leading-relaxed text-[var(--muted)]">
-                    {money(quote.deposit)} deposit now, balance when the job is
-                    done. Price is held unless the beds measure more than
-                    entered — we call before proceeding.
-                  </p>
-                  <a
-                    href="/request-estimate"
-                    className="mt-4 block text-center text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)]"
-                  >
-                    Have us look at it first
-                  </a>
-                </div>
-              ) : (
-                <div className="mt-6">
-                  <a
-                    href="/request-estimate"
-                    className="block rounded-sm border border-[var(--clay)] px-5 py-3.5 text-center font-medium text-[var(--clay)] transition-colors hover:bg-[var(--clay)] hover:text-white"
-                  >
-                    Request a written estimate
-                  </a>
-                  <ul className="mt-4 space-y-1.5 text-xs leading-relaxed text-[var(--muted)]">
-                    {quote.reviewReasons.map((r) => (
-                      <li key={r}>— {r}</li>
-                    ))}
-                  </ul>
-                  <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">
-                    Send photos and we return an itemized quote by email, usually
-                    same day.
-                  </p>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </aside>
+function Swatch({
+  item,
+  on,
+  pick,
+}: {
+  item: Material;
+  on: boolean;
+  pick: (m: Material) => void;
+}) {
+  const ring = on
+    ? "inset 0 0 0 3px var(--clay)"
+    : "inset 0 0 0 1px rgba(69,55,56,0.12)";
+
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => pick(item)}
+      className="text-left">
+      <span
+        className="block h-20 w-full rounded-lg"
+        style={{ backgroundColor: item.swatch, boxShadow: ring }}
+      />
+      <span className="mt-2 block text-sm font-medium">{item.name}</span>
+    </button>
+  );
+}
+
+function Step({ n, title }: { n: string; title: string }) {
+  return (
+    <div className="mb-4 mt-12 flex items-baseline gap-3 first:mt-0">
+      <span className={MONO + " text-xs text-[var(--clay)]"}>{n}</span>
+      <h2 className="text-xl font-semibold">{title}</h2>
     </div>
   );
 }
 
 function Check({
-  checked,
-  onChange,
+  on,
+  set,
   label,
   note,
 }: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
+  on: boolean;
+  set: (v: boolean) => void;
   label: string;
   note: string;
 }) {
@@ -273,14 +346,127 @@ function Check({
     <label className="mb-4 flex cursor-pointer gap-3">
       <input
         type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        checked={on}
+        onChange={(e) => set(e.target.checked)}
         className="mt-1 h-4 w-4 shrink-0 accent-[var(--clay)]"
       />
       <span>
         <span className="block font-medium">{label}</span>
-        <span className="mt-0.5 block text-sm text-[var(--muted)]">{note}</span>
+        <span className="mt-0.5 block text-sm text-[var(--muted)]">
+          {note}
+        </span>
       </span>
     </label>
+  );
+}
+
+function Quote({
+  quote,
+  material,
+  perYard,
+  settings,
+}: {
+  quote: ReturnType<typeof buildQuote>;
+  material: Material;
+  perYard: number;
+  settings: PricingSettings;
+}) {
+  const cap = " text-xs uppercase tracking-widest text-[var(--muted)]";
+
+  return (
+    <>
+      <p className={MONO + cap}>Your rate</p>
+      <p className="mt-2 flex items-baseline gap-2">
+        <span className="tnum text-4xl font-extrabold">
+          {money(perYard)}
+        </span>
+        <span className="text-sm text-[var(--ink-soft)]">
+          per yd³, delivered and spread
+        </span>
+      </p>
+
+      <div className="mt-6 border-t border-[var(--line)] pt-5">
+        <p className="text-sm text-[var(--muted)]">
+          Estimated for your beds
+        </p>
+        <p className="mt-1 flex items-baseline gap-2">
+          <span className="tnum text-2xl font-semibold">
+            {quote.yards.toFixed(2)} yd³
+          </span>
+          <span className="text-sm text-[var(--ink-soft)]">
+            of {material.name.toLowerCase()}
+          </span>
+        </p>
+      </div>
+
+      <dl className={ITEMS}>
+        {quote.lineItems.map((li) => (
+          <div key={li.label} className="flex justify-between gap-4">
+            <dt>
+              {li.label}
+              {li.detail && (
+                <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                  {li.detail}
+                </span>
+              )}
+            </dt>
+            <dd className={"tnum whitespace-nowrap " + MONO}>
+              {money(li.amount)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      {quote.minimumApplied && (
+        <p className="mb-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs">
+          Job minimum of {money(settings.minimum_job)} applies.
+        </p>
+      )}
+
+      <div className={TOTALROW}>
+        <span className="text-lg font-semibold">Estimated total</span>
+        <span className={"tnum text-2xl " + MONO}>
+          {money(quote.total)}
+        </span>
+      </div>
+
+      <p className={NOTE}>
+        This is an estimate to help you plan. We bill for the volume
+        actually spread, at the same {money(perYard)} per yard. If
+        your beds take less than this, you pay less.
+      </p>
+
+      <a href="/request-estimate" className={PILL + " mt-6"}>
+        Get on the schedule
+      </a>
+    </>
+  );
+}
+
+function MobileBar({
+  quote,
+  perYard,
+}: {
+  quote: ReturnType<typeof buildQuote>;
+  perYard: number;
+}) {
+  return (
+    <div className={BAR}>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className={"tnum text-2xl font-extrabold " + MONO}>
+            about {money(quote.total)}
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
+          </p>
+        </div>
+        
+          href="/request-estimate"
+          className={"shrink-0 " + PILL}>
+          Schedule
+        </a>
+      </div>
+    </div>
   );
 }
