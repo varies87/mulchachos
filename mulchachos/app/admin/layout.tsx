@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           admins table in Supabase.
         </p>
         <form action={signOut}>
-          <button className="mt-6 text-sm text-[var(--granite)] underline underline-offset-4">
+          <button className="mt-6 text-sm text-[var(--clay)] underline underline-offset-4">
             Sign out
           </button>
         </form>
@@ -39,7 +39,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-white/10">
+      <header className="border-b border-[var(--line)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-baseline gap-3">
             <span className="font-[family-name:var(--font-display)] font-extrabold">
@@ -50,11 +50,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </span>
           </div>
           <div className="flex items-center gap-5 text-sm">
-            <a href="/" className="text-[var(--muted)] hover:text-[var(--paper)]">
+            <a href="/" className="text-[var(--muted)] hover:text-[var(--ink)]">
               View site
             </a>
             <form action={signOut}>
-              <button className="text-[var(--muted)] hover:text-[var(--paper)]">
+              <button className="text-[var(--muted)] hover:text-[var(--ink)]">
                 Sign out
               </button>
             </form>

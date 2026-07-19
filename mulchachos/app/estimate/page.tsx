@@ -4,7 +4,6 @@ import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
 export const dynamic = "force-dynamic";
 
-const LOGO = "font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight";
 
 export const metadata: Metadata = {
   title: "Price your beds",
@@ -39,9 +38,14 @@ export default async function EstimatePage({
 
   return (
     <main>
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <a href="/" className={LOGO}>Mulchachos</a>
-        <a href="/" className="text-sm text-[var(--muted)]">Back to home</a>
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <a href="/" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Preston Hollow Mulchachos" className="h-12 w-auto" />
+        </a>
+        <a href="/" className="text-sm text-[var(--ink-soft)] hover:text-[var(--clay)]">
+          Back to home
+        </a>
       </header>
 
       <div className="mx-auto max-w-6xl px-6 pb-10 pt-6 sm:pt-12">

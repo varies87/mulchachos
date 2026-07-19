@@ -18,7 +18,7 @@ const blank: Partial<Material> = {
 };
 
 const input =
-  "w-full rounded-sm border border-white/15 bg-[var(--soil)] px-3 py-2 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--granite)] focus:outline-none";
+  "w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-3 py-2 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--clay)] focus:outline-none";
 const label = "mb-1.5 block text-xs uppercase tracking-wider text-[var(--muted)]";
 
 export default function MaterialEditor({
@@ -77,7 +77,7 @@ export default function MaterialEditor({
   return (
     <form
       action={submit}
-      className="rounded-sm border border-white/15 bg-[var(--soil-raised)] p-5"
+      className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5"
     >
       <input type="hidden" name="id" value={isNew ? "" : m.id} />
       <input type="hidden" name="image_url" value={imageUrl ?? ""} />
@@ -112,7 +112,7 @@ export default function MaterialEditor({
             <button
               type="button"
               onClick={() => setImageUrl(null)}
-              className="mt-1 w-full text-center text-xs text-[var(--muted)] underline underline-offset-2 hover:text-[var(--paper)]"
+              className="mt-1 w-full text-center text-xs text-[var(--muted)] underline underline-offset-2 hover:text-[var(--ink)]"
             >
               Remove photo
             </button>
@@ -123,7 +123,7 @@ export default function MaterialEditor({
               type="color"
               value={swatch}
               onChange={(e) => setSwatch(e.target.value)}
-              className="h-8 w-full cursor-pointer rounded-sm border border-white/15 bg-transparent"
+              className="h-8 w-full cursor-pointer rounded-sm border border-[var(--line)] bg-transparent"
             />
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function MaterialEditor({
                 type="checkbox"
                 name="active"
                 defaultChecked={m.active}
-                className="h-4 w-4 accent-[var(--granite)]"
+                className="h-4 w-4 accent-[var(--clay)]"
               />
               Show on the site
             </label>
@@ -197,7 +197,7 @@ export default function MaterialEditor({
                 type="checkbox"
                 name="instant_bookable"
                 defaultChecked={m.instant_bookable}
-                className="h-4 w-4 accent-[var(--granite)]"
+                className="h-4 w-4 accent-[var(--clay)]"
               />
               Can be booked without a site visit
             </label>
@@ -206,13 +206,13 @@ export default function MaterialEditor({
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <button
               disabled={pending || uploading}
-              className="rounded-sm bg-[var(--granite)] px-5 py-2.5 text-sm font-medium text-[#231A10] disabled:opacity-50"
+              className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
             >
               {pending ? "Saving…" : isNew ? "Add material" : "Save changes"}
             </button>
 
-            {saved && <span className="text-sm text-[var(--grass)]">Saved and live.</span>}
-            {error && <span className="text-sm text-[#E08A6A]">{error}</span>}
+            {saved && <span className="text-sm text-[var(--success)]">Saved and live.</span>}
+            {error && <span className="text-sm text-[var(--danger)]">{error}</span>}
 
             {!isNew && (
               <button
@@ -222,7 +222,7 @@ export default function MaterialEditor({
                     start(() => deleteMaterial(m.id).then(() => {}));
                   }
                 }}
-                className="ml-auto text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[#E08A6A]"
+                className="ml-auto text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--danger)]"
               >
                 Delete
               </button>

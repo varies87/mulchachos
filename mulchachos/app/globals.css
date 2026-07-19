@@ -1,13 +1,20 @@
 @import "tailwindcss";
 
+/* Palette sampled from the Mulchachos logo. */
 :root {
-  --soil: #191410;
-  --soil-raised: #241C16;
-  --bark: #6B4A2F;
-  --granite: #C4A57B;
-  --paper: #E8E6E0;
-  --muted: #9A9086;
-  --grass: #6E9440;
+  --paper: #FFFFFF;
+  --paper-warm: #FAF6F5;
+  --paper-deep: #F3EBE9;
+  --ink: #453738;
+  --ink-soft: #6E5D5D;
+  --muted: #8A7878;
+  --clay: #B7655D;
+  --clay-deep: #9A4E47;
+  --rose: #C9ACA8;
+  --line: #E9DEDB;
+  --line-strong: #D8C7C3;
+  --success: #4F7A46;
+  --danger: #A83E3E;
 }
 
 html {
@@ -15,7 +22,7 @@ html {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--granite);
+  outline: 2px solid var(--clay);
   outline-offset: 3px;
   border-radius: 2px;
 }

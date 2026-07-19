@@ -49,17 +49,17 @@ export default function AdminLogin() {
             onKeyDown={(e) => e.key === "Enter" && send()}
             placeholder="you@prestonhollowmulchachos.com"
             autoComplete="email"
-            className="mt-6 w-full rounded-sm border border-white/15 bg-[var(--soil)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--granite)] focus:outline-none"
+            className="mt-6 w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--clay)] focus:outline-none"
           />
           <button
             onClick={send}
             disabled={state === "sending"}
-            className="mt-3 rounded-sm bg-[var(--granite)] px-5 py-3 font-medium text-[#231A10] disabled:opacity-50"
+            className="mt-3 rounded-sm bg-[var(--clay)] px-5 py-3 font-medium text-white disabled:opacity-50"
           >
             {state === "sending" ? "Sending…" : "Email me a link"}
           </button>
           {state === "error" && (
-            <p className="mt-3 text-sm text-[#E08A6A]">{message}</p>
+            <p className="mt-3 text-sm text-[var(--danger)]">{message}</p>
           )}
         </>
       )}

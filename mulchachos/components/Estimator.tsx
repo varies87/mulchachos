@@ -48,7 +48,7 @@ export default function Estimator({
   const hasInput = squareFeet > 0;
 
   const field =
-    "w-full rounded-sm border border-white/15 bg-[var(--soil)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-[var(--paper)] placeholder:text-white/25 focus:border-[var(--granite)] focus:outline-none";
+    "w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--clay)] focus:outline-none";
   const legend =
     "mb-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest text-[var(--muted)]";
 
@@ -56,7 +56,7 @@ export default function Estimator({
     <div className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
       {/* ------------------------------- inputs ------------------------------- */}
       <div>
-        <fieldset className="border-t border-white/10 pt-8">
+        <fieldset className="border-t border-[var(--line)] pt-8">
           <legend className={legend}>Material</legend>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {materials.map((m) => (
@@ -71,7 +71,7 @@ export default function Estimator({
           <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">{material.blurb}</p>
         </fieldset>
 
-        <fieldset className="mt-12 border-t border-white/10 pt-8">
+        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
           <legend className={legend}>Bed size</legend>
           <div className="flex items-end gap-3">
             <label className="flex-1">
@@ -102,7 +102,7 @@ export default function Estimator({
           </p>
         </fieldset>
 
-        <fieldset className="mt-12 border-t border-white/10 pt-8">
+        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
           <legend className={legend}>Depth</legend>
           <div className="grid gap-3 sm:grid-cols-3">
             {DEPTHS.map((d) => (
@@ -113,11 +113,11 @@ export default function Estimator({
                 aria-pressed={depth === d.in}
                 className={`rounded-sm border px-4 py-3 text-left transition-colors ${
                   depth === d.in
-                    ? "border-[var(--granite)] bg-[var(--soil-raised)]"
-                    : "border-white/15 hover:border-white/30"
+                    ? "border-[var(--clay)] bg-[var(--paper-warm)]"
+                    : "border-[var(--line)] hover:border-[var(--line-strong)]"
                 }`}
               >
-                <span className="tnum font-[family-name:var(--font-mono)] text-sm text-[var(--granite)]">
+                <span className="tnum font-[family-name:var(--font-mono)] text-sm text-[var(--clay)]">
                   {d.in}&quot;
                 </span>
                 <span className="mt-1 block font-medium">{d.label}</span>
@@ -127,7 +127,7 @@ export default function Estimator({
           </div>
         </fieldset>
 
-        <fieldset className="mt-12 border-t border-white/10 pt-8">
+        <fieldset className="mt-12 border-t border-[var(--line)] pt-8">
           <legend className={legend}>Site details</legend>
           <label className="mb-6 block max-w-[200px]">
             <span className="mb-1.5 block text-sm text-[var(--muted)]">ZIP code</span>
@@ -158,7 +158,7 @@ export default function Estimator({
 
       {/* ------------------------------- quote -------------------------------- */}
       <aside className="lg:sticky lg:top-8 lg:self-start">
-        <div className="rounded-sm border border-white/15 bg-[var(--soil-raised)] p-6">
+        <div className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-6">
           <p className={legend}>Your estimate</p>
 
           {!hasInput ? (
@@ -167,7 +167,7 @@ export default function Estimator({
             </p>
           ) : (
             <>
-              <div className="flex items-baseline gap-2 border-b border-white/10 pb-5">
+              <div className="flex items-baseline gap-2 border-b border-[var(--line)] pb-5">
                 <span className="tnum font-[family-name:var(--font-display)] text-5xl font-extrabold">
                   {quote.yards.toFixed(2)}
                 </span>
@@ -195,13 +195,13 @@ export default function Estimator({
               </dl>
 
               {quote.minimumApplied && (
-                <p className="mb-4 rounded-sm bg-white/5 p-3 text-xs leading-relaxed text-[var(--muted)]">
+                <p className="mb-4 rounded-sm bg-[var(--paper-deep)] p-3 text-xs leading-relaxed text-[var(--muted)]">
                   Job minimum of {money(settings.minimum_job)} applies. Adding beds
                   or edging gets you more for the same trip.
                 </p>
               )}
 
-              <div className="flex items-baseline justify-between border-t border-white/10 pt-5">
+              <div className="flex items-baseline justify-between border-t border-[var(--line)] pt-5">
                 <span className="font-[family-name:var(--font-display)] text-lg font-semibold">
                   Total
                 </span>
@@ -215,7 +215,7 @@ export default function Estimator({
                 <div className="mt-6">
                   <a
                     href="/book"
-                    className="block rounded-sm bg-[var(--granite)] px-5 py-3.5 text-center font-medium text-[#231A10] transition-colors hover:bg-[#D4B98F]"
+                    className="block rounded-sm bg-[var(--clay)] px-5 py-3.5 text-center font-medium text-white transition-colors hover:bg-[var(--clay-deep)]"
                   >
                     Book this job
                   </a>
@@ -226,7 +226,7 @@ export default function Estimator({
                   </p>
                   <a
                     href="/request-estimate"
-                    className="mt-4 block text-center text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--paper)]"
+                    className="mt-4 block text-center text-sm text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)]"
                   >
                     Have us look at it first
                   </a>
@@ -235,7 +235,7 @@ export default function Estimator({
                 <div className="mt-6">
                   <a
                     href="/request-estimate"
-                    className="block rounded-sm border border-[var(--granite)] px-5 py-3.5 text-center font-medium text-[var(--granite)] transition-colors hover:bg-[var(--granite)] hover:text-[#231A10]"
+                    className="block rounded-sm border border-[var(--clay)] px-5 py-3.5 text-center font-medium text-[var(--clay)] transition-colors hover:bg-[var(--clay)] hover:text-white"
                   >
                     Request a written estimate
                   </a>
@@ -275,7 +275,7 @@ function Check({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 h-4 w-4 shrink-0 accent-[var(--granite)]"
+        className="mt-1 h-4 w-4 shrink-0 accent-[var(--clay)]"
       />
       <span>
         <span className="block font-medium">{label}</span>

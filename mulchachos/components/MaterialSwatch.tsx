@@ -29,8 +29,8 @@ export default function MaterialSwatch({
         style={{
           backgroundColor: material.swatch,
           boxShadow: selected
-            ? "inset 0 3px 0 0 var(--granite)"
-            : "inset 0 0 0 1px rgba(232,230,224,0.10)",
+            ? "inset 0 0 0 2px var(--clay)"
+            : "inset 0 0 0 1px rgba(69,55,56,0.12)",
         }}
       >
         {material.image_url && (
@@ -44,7 +44,7 @@ export default function MaterialSwatch({
         )}
       </div>
       <div className="mt-3">
-        <p className="font-[family-name:var(--font-display)] text-sm font-semibold leading-tight text-[var(--paper)]">
+        <p className="font-[family-name:var(--font-display)] text-sm font-semibold leading-tight text-[var(--ink)]">
           {material.name}
         </p>
         {showPrice && (

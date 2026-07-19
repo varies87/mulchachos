@@ -47,7 +47,7 @@ export default async function AdminPage() {
         </div>
 
         {materials.length === 0 && (
-          <p className="rounded-sm border border-dashed border-white/15 p-10 text-center text-[var(--muted)]">
+          <p className="rounded-sm border border-dashed border-[var(--line)] p-10 text-center text-[var(--muted)]">
             No materials yet. Add your first one and it appears on the home page
             and the estimator immediately.
           </p>

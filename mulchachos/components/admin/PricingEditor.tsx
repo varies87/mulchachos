@@ -5,7 +5,7 @@ import { PricingSettings } from "@/lib/materials";
 import { savePricing } from "@/app/admin/actions";
 
 const input =
-  "w-full rounded-sm border border-white/15 bg-[var(--soil)] px-3 py-2 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--granite)] focus:outline-none";
+  "w-full rounded-sm border border-[var(--line)] bg-[var(--paper)] px-3 py-2 font-[family-name:var(--font-mono)] text-sm focus:border-[var(--clay)] focus:outline-none";
 
 const FIELDS: { name: keyof PricingSettings; label: string; note: string; step?: string }[] = [
   { name: "labor_per_yard", label: "Spreading labor", note: "Per cubic yard" },
@@ -38,7 +38,7 @@ export default function PricingEditor({ settings }: { settings: PricingSettings 
   return (
     <form
       action={submit}
-      className="rounded-sm border border-white/15 bg-[var(--soil-raised)] p-5"
+      className="rounded-sm border border-[var(--line)] bg-[var(--paper-warm)] p-5"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {FIELDS.map((f) => (
@@ -77,12 +77,12 @@ export default function PricingEditor({ settings }: { settings: PricingSettings 
       <div className="mt-5 flex items-center gap-4">
         <button
           disabled={pending}
-          className="rounded-sm bg-[var(--granite)] px-5 py-2.5 text-sm font-medium text-[#231A10] disabled:opacity-50"
+          className="rounded-sm bg-[var(--clay)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save pricing"}
         </button>
-        {saved && <span className="text-sm text-[var(--grass)]">Saved and live.</span>}
-        {error && <span className="text-sm text-[#E08A6A]">{error}</span>}
+        {saved && <span className="text-sm text-[var(--success)]">Saved and live.</span>}
+        {error && <span className="text-sm text-[var(--danger)]">{error}</span>}
       </div>
     </form>
   );
