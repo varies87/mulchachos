@@ -1,5 +1,6 @@
 import MaterialSwatch from "@/components/MaterialSwatch";
 import DumpReel from "@/components/DumpReel";
+import VideoWall from "@/components/VideoWall";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
 // Rendered per request so the build never touches the database.
@@ -34,12 +35,6 @@ const STEPS = [
       "Even three-inch depth, clean bed lines, walks blown off. You come " +
       "home and it is done.",
   },
-];
-
-const RECENT = [
-  { area: "Preston Hollow", detail: "14 yd³ black hardwood, front and side beds" },
-  { area: "University Park", detail: "6 yd³ cedar, raised vegetable boxes" },
-  { area: "Bluffview", detail: "9 yd³ decomposed granite, side yard path" },
 ];
 
 export default async function Home() {
@@ -136,25 +131,13 @@ export default async function Home() {
 
       <section id="work" className="mx-auto max-w-6xl px-6 py-20">
         <h2 className="font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight">
-          Recent work
+          Deliveries this season
         </h2>
-        <div className="mt-8 grid gap-6 sm:grid-cols-3">
-          {RECENT.map((j) => (
-            <article key={j.area}>
-              {/* Replace with a real photo of the finished job. */}
-              <div
-                className="h-48 rounded-lg bg-[var(--paper-deep)]"
-                aria-hidden="true"
-              />
-              <p className="mt-4 font-[family-name:var(--font-display)] font-semibold">
-                {j.area}
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-[var(--ink-soft)]">
-                {j.detail}
-              </p>
-            </article>
-          ))}
-        </div>
+        <p className="mb-8 mt-3 max-w-xl leading-relaxed text-[var(--ink-soft)]">
+          Every load goes down the same way. Dumped where you want it, spread
+          the same day, driveway swept before we leave.
+        </p>
+        <VideoWall />
       </section>
 
       <section
