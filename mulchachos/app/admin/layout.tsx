@@ -50,6 +50,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </span>
           </div>
           <div className="flex items-center gap-5 text-sm">
+            <a href="/admin" className="text-[var(--muted)] hover:text-[var(--ink)]">
+              Materials
+            </a>
+            <a href="/admin/inquiries" className="text-[var(--muted)] hover:text-[var(--ink)]">
+              Inquiries
+            </a>
             <a href="/" className="text-[var(--muted)] hover:text-[var(--ink)]">
               View site
             </a>

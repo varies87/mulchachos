@@ -3,6 +3,7 @@ import Estimator from "@/components/Estimator";
 import SiteHeader from "@/components/SiteHeader";
 import {
   getActiveMaterials,
+  getDiscountTiers,
   getPricingSettings,
 } from "@/lib/materials";
 
@@ -20,10 +21,11 @@ export default async function EstimatePage({
 }: {
   searchParams: Promise<{ material?: string }>;
 }) {
-  const [{ material }, materials, settings] = await Promise.all([
+  const [{ material }, materials, settings, tiers] = await Promise.all([
     searchParams,
     getActiveMaterials(),
     getPricingSettings(),
+    getDiscountTiers(),
   ]);
 
   const initial =
@@ -57,7 +59,7 @@ export default async function EstimatePage({
         </p>
       </div>
 
-      <Estimator materials={materials} settings={settings} initial={initial} />
+      <Estimator materials={materials} settings={settings} tiers={tiers} initial={initial} />
     </main>
   );
 }

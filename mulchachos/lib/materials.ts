@@ -14,7 +14,15 @@ export interface Material {
   sort_order: number;
 }
 
+export interface DiscountTier {
+  category: "mulch" | "rock";
+  min_yards: number;
+  discount_per_yard: number;
+}
+
 export interface PricingSettings {
+  mulch_min_yards: number;
+  rock_min_yards: number;
   labor_per_yard: number;
   delivery_fee: number;
   yards_per_trip: number;
@@ -55,6 +63,16 @@ export async function getPricingSettings(): Promise<PricingSettings> {
     .single();
   if (error) throw error;
   return data as PricingSettings;
+}
+
+export async function getDiscountTiers(): Promise<DiscountTier[]> {
+  const sb = await supabaseServer();
+  const { data, error } = await sb
+    .from("discount_tiers")
+    .select("*")
+    .order("min_yards");
+  if (error) throw error;
+  return (data ?? []) as DiscountTier[];
 }
 
 export const slugify = (s: string) =>

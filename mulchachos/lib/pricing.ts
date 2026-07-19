@@ -1,4 +1,4 @@
-import { Material, PricingSettings } from "./materials";
+import { DiscountTier, Material, PricingSettings } from "./materials";
 
 // A cubic yard is 27 cubic feet. Spread D inches deep over A square feet:
 //   yards = A * (D / 12) / 27  =  A * D / 324
@@ -12,9 +12,38 @@ export function billableYards(raw: number): number {
   return Math.ceil(raw * 4) / 4;
 }
 
+/** Best flat discount the yardage qualifies for, in dollars per yard. */
+export function tierFor(
+  tiers: DiscountTier[],
+  category: string,
+  yards: number
+): DiscountTier | null {
+  const eligible = tiers
+    .filter((t) => t.category === category && yards >= t.min_yards)
+    .sort((a, b) => b.min_yards - a.min_yards);
+  return eligible[0] ?? null;
+}
+
+/** The next tier up, so the estimator can nudge toward it. */
+export function nextTier(
+  tiers: DiscountTier[],
+  category: string,
+  yards: number
+): DiscountTier | null {
+  const ahead = tiers
+    .filter((t) => t.category === category && yards < t.min_yards)
+    .sort((a, b) => a.min_yards - b.min_yards);
+  return ahead[0] ?? null;
+}
+
+export function minYardsFor(s: PricingSettings, category: string): number {
+  return category === "mulch" ? s.mulch_min_yards : s.rock_min_yards;
+}
+
 export interface QuoteInput {
   material: Material;
   settings: PricingSettings;
+  tiers: DiscountTier[];
   squareFeet: number;
   depthInches: number;
   zip: string;
@@ -31,6 +60,14 @@ export interface LineItem {
 export interface Quote {
   rawYards: number;
   yards: number;
+  billedYards: number;
+  minimumYards: number;
+  minimumYardsApplied: boolean;
+  ratePerYard: number;
+  discountPerYard: number;
+  savings: number;
+  tier: DiscountTier | null;
+  upcoming: DiscountTier | null;
   trips: number;
   lineItems: LineItem[];
   subtotal: number;
@@ -42,12 +79,25 @@ export interface Quote {
 }
 
 export function buildQuote(input: QuoteInput): Quote {
-  const { material, settings, squareFeet, depthInches, zip, limitedAccess, edgingFeet } = input;
+  const { material, settings, tiers, squareFeet, depthInches, zip,
+          limitedAccess, edgingFeet } = input;
   const s = settings;
 
   const rawYards = yardsNeeded(squareFeet, depthInches);
   const yards = billableYards(rawYards);
-  const trips = Math.max(1, Math.ceil(yards / (s.yards_per_trip || 6)));
+
+  // Small jobs are not worth a delivery, so a minimum applies.
+  const minimumYards = minYardsFor(s, material.category);
+  const minimumYardsApplied = yards > 0 && yards < minimumYards;
+  const billedYards = minimumYardsApplied ? minimumYards : yards;
+
+  // Flat dollars off the per-yard rate, never a percentage.
+  const tier = tierFor(tiers, material.category, billedYards);
+  const upcoming = nextTier(tiers, material.category, billedYards);
+  const discountPerYard = tier ? tier.discount_per_yard : 0;
+  const ratePerYard = Math.max(0, material.cost_per_yard - discountPerYard);
+  const savings = discountPerYard * billedYards;
+  const trips = Math.max(1, Math.ceil(billedYards / (s.yards_per_trip || 6)));
 
   const lineItems: LineItem[] = [];
 
@@ -57,8 +107,8 @@ export function buildQuote(input: QuoteInput): Quote {
   if (yards > 0) {
     lineItems.push({
       label: material.name,
-      detail: `${yards.toFixed(2)} yd³ at $${material.cost_per_yard}/yd³, delivered and spread`,
-      amount: yards * material.cost_per_yard,
+      detail: `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
+      amount: billedYards * ratePerYard,
     });
 
     if (s.labor_per_yard > 0) {
@@ -78,11 +128,11 @@ export function buildQuote(input: QuoteInput): Quote {
     }
   }
 
-  if (limitedAccess && yards > 0) {
+  if (limitedAccess && billedYards > 0) {
     lineItems.push({
       label: "Limited access",
       detail: "Wheelbarrow haul from the street",
-      amount: yards * s.limited_access_surcharge,
+      amount: billedYards * s.limited_access_surcharge,
     });
   }
 
@@ -103,7 +153,7 @@ export function buildQuote(input: QuoteInput): Quote {
   if (!material.instant_bookable) {
     reviewReasons.push(`${material.name} is priced by load and haul distance`);
   }
-  if (yards > s.instant_book_yard_cap) {
+  if (billedYards > s.instant_book_yard_cap) {
     reviewReasons.push(`Jobs over ${s.instant_book_yard_cap} yd³ get walked first`);
   }
   if (zip.length === 5 && !s.service_zips.includes(zip)) {
@@ -113,13 +163,21 @@ export function buildQuote(input: QuoteInput): Quote {
   return {
     rawYards,
     yards,
+    billedYards,
+    minimumYards,
+    minimumYardsApplied,
+    ratePerYard,
+    discountPerYard,
+    savings,
+    tier,
+    upcoming,
     trips,
     lineItems,
     subtotal,
     total,
     minimumApplied,
     deposit: Math.round(total * s.deposit_rate),
-    instantBookable: reviewReasons.length === 0 && yards > 0,
+    instantBookable: reviewReasons.length === 0 && billedYards > 0,
     reviewReasons,
   };
 }

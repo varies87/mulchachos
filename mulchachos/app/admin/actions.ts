@@ -113,3 +113,14 @@ export async function signOut() {
   await sb.auth.signOut();
   redirect("/admin/login");
 }
+
+/** Toggle an inquiry between waiting and dealt with. */
+export async function setHandled(id: string, handled: boolean) {
+  const sb = await supabaseServer();
+  const { error } = await sb
+    .from("inquiries")
+    .update({ handled })
+    .eq("id", id);
+  if (error) throw error;
+  revalidatePath("/admin/inquiries");
+}

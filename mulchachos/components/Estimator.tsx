@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Material, PricingSettings } from "@/lib/materials";
+import { DiscountTier, Material, PricingSettings } from "@/lib/materials";
+import InquiryForm from "./InquiryForm";
 import { buildQuote, money } from "@/lib/pricing";
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -52,10 +53,12 @@ type Bed = { id: number; length: string; width: string };
 export default function Estimator({
   materials,
   settings,
+  tiers,
   initial,
 }: {
   materials: Material[];
   settings: PricingSettings;
+  tiers: DiscountTier[];
   initial: Material;
 }) {
   const [material, setMaterial] = useState<Material>(initial);
@@ -86,17 +89,23 @@ export default function Estimator({
       buildQuote({
         material,
         settings,
+        tiers,
         squareFeet,
         depthInches: depth,
         zip,
         limitedAccess: access,
         edgingFeet,
       }),
-    [material, settings, squareFeet, depth, zip, access, edgingFeet]
+    [material, settings, tiers, squareFeet, depth, zip, access, edgingFeet]
   );
 
   const ready = squareFeet > 0;
-  const perYard = material.cost_per_yard + settings.labor_per_yard;
+  const perYard = quote.ratePerYard + settings.labor_per_yard;
+
+  const note = ready
+    ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
+      `$${perYard}/yd³, about $${quote.total.toFixed(0)} total`
+    : "No estimate built yet";
 
   function edit(id: number, key: "length" | "width", v: string) {
     const clean = v.replace(/[^\d.]/g, "");
@@ -195,6 +204,10 @@ export default function Estimator({
             )}
           </div>
         </aside>
+      </div>
+
+      <div className="mt-20 max-w-3xl">
+        <InquiryForm quoteNote={note} />
       </div>
 
       {ready && <MobileBar quote={quote} perYard={perYard} />}
@@ -366,6 +379,24 @@ function Quote({
           {money(quote.total)}
         </span>
       </div>
+
+      {quote.savings > 0 && (
+        <p className="mt-4 rounded-lg bg-[var(--paper-deep)] p-3 text-sm font-medium text-[var(--success)]">
+          Volume rate applied. You save {money(quote.savings)}.
+        </p>
+      )}
+
+      {quote.upcoming && (
+        <p className="mt-4 rounded-lg border border-dashed border-[var(--line-strong)] p-3 text-sm text-[var(--ink-soft)]">
+          Add {(quote.upcoming.min_yards - quote.billedYards).toFixed(2)} yd³ to reach {quote.upcoming.min_yards} yd³ and the rate drops another {money(quote.upcoming.discount_per_yard)} per yard.
+        </p>
+      )}
+
+      {quote.minimumYardsApplied && (
+        <p className="mt-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs text-[var(--ink-soft)]">
+          Your beds need {quote.yards.toFixed(2)} yd³, but our minimum is {quote.minimumYards} yd³. You are quoted at the minimum.
+        </p>
+      )}
 
       <p className={NOTE}>
         This is an estimate to help you plan. We bill for the volume

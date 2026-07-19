@@ -57,7 +57,7 @@ values
 
   ('black-star-gravel', 'Black star gravel',
    'Crushed dark grey basalt. Available in 3/8 inch, 5/8 inch, and 1.5 to 4 inch.',
-   'rock', '#797368', '/materials/black-star-gravel.jpg',
+   'rock', '#87898F', '/materials/black-star-gravel.jpg',
    600, true, true, 70),
 
   ('salt-and-pepper-river-rock', 'Salt and pepper river rock',
