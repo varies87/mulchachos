@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Price your beds",
   description:
-    "Enter your bed size and pick a material for an itemized " +
-    "mulch or rock price in about a minute.",
+    "Enter your bed sizes and pick a material for an itemized " +
+    "mulch or rock estimate in about a minute.",
 };
 
 export default async function EstimatePage({
@@ -34,12 +34,9 @@ export default async function EstimatePage({
       <main>
         <SiteHeader />
         <div className="mx-auto max-w-md px-6 py-24 text-center">
-          <h1 className="text-2xl font-extrabold">
-            No materials yet
-          </h1>
+          <h1 className="text-2xl font-extrabold">No materials yet</h1>
           <p className="mt-3 text-[var(--ink-soft)]">
-            Add one in the admin panel and this page starts
-            working.
+            Add one in the admin panel and this page starts working.
           </p>
         </div>
       </main>
@@ -48,23 +45,4 @@ export default async function EstimatePage({
 
   return (
     <main>
-      <SiteHeader />
-
-      <div className="mx-auto max-w-6xl px-6 pb-10 pt-10">
-        <h1 className="max-w-2xl text-4xl font-extrabold sm:text-6xl">
-          Price your beds.
-        </h1>
-        <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Four questions. The number updates as you answer them,
-          and it is the number we honor when the truck shows up.
-        </p>
-      </div>
-
-      <Estimator
-        materials={materials}
-        settings={settings}
-        initial={initial}
-      />
-    </main>
-  );
-}
+      <SiteHeader
