@@ -4,6 +4,8 @@ import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
 export const revalidate = 3600;
 
+const LOGO = "font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight";
+
 export const metadata: Metadata = {
   title: "Price your beds",
   description:
@@ -38,15 +40,8 @@ export default async function EstimatePage({
   return (
     <main>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        
-          href="/"
-          className="font-[family-name:var(--font-display)] text-lg font-extrabold tracking-tight"
-        >
-          Mulchachos
-        </a>
-        <a href="/" className="text-sm text-[var(--muted)] hover:text-[var(--paper)]">
-          Back to home
-        </a>
+        <a href="/" className={LOGO}>Mulchachos</a>
+        <a href="/" className="text-sm text-[var(--muted)]">Back to home</a>
       </header>
 
       <div className="mx-auto max-w-6xl px-6 pb-10 pt-6 sm:pt-12">
