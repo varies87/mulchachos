@@ -14,10 +14,10 @@ import { decodeQuote } from "@/lib/quote-link";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Get on the schedule",
+  title: "Send your request",
   description:
-    "Send your beds, a few photos, and the times that work. We confirm the " +
-    "material and volume on site, then put you on the calendar.",
+    "Send your beds, a few photos, and the times that work. No payment and " +
+    "nothing booked — we call or text to confirm the material and volume first.",
 };
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -80,15 +80,15 @@ export default async function RequestEstimatePage({
 
       <section className="mx-auto max-w-3xl px-6 pb-4 pt-12">
         <p className={MONO + " text-xs uppercase tracking-widest text-[var(--clay)]"}>
-          Last step
+          No commitment
         </p>
         <h1 className="mt-3 max-w-2xl text-4xl font-extrabold sm:text-5xl">
-          Get on the schedule.
+          Send your request.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
           {hasQuote
-            ? "Your estimate is attached below. Add where the job is and a couple of photos, and we confirm the details before we roll."
-            : "Tell us about the beds and add a couple of photos. We confirm the material and volume on site, then put you on the calendar."}
+            ? "Your estimate is attached below. Send it over with a couple of photos and we'll call or text to confirm the material and volume. Nothing is booked or charged."
+            : "Tell us about the beds and add a couple of photos. We'll call or text to confirm the material and volume — nothing is booked or charged until you say go."}
         </p>
       </section>
 

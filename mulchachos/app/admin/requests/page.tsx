@@ -1,12 +1,16 @@
 import { supabaseServer } from "@/lib/supabase-server";
 import RequestStatus from "@/components/admin/RequestStatus";
+import RequestTotal from "@/components/admin/RequestTotal";
+import AddOrder from "@/components/admin/AddOrder";
 
 export const dynamic = "force-dynamic";
 
 interface EstimateRequest {
   id: string;
   name: string;
-  contact: string;
+  contact: string | null;
+  phone: string | null;
+  email: string | null;
   address: string | null;
   zip: string | null;
   material_name: string | null;
@@ -16,6 +20,8 @@ interface EstimateRequest {
   limited_access: boolean;
   edging: boolean;
   estimated_total: number | null;
+  final_total: number | null;
+  source: string | null;
   quote_note: string | null;
   preferred_time: string | null;
   notes: string | null;
@@ -57,7 +63,11 @@ export default async function RequestsPage() {
         {open.length === 0 ? "Nothing open." : `${open.length} open.`}
       </p>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-6">
+        <AddOrder />
+      </div>
+
+      <div className="mt-4 space-y-4">
         {rows.length === 0 && (
           <p className="text-[var(--muted)]">No requests yet.</p>
         )}
@@ -65,13 +75,33 @@ export default async function RequestsPage() {
         {rows.map((r) => (
           <article key={r.id} className={"rounded-xl border p-5 " + (r.status === "closed" ? "border-[var(--line)] opacity-60" : "border-[var(--clay)]")}>
             <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h2 className="text-lg font-semibold">{r.name}</h2>
+              <h2 className="text-lg font-semibold">
+                {r.name}
+                {r.source && r.source !== "website" && (
+                  <span className="ml-2 rounded-full bg-[var(--paper-deep)] px-2 py-0.5 text-xs font-normal text-[var(--clay)]">
+                    {r.source}
+                  </span>
+                )}
+              </h2>
               <span className={MONO + " text-xs text-[var(--muted)]"}>
                 {new Date(r.created_at).toLocaleString()}
               </span>
             </div>
 
-            <p className={MONO + " mt-1 text-sm text-[var(--clay)]"}>{r.contact}</p>
+            <p className={MONO + " mt-1 text-sm"}>
+              {r.phone && (
+                <a href={`tel:${r.phone}`} className="text-[var(--clay)]">{r.phone}</a>
+              )}
+              {r.email && (
+                <>
+                  {r.phone ? <span className="text-[var(--muted)]"> · </span> : null}
+                  <a href={`mailto:${r.email}`} className="text-[var(--clay)]">{r.email}</a>
+                </>
+              )}
+              {!r.phone && !r.email && r.contact ? (
+                <span className="text-[var(--clay)]">{r.contact}</span>
+              ) : null}
+            </p>
 
             {r.address && (
               <p className="mt-1 text-sm text-[var(--ink-soft)]">
@@ -83,7 +113,7 @@ export default async function RequestsPage() {
               {r.material_name && <span>{r.material_name}</span>}
               {r.square_feet ? <span className={MONO}>{r.square_feet.toLocaleString()} sq ft</span> : null}
               {r.depth_inches ? <span className={MONO}>{r.depth_inches}&quot; deep</span> : null}
-              {r.estimated_total ? <span className={MONO}>~{money(r.estimated_total)}</span> : null}
+              {r.estimated_total ? <span className={MONO}>est. {money(r.estimated_total)}</span> : null}
               {r.weed_fabric && <span>+ fabric</span>}
               {r.limited_access && <span>+ limited access</span>}
               {r.edging && <span>+ edging</span>}
@@ -115,7 +145,8 @@ export default async function RequestsPage() {
               </div>
             )}
 
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-4">
+              <RequestTotal id={r.id} value={r.final_total} />
               <RequestStatus id={r.id} status={r.status} />
             </div>
           </article>

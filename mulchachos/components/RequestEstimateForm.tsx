@@ -119,10 +119,11 @@ export default function RequestEstimateForm({
   if (sent) {
     return (
       <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-warm)] p-8">
-        <h2 className="text-2xl font-extrabold">You are on the list.</h2>
+        <h2 className="text-2xl font-extrabold">Request sent.</h2>
         <p className="mt-3 text-[var(--ink-soft)]">
-          We will call or text to confirm the material and a delivery morning,
-          usually the same day. If you want to talk it through now, reach us at{" "}
+          Thanks — nothing is booked or charged. We will call or text to go over
+          the material and pick a delivery morning, usually the same day. Want to
+          talk it through now? Reach us at{" "}
           <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
             {PHONE}
           </a>
@@ -172,9 +173,14 @@ export default function RequestEstimateForm({
           <input id="re-name" name="name" required className={FIELD} autoComplete="name" />
         </div>
         <div>
-          <label className={LABEL} htmlFor="re-contact">Phone or email</label>
-          <input id="re-contact" name="contact" required className={FIELD} autoComplete="tel" />
+          <label className={LABEL} htmlFor="re-phone">Phone</label>
+          <input id="re-phone" name="phone" type="tel" required className={FIELD} autoComplete="tel" placeholder="214-555-0100" />
         </div>
+      </div>
+
+      <div>
+        <label className={LABEL} htmlFor="re-email">Email</label>
+        <input id="re-email" name="email" type="email" required className={FIELD} autoComplete="email" placeholder="you@email.com" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-[1fr_140px]">

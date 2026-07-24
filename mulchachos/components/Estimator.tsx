@@ -440,8 +440,11 @@ function Quote({
       </p>
 
       <a href={href} className={PILL + " mt-6"}>
-        Get on the schedule
+        Send request to Mulchachos
       </a>
+      <p className="mt-3 text-center text-xs text-[var(--muted)]">
+        No payment, nothing booked yet. We call or text to confirm everything first.
+      </p>
     </>
   );
 }
@@ -467,7 +470,7 @@ function MobileBar({
           </p>
         </div>
         <a href={href} className={"shrink-0 " + PILL}>
-          Schedule
+          Send request
         </a>
       </div>
     </div>

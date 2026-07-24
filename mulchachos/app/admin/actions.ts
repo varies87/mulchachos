@@ -182,6 +182,47 @@ export async function deleteJobPhoto(id: string) {
   return { ok: true };
 }
 
+/** Record the real amount of a job. Pass null to clear it. */
+export async function setRequestTotal(id: string, total: number | null) {
+  const sb = await requireAdmin();
+  const clean = total !== null && Number.isFinite(total) && total >= 0 ? total : null;
+  const { error } = await sb
+    .from("estimate_requests")
+    .update({ final_total: clean })
+    .eq("id", id);
+  if (error) throw error;
+  revalidatePath("/admin/requests");
+  revalidatePath("/admin/customers");
+}
+
+/** Log an order that came in off the website — a text, a call, in person. */
+export async function addManualOrder(formData: FormData) {
+  const sb = await requireAdmin();
+
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return { error: "Add a name." };
+
+  const total = num(formData.get("final_total"), 0);
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  const { error } = await sb.from("estimate_requests").insert({
+    name,
+    phone: String(formData.get("phone") ?? "").trim() || null,
+    email: email || null,
+    contact: null,
+    material_name: String(formData.get("material_name") ?? "").trim() || null,
+    final_total: total > 0 ? total : null,
+    notes: String(formData.get("notes") ?? "").trim() || null,
+    source: String(formData.get("source") ?? "text").trim() || "text",
+    status: "new",
+  });
+
+  if (error) return { error: error.message };
+  revalidatePath("/admin/requests");
+  revalidatePath("/admin/customers");
+  return { ok: true };
+}
+
 export async function signOut() {
   const sb = await supabaseServer();
   await sb.auth.signOut();
