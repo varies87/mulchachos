@@ -5,6 +5,7 @@ import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/mater
 import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
 import { buildQuote, money } from "@/lib/pricing";
+import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
 
@@ -106,7 +107,28 @@ export default function Estimator({
   );
 
   const ready = squareFeet > 0;
-  const perYard = quote.ratePerYard + settings.labor_per_yard;
+
+  // The material rate is all-in: delivery and spreading are already in it.
+  // If a shop ever sets labor_per_yard above zero, it shows as its own line
+  // item below, so the headline rate must not add it again.
+  const perYard = quote.ratePerYard;
+
+  // Carry the whole estimate forward, so the scheduling page opens with the
+  // customer's beds, material, and options already filled in.
+  const quoteHref =
+    "/request-estimate?" +
+    encodeQuote({
+      material: material.slug,
+      beds: beds.map((b) => ({
+        length: Number(b.length) || 0,
+        width: Number(b.width) || 0,
+      })),
+      depth,
+      zip,
+      fabric,
+      access,
+      edging,
+    });
 
   const note = ready
     ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
@@ -204,10 +226,10 @@ export default function Estimator({
           </div>
         </div>
 
-        <aside className="hidden lg:sticky lg:top-8 lg:block lg:self-start">
+        <aside className="hidden lg:sticky lg:top-8 lg:block lg:self-start" aria-live="polite">
           <div className={PANEL}>
             {ready ? (
-              <Quote quote={quote} material={material} perYard={perYard} settings={settings} />
+              <Quote quote={quote} material={material} perYard={perYard} settings={settings} href={quoteHref} />
             ) : (
               <p className="text-[var(--ink-soft)]">
                 Enter a bed size and your estimate builds here.
@@ -221,7 +243,7 @@ export default function Estimator({
         <InquiryForm quoteNote={note} />
       </div>
 
-      {ready && <MobileBar quote={quote} perYard={perYard} />}
+      {ready && <MobileBar quote={quote} perYard={perYard} href={quoteHref} />}
     </div>
   );
 }
@@ -326,11 +348,13 @@ function Quote({
   material,
   perYard,
   settings,
+  href,
 }: {
   quote: ReturnType<typeof buildQuote>;
   material: Material;
   perYard: number;
   settings: PricingSettings;
+  href: string;
 }) {
   const cap = " text-xs uppercase tracking-widest text-[var(--muted)]";
 
@@ -415,7 +439,7 @@ function Quote({
         your beds take less than this, you pay less.
       </p>
 
-      <a href="/request-estimate" className={PILL + " mt-6"}>
+      <a href={href} className={PILL + " mt-6"}>
         Get on the schedule
       </a>
     </>
@@ -425,14 +449,16 @@ function Quote({
 function MobileBar({
   quote,
   perYard,
+  href,
 }: {
   quote: ReturnType<typeof buildQuote>;
   perYard: number;
+  href: string;
 }) {
   return (
     <div className={BAR}>
       <div className="flex items-center justify-between gap-4">
-        <div>
+        <div role="status" aria-live="polite">
           <p className={"tnum text-2xl font-extrabold " + MONO}>
             about {money(quote.total)}
           </p>
@@ -440,7 +466,7 @@ function MobileBar({
             {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
           </p>
         </div>
-        <a href="/request-estimate" className={"shrink-0 " + PILL}>
+        <a href={href} className={"shrink-0 " + PILL}>
           Schedule
         </a>
       </div>

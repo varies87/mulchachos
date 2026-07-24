@@ -51,6 +51,19 @@ export async function getActiveMaterials(): Promise<Material[]> {
   return (data ?? []) as Material[];
 }
 
+/** One active material by slug, for its landing page. Null if hidden or gone. */
+export async function getMaterialBySlug(slug: string): Promise<Material | null> {
+  const sb = await supabaseServer();
+  const { data, error } = await sb
+    .from("materials")
+    .select("*")
+    .eq("slug", slug)
+    .eq("active", true)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as Material) ?? null;
+}
+
 /** Admin panel: everything, including hidden materials. */
 export async function getAllMaterials(): Promise<Material[]> {
   const sb = await supabaseServer();

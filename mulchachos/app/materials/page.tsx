@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const MONO = "font-[family-name:var(--font-mono)]";
 
 const BTN =
-  "mt-4 inline-block rounded-full border border-[var(--clay)] " +
+  "inline-block rounded-full border border-[var(--clay)] " +
   "px-4 py-2 text-sm font-medium text-[var(--clay)] " +
   "hover:bg-[var(--clay)] hover:text-white";
 
@@ -67,19 +67,21 @@ function Group({ title, items }: { title: string; items: Item[] }) {
       <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((m) => (
           <article key={m.id}>
-            <div className="h-44 overflow-hidden rounded-lg" style={{ backgroundColor: m.swatch }}>
-              {m.image_url && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover" />
-              )}
-            </div>
+            <a href={"/materials/" + m.slug} className="group block">
+              <div className="h-44 overflow-hidden rounded-lg" style={{ backgroundColor: m.swatch }}>
+                {m.image_url && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                )}
+              </div>
 
-            <div className="mt-4 flex items-baseline justify-between">
-              <h3 className="text-lg font-semibold">{m.name}</h3>
-              <span className={"tnum text-sm " + MONO}>
-                ${m.cost_per_yard}/yd³
-              </span>
-            </div>
+              <div className="mt-4 flex items-baseline justify-between">
+                <h3 className="text-lg font-semibold group-hover:text-[var(--clay)]">{m.name}</h3>
+                <span className={"tnum text-sm " + MONO}>
+                  ${m.cost_per_yard}/yd³
+                </span>
+              </div>
+            </a>
 
             <p className="mt-2 text-[var(--ink-soft)]">{m.blurb}</p>
 
@@ -89,9 +91,14 @@ function Group({ title, items }: { title: string; items: Item[] }) {
               </p>
             )}
 
-            <a href={"/estimate?material=" + m.slug} className={BTN}>
-              Price this
-            </a>
+            <div className="mt-4 flex items-center gap-4">
+              <a href={"/estimate?material=" + m.slug} className={BTN}>
+                Price this
+              </a>
+              <a href={"/materials/" + m.slug} className="text-sm font-medium text-[var(--clay)]">
+                Details
+              </a>
+            </div>
           </article>
         ))}
       </div>

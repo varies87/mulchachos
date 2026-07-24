@@ -108,10 +108,97 @@ export async function savePricing(formData: FormData) {
   return { ok: true };
 }
 
+/** Testimonials appear on the home page as soon as they are active. */
+export async function saveTestimonial(formData: FormData) {
+  const sb = await requireAdmin();
+
+  const id = String(formData.get("id") ?? "");
+  const author = String(formData.get("author") ?? "").trim();
+  const quote = String(formData.get("quote") ?? "").trim();
+  if (!author) return { error: "Add who said it." };
+  if (!quote) return { error: "Add the quote." };
+
+  const row = {
+    author,
+    neighborhood: String(formData.get("neighborhood") ?? "").trim() || null,
+    quote,
+    rating: Math.min(5, Math.max(1, num(formData.get("rating"), 5))),
+    sort_order: num(formData.get("sort_order"), 0),
+    active: formData.get("active") === "on",
+  };
+
+  const { error } = id
+    ? await sb.from("testimonials").update(row).eq("id", id)
+    : await sb.from("testimonials").insert(row);
+
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/admin/testimonials");
+  return { ok: true };
+}
+
+export async function deleteTestimonial(id: string) {
+  const sb = await requireAdmin();
+  const { error } = await sb.from("testimonials").delete().eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/admin/testimonials");
+  return { ok: true };
+}
+
+/** Job photos lead the home page proof section as soon as one is active. */
+export async function saveJobPhoto(formData: FormData) {
+  const sb = await requireAdmin();
+
+  const id = String(formData.get("id") ?? "");
+  const image_url = String(formData.get("image_url") ?? "").trim();
+  if (!image_url) return { error: "Add a photo first." };
+
+  const row = {
+    image_url,
+    caption: String(formData.get("caption") ?? "").trim() || null,
+    neighborhood: String(formData.get("neighborhood") ?? "").trim() || null,
+    material_slug: String(formData.get("material_slug") ?? "").trim() || null,
+    sort_order: num(formData.get("sort_order"), 0),
+    active: formData.get("active") === "on",
+  };
+
+  const { error } = id
+    ? await sb.from("job_photos").update(row).eq("id", id)
+    : await sb.from("job_photos").insert(row);
+
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/admin/photos");
+  return { ok: true };
+}
+
+export async function deleteJobPhoto(id: string) {
+  const sb = await requireAdmin();
+  const { error } = await sb.from("job_photos").delete().eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/");
+  revalidatePath("/admin/photos");
+  return { ok: true };
+}
+
 export async function signOut() {
   const sb = await supabaseServer();
   await sb.auth.signOut();
   redirect("/admin/login");
+}
+
+/** Move an estimate request along: new → scheduled → quoted → closed. */
+export async function setRequestStatus(id: string, status: string) {
+  const allowed = ["new", "scheduled", "quoted", "closed"];
+  if (!allowed.includes(status)) return;
+  const sb = await supabaseServer();
+  const { error } = await sb
+    .from("estimate_requests")
+    .update({ status })
+    .eq("id", id);
+  if (error) throw error;
+  revalidatePath("/admin/requests");
 }
 
 /** Toggle an inquiry between waiting and dealt with. */

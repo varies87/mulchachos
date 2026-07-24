@@ -1,8 +1,12 @@
 import DumpReel from "@/components/DumpReel";
-import VideoWall from "@/components/VideoWall";
+import JobGallery from "@/components/JobGallery";
+import TrustStrip from "@/components/TrustStrip";
+import Testimonials from "@/components/Testimonials";
+import ServiceArea from "@/components/ServiceArea";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { getPricingSettings } from "@/lib/materials";
+import { getJobPhotos, getTestimonials } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +41,11 @@ const STEPS = [
 ];
 
 export default async function Home() {
-  const settings = await getPricingSettings();
+  const [settings, photos, testimonials] = await Promise.all([
+    getPricingSettings(),
+    getJobPhotos(),
+    getTestimonials(),
+  ]);
 
   return (
     <main>
@@ -62,6 +70,8 @@ export default async function Home() {
       </section>
 
       <DumpReel />
+
+      <TrustStrip />
 
       <section className="border-y border-[var(--line)] bg-[var(--paper-warm)]">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 sm:grid-cols-3">
@@ -90,8 +100,12 @@ export default async function Home() {
           want it, spread the same day, driveway swept before
           we leave.
         </p>
-        <VideoWall />
+        <JobGallery photos={photos} />
       </section>
+
+      <Testimonials items={testimonials} />
+
+      <ServiceArea zips={settings.service_zips} />
 
       <SiteFooter zips={settings.service_zips} />
     </main>

@@ -53,8 +53,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <a href="/admin" className="text-[var(--muted)] hover:text-[var(--ink)]">
               Materials
             </a>
+            <a href="/admin/requests" className="text-[var(--muted)] hover:text-[var(--ink)]">
+              Requests
+            </a>
             <a href="/admin/inquiries" className="text-[var(--muted)] hover:text-[var(--ink)]">
               Inquiries
+            </a>
+            <a href="/admin/testimonials" className="text-[var(--muted)] hover:text-[var(--ink)]">
+              Reviews
+            </a>
+            <a href="/admin/photos" className="text-[var(--muted)] hover:text-[var(--ink)]">
+              Photos
             </a>
             <a href="/" className="text-[var(--muted)] hover:text-[var(--ink)]">
               View site
