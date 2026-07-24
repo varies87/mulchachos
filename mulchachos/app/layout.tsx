@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Public_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -33,6 +33,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "Preston Hollow Mulchachos",
   },
+};
+
+// Mobile-first: fit under the notch, tint the browser chalk to match the brand,
+// and keep pinch-zoom available for accessibility (no maximum-scale lock).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#B7655D",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

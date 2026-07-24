@@ -33,7 +33,8 @@ const PILL =
 
 const BAR =
   "fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] " +
-  "bg-white/95 px-5 py-3 backdrop-blur lg:hidden";
+  "bg-white/95 px-5 pt-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] " +
+  "backdrop-blur lg:hidden";
 
 const PANEL =
   "rounded-xl border border-[var(--line)] " +
@@ -226,7 +227,7 @@ export default function Estimator({
           </div>
         </div>
 
-        <aside className="hidden lg:sticky lg:top-8 lg:block lg:self-start" aria-live="polite">
+        <aside className="lg:sticky lg:top-24 lg:self-start" aria-live="polite">
           <div className={PANEL}>
             {ready ? (
               <Quote quote={quote} material={material} perYard={perYard} settings={settings} href={quoteHref} />

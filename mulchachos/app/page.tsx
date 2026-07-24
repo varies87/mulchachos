@@ -52,7 +52,7 @@ export default async function Home() {
       <SiteHeader />
 
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-14">
-        <h1 className="max-w-3xl text-5xl font-extrabold leading-[0.95] sm:text-7xl">
+        <h1 className="max-w-3xl text-[2.6rem] font-extrabold leading-[1.02] sm:text-7xl sm:leading-[0.95]">
           Fresh beds
           <br />
           <span className="text-[var(--clay)]">by the weekend.</span>

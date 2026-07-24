@@ -41,3 +41,30 @@ html {
 .tnum {
   font-variant-numeric: tabular-nums;
 }
+
+/* iOS zooms the whole page when it focuses a field under 16px. Keep every
+   form control at 16px on phones so tapping an input never yanks the layout. */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* No grey flash when tapping controls on mobile. */
+button,
+a,
+label,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Never let a stray wide element cause sideways scrolling on a phone. Uses
+   clip, not hidden, so it does not become a scroll container and break the
+   sticky desktop quote panel. */
+body {
+  overflow-x: clip;
+}
