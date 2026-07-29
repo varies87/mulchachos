@@ -74,6 +74,35 @@ export async function getAllJobPhotos(): Promise<JobPhoto[]> {
 }
 
 /**
+ * The DFW cities within roughly 30 minutes of the shop in Northwest Dallas
+ * (75229). Central location, so this covers most of the metroplex core plus the
+ * near suburbs. Drive times vary with traffic — this is the honest "we cover
+ * you" list for ads and the service-area section. Edit freely as routes change.
+ */
+export const SERVICE_CITIES: string[] = [
+  "Dallas",
+  "University Park",
+  "Highland Park",
+  "Farmers Branch",
+  "Addison",
+  "Carrollton",
+  "Irving",
+  "Las Colinas",
+  "Coppell",
+  "Richardson",
+  "Garland",
+  "Grand Prairie",
+  "Plano",
+  "Grapevine",
+  "Lewisville",
+  "Flower Mound",
+  "Duncanville",
+  "DeSoto",
+  "Cedar Hill",
+  "Mesquite",
+];
+
+/**
  * The neighborhoods behind the service ZIPs, for landing-page and footer copy.
  * A ZIP with no entry falls back to plain "North Dallas".
  */

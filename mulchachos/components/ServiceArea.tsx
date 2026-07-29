@@ -1,57 +1,46 @@
-import { neighborhoodFor } from "@/lib/content";
+import { SERVICE_CITIES } from "@/lib/content";
 import { PHONE } from "./SiteHeader";
 
 const MONO = "font-[family-name:var(--font-mono)]";
 
 /**
- * Where we deliver. Groups the service ZIPs by neighborhood so a visitor can
- * find their own, and links each ZIP to its landing page. The ZIP list is the
- * same one the pricing panel uses, so this stays true as the area changes.
+ * Where we deliver. We run out of Northwest Dallas and cover the metroplex
+ * within about 30 minutes, so this lists the DFW cities a visitor is likely to
+ * live in. Cold ad traffic needs to see their own city here and think "yes,
+ * they come to me."
  */
-export default function ServiceArea({ zips }: { zips: string[] }) {
-  if (zips.length === 0) return null;
-
-  // neighborhood -> sorted unique zips
-  const byArea = new Map<string, string[]>();
-  for (const z of zips) {
-    const area = neighborhoodFor(z);
-    byArea.set(area, [...(byArea.get(area) ?? []), z]);
-  }
-  const areas = [...byArea.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-
+export default function ServiceArea() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
-      <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
         <div>
-          <h2 className="text-3xl font-extrabold">Where we deliver</h2>
+          <h2 className="text-3xl font-extrabold sm:text-4xl">
+            All over DFW
+          </h2>
           <p className="mt-4 max-w-md text-[var(--ink-soft)]">
-            A tight loop around Preston Hollow and North Dallas. If your ZIP is
-            on the list, you can book without a site visit. Just outside it?{" "}
+            We run out of Northwest Dallas and deliver across the Dallas–Fort
+            Worth metroplex — just about anywhere within 30 minutes of us. If
+            your city is on this list, we come to you.
+          </p>
+          <p className="mt-4">
             <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
-              Call {PHONE}
+              Not sure? Call {PHONE}
             </a>{" "}
-            and we will tell you straight.
+            <span className="text-[var(--muted)]">and we'll tell you straight.</span>
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
-          {areas.map(([area, list]) => (
-            <div key={area}>
-              <p className={MONO + " text-xs uppercase tracking-widest text-[var(--muted)]"}>
-                {area}
-              </p>
-              <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                {[...new Set(list)].sort().map((z) => (
-                  <li key={z}>
-                    <a href={`/delivery/${z}`} className={"tnum text-sm text-[var(--ink-soft)] hover:text-[var(--clay)] " + MONO}>
-                      {z}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 sm:grid-cols-3">
+          {SERVICE_CITIES.map((city) => (
+            <li key={city} className="flex items-center gap-2 text-[var(--ink-soft)]">
+              <span className="text-[var(--clay)]" aria-hidden="true">•</span>
+              {city}
+            </li>
           ))}
-        </div>
+          <li className={MONO + " col-span-2 mt-1 text-sm text-[var(--muted)] sm:col-span-3"}>
+            + the surrounding communities
+          </li>
+        </ul>
       </div>
     </section>
   );

@@ -17,8 +17,8 @@ const POINTS: { head: string; body: string }[] = [
     body: "Measure your beds and see an itemized number now, not a callback in three days.",
   },
   {
-    head: "Local to North Dallas",
-    body: "Preston Hollow Mulchachos runs a tight service area, so we know the alleys, the gates, and the drop spots.",
+    head: "Local, all over DFW",
+    body: "We run out of Northwest Dallas and deliver across the metroplex — we know the neighborhoods, the gates, and the drop spots.",
   },
 ];
 

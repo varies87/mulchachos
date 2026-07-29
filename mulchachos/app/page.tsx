@@ -56,22 +56,31 @@ export default async function Home() {
     <main>
       <SiteHeader />
 
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-14">
-        <h1 className="max-w-3xl text-[2.6rem] font-extrabold leading-[1.02] sm:text-7xl sm:leading-[0.95]">
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-10 sm:pt-14">
+        <p className={MONO + " text-xs uppercase tracking-widest text-[var(--clay)]"}>
+          Dallas–Fort Worth · mulch &amp; rock delivery
+        </p>
+
+        <h1 className="mt-4 max-w-3xl text-[2.6rem] font-extrabold leading-[1.02] sm:text-7xl sm:leading-[0.95]">
           Fresh beds
           <br />
           <span className="text-[var(--clay)]">by the weekend.</span>
         </h1>
 
         <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
-          Bulk mulch, granite, and rock, delivered and spread
-          across North Dallas. A real price in about a minute,
-          not a callback in three days.
+          Bulk mulch, rock, and decomposed granite — delivered{" "}
+          <em>and</em> spread, anywhere in DFW. Price your beds online in
+          about a minute. No account, nothing to pay now.
         </p>
 
-        <a href="/estimate" className={CTA + " mt-9"}>
-          Price my beds
-        </a>
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+          <a href="/estimate" className={CTA + " w-full text-center sm:w-auto"}>
+            Price my beds
+          </a>
+          <a href="tel:214-708-7503" className="text-center text-base font-medium text-[var(--clay)] sm:text-left">
+            or call 214-708-7503
+          </a>
+        </div>
       </section>
 
       <DumpReel />
@@ -110,7 +119,7 @@ export default async function Home() {
 
       <Testimonials items={testimonials} />
 
-      <ServiceArea zips={settings.service_zips} />
+      <ServiceArea />
 
       <SiteFooter zips={settings.service_zips} />
     </main>

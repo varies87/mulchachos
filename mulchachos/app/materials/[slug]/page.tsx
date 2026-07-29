@@ -28,7 +28,7 @@ export async function generateMetadata({
   if (!m) return { title: "Material not found" };
   return {
     title: `${m.name} — delivered and spread`,
-    description: `${m.blurb} Delivered and spread across Preston Hollow and North Dallas at $${m.cost_per_yard} per cubic yard.`,
+    description: `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at $${m.cost_per_yard} per cubic yard.`,
     alternates: { canonical: `/materials/${m.slug}` },
   };
 }

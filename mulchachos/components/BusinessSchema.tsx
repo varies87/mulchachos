@@ -3,13 +3,25 @@
 // searches. Rendered once site-wide from the root layout.
 
 const AREAS = [
-  "Preston Hollow",
+  "Dallas",
   "University Park",
   "Highland Park",
-  "Bluffview",
-  "Midway Hollow",
-  "Lake Highlands",
-  "North Dallas",
+  "Farmers Branch",
+  "Addison",
+  "Carrollton",
+  "Irving",
+  "Coppell",
+  "Richardson",
+  "Garland",
+  "Grand Prairie",
+  "Plano",
+  "Grapevine",
+  "Lewisville",
+  "Flower Mound",
+  "Duncanville",
+  "DeSoto",
+  "Cedar Hill",
+  "Mesquite",
 ];
 
 export default function BusinessSchema() {
@@ -19,7 +31,7 @@ export default function BusinessSchema() {
     "@id": "https://prestonhollowmulchachos.com/#business",
     name: "Preston Hollow Mulchachos",
     description:
-      "Bulk mulch, decomposed granite, and river rock delivered and spread across Preston Hollow and North Dallas.",
+      "Bulk mulch, decomposed granite, and river rock delivered and spread across the Dallas–Fort Worth metroplex.",
     url: "https://prestonhollowmulchachos.com",
     telephone: "214-708-7503",
     priceRange: "$$",

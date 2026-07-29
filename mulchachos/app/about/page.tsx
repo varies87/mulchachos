@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Who we are",
   description:
     "Preston Hollow Mulchachos is a local mulch and rock crew " +
-    "serving North Dallas.",
+    "serving the Dallas–Fort Worth metroplex.",
 };
 
 const CTA =
@@ -55,9 +55,10 @@ export default async function AboutPage() {
             Where we work
           </h2>
           <p className="mt-3 text-[var(--ink-soft)]">
-            Preston Hollow, University Park, Highland Park,
-            Bluffview, and the surrounding North Dallas
-            neighborhoods.
+            We run out of Northwest Dallas and cover the whole
+            Dallas–Fort Worth metroplex — just about anywhere
+            within 30 minutes, from University Park and Highland
+            Park to Irving, Carrollton, Plano, and Grand Prairie.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
