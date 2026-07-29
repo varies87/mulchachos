@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   description:
     "Enter your bed sizes and pick a material for an itemized " +
     "mulch or rock estimate in about a minute.",
+  alternates: { canonical: "/estimate" },
 };
 
 export default async function EstimatePage({

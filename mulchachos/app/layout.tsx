@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Public_Sans, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import BusinessSchema from "@/components/BusinessSchema";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -33,6 +36,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "Preston Hollow Mulchachos",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Preston Hollow Mulchachos — mulch and rock, delivered and spread",
+    description:
+      "Price your beds in under a minute. Bulk mulch and rock delivered and spread across North Dallas.",
+  },
 };
 
 // Mobile-first: fit under the notch, tint the browser chalk to match the brand,
@@ -48,7 +57,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="bg-[var(--paper)] text-[var(--ink)] font-[family-name:var(--font-body)] antialiased">
+        <BusinessSchema />
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

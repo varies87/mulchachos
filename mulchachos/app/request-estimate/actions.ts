@@ -1,7 +1,7 @@
 "use server";
 
 import { supabaseServer } from "@/lib/supabase-server";
-import { notifyOwner, esc, looksLikeEmail, row } from "@/lib/notify";
+import { notifyOwner, confirmToCustomer, esc, looksLikeEmail, row } from "@/lib/notify";
 
 /**
  * A request to be contacted about a job. Like inquiries, RLS allows the insert
@@ -114,6 +114,15 @@ export async function submitEstimateRequest(formData: FormData) {
     html,
     replyTo: email && looksLikeEmail(email) ? email : undefined,
   });
+
+  // Confirmation to the customer, so they know it went through.
+  if (email && looksLikeEmail(email)) {
+    const estimateLine =
+      materialName && estimatedTotal
+        ? `${materialName}, about ${usd(estimatedTotal)}`
+        : materialName || null;
+    await confirmToCustomer({ to: email, name, estimateLine });
+  }
 
   return { ok: true };
 }

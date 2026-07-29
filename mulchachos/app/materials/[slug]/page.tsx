@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -94,10 +95,9 @@ export default async function MaterialPage({
         </nav>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-          <div className="h-64 overflow-hidden rounded-xl sm:h-80 lg:h-full" style={{ backgroundColor: material.swatch }}>
+          <div className="relative h-64 overflow-hidden rounded-xl sm:h-80 lg:h-full lg:min-h-[380px]" style={{ backgroundColor: material.swatch }}>
             {material.image_url && (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={material.image_url} alt={material.name} className="h-full w-full object-cover" />
+              <Image src={material.image_url} alt={material.name} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
             )}
           </div>
 
@@ -161,10 +161,9 @@ export default async function MaterialPage({
           <div className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             {related.map((m) => (
               <a key={m.id} href={`/materials/${m.slug}`} className="group block">
-                <span className="block h-28 w-full overflow-hidden rounded-lg sm:h-32" style={{ backgroundColor: m.swatch }}>
+                <span className="relative block h-28 w-full overflow-hidden rounded-lg sm:h-32" style={{ backgroundColor: m.swatch }}>
                   {m.image_url && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                    <Image src={m.image_url} alt={m.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
                   )}
                 </span>
                 <span className="mt-2 flex items-baseline justify-between">

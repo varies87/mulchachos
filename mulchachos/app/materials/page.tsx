@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import WeedFabric from "@/components/WeedFabric";
 import SiteFooter from "@/components/SiteFooter";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   description:
     "Mulch, decomposed granite, and river rock we deliver and " +
     "spread across Preston Hollow and North Dallas.",
+  alternates: { canonical: "/materials" },
 };
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -68,10 +70,9 @@ function Group({ title, items }: { title: string; items: Item[] }) {
         {items.map((m) => (
           <article key={m.id}>
             <a href={"/materials/" + m.slug} className="group block">
-              <div className="h-44 overflow-hidden rounded-lg" style={{ backgroundColor: m.swatch }}>
+              <div className="relative h-44 overflow-hidden rounded-lg" style={{ backgroundColor: m.swatch }}>
                 {m.image_url && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                  <Image src={m.image_url} alt={m.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
                 )}
               </div>
 

@@ -7,6 +7,11 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { getPricingSettings } from "@/lib/materials";
 import { getJobPhotos, getTestimonials } from "@/lib/content";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export const dynamic = "force-dynamic";
 

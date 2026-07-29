@@ -21,11 +21,12 @@ const OFF = " border-[var(--line)] hover:border-[var(--line-strong)]";
 
 const FIELD =
   "w-full rounded-lg border border-[var(--line)] " +
-  "px-3 py-2.5 focus:border-[var(--clay)] focus:outline-none " +
+  "px-3 py-3 focus:border-[var(--clay)] focus:outline-none " +
   MONO;
 
 const LABEL = "mb-1.5 block text-sm text-[var(--muted)]";
 const LINK = "text-sm font-medium text-[var(--clay)]";
+const ACTION = "inline-flex items-center py-2.5 text-sm font-medium text-[var(--clay)]";
 
 const PILL =
   "block rounded-full bg-[var(--clay)] px-5 py-3.5 " +
@@ -166,7 +167,7 @@ export default function Estimator({
             ))}
           </div>
 
-          <button type="button" onClick={addBed} className={"mt-4 " + LINK}>
+          <button type="button" onClick={addBed} className={"mt-2 " + ACTION}>
             Add another bed
           </button>
 
@@ -207,7 +208,7 @@ export default function Estimator({
           <WeedFabric selected={fabric} onSelect={setFabric} compact />
 
           <div className="mt-10 border-t border-[var(--line)] pt-6">
-            <button type="button" onClick={() => setExtras(!extras)} className={LINK}>
+            <button type="button" onClick={() => setExtras(!extras)} className={ACTION}>
               {extras ? "Hide extras" : "Anything unusual? Add extras"}
             </button>
 
@@ -277,7 +278,7 @@ function BedRow({
       </label>
 
       {canRemove && (
-        <button type="button" onClick={() => onRemove(bed.id)} className="pb-3 text-sm text-[var(--muted)]">
+        <button type="button" onClick={() => onRemove(bed.id)} className="shrink-0 rounded-md px-2 py-2.5 text-sm text-[var(--muted)] hover:text-[var(--clay)]" aria-label={`Remove bed ${index + 1}`}>
           Remove
         </button>
       )}
@@ -332,8 +333,8 @@ function Check({
   note: string;
 }) {
   return (
-    <label className="mb-4 flex cursor-pointer gap-3">
-      <input type="checkbox" checked={on} onChange={(e) => set(e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--clay)]" />
+    <label className="mb-4 flex cursor-pointer gap-3 py-1">
+      <input type="checkbox" checked={on} onChange={(e) => set(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--clay)]" />
       <span>
         <span className="block font-medium">{label}</span>
         <span className="mt-0.5 block text-sm text-[var(--muted)]">

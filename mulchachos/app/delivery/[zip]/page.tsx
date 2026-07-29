@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -117,10 +118,9 @@ export default async function DeliveryZipPage({
         <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
           {featured.map((m) => (
             <a key={m.id} href={`/materials/${m.slug}`} className="group block">
-              <span className="block h-28 w-full overflow-hidden rounded-lg sm:h-32" style={{ backgroundColor: m.swatch }}>
+              <span className="relative block h-28 w-full overflow-hidden rounded-lg sm:h-32" style={{ backgroundColor: m.swatch }}>
                 {m.image_url && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={m.image_url} alt={m.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                  <Image src={m.image_url} alt={m.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
                 )}
               </span>
               <span className="mt-2 flex items-baseline justify-between">

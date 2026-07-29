@@ -38,6 +38,25 @@ export default async function CustomersPage() {
 
   const rows = (data ?? []) as RequestRow[];
 
+  // Money at a glance. Real revenue uses the final amounts you entered; pipeline
+  // is the estimated value of everything not yet finalized.
+  const now = new Date();
+  const monthKey = `${now.getFullYear()}-${now.getMonth()}`;
+  let revThisMonth = 0;
+  let revAllTime = 0;
+  let pipeline = 0;
+  let jobsDone = 0;
+  for (const r of rows) {
+    if (r.final_total != null) {
+      revAllTime += r.final_total;
+      jobsDone += 1;
+      const d = new Date(r.created_at);
+      if (`${d.getFullYear()}-${d.getMonth()}` === monthKey) revThisMonth += r.final_total;
+    } else {
+      pipeline += r.estimated_total ?? 0;
+    }
+  }
+
   // Group by email when we have one, else by phone, else by name. Email is
   // required on new requests, so repeat customers thread together on it.
   const byKey = new Map<string, Customer>();
@@ -83,6 +102,13 @@ export default async function CustomersPage() {
         real job amount where you have entered one, and the website estimate
         until then.
       </p>
+
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="This month" value={money(revThisMonth)} tone="clay" />
+        <Stat label="All-time revenue" value={money(revAllTime)} tone="clay" />
+        <Stat label="Jobs done" value={String(jobsDone)} />
+        <Stat label="Open pipeline (est.)" value={money(pipeline)} />
+      </div>
 
       <div className="mt-8 space-y-3">
         {customers.map((c) => (
@@ -135,6 +161,30 @@ export default async function CustomersPage() {
           they asked about and their running estimated total.
         </p>
       )}
+    </div>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: "clay";
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-warm)] p-4">
+      <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{label}</p>
+      <p
+        className={
+          "tnum mt-1 text-2xl font-extrabold font-[family-name:var(--font-mono)] " +
+          (tone === "clay" ? "text-[var(--clay)]" : "text-[var(--ink)]")
+        }
+      >
+        {value}
+      </p>
     </div>
   );
 }

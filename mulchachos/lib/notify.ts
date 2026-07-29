@@ -10,21 +10,20 @@
 // Notifications are best-effort. If the email fails, the request is still saved
 // to the database, so a customer never sees an error because of a mail hiccup.
 
-interface Notice {
+interface Send {
+  to: string;
   subject: string;
   html: string;
   replyTo?: string;
 }
 
-export async function notifyOwner({ subject, html, replyTo }: Notice): Promise<void> {
+/** Core Resend call. Best-effort: never throws into the caller. */
+async function sendResend({ to, subject, html, replyTo }: Send): Promise<void> {
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFY_EMAIL;
   const from = process.env.NOTIFY_FROM;
 
-  if (!key || !to || !from) {
-    console.warn(
-      "notifyOwner skipped: set RESEND_API_KEY, NOTIFY_EMAIL, and NOTIFY_FROM."
-    );
+  if (!key || !from) {
+    console.warn("email skipped: set RESEND_API_KEY and NOTIFY_FROM.");
     return;
   }
 
@@ -44,11 +43,70 @@ export async function notifyOwner({ subject, html, replyTo }: Notice): Promise<v
       }),
     });
     if (!res.ok) {
-      console.error("notifyOwner: Resend returned", res.status, await res.text());
+      console.error("Resend returned", res.status, await res.text());
     }
   } catch (err) {
-    console.error("notifyOwner failed:", err);
+    console.error("email failed:", err);
   }
+}
+
+interface Notice {
+  subject: string;
+  html: string;
+  replyTo?: string;
+}
+
+/** Email you (the owner) at NOTIFY_EMAIL. */
+export async function notifyOwner({ subject, html, replyTo }: Notice): Promise<void> {
+  const to = process.env.NOTIFY_EMAIL;
+  if (!to) {
+    console.warn("notifyOwner skipped: set NOTIFY_EMAIL.");
+    return;
+  }
+  await sendResend({ to, subject, html, replyTo });
+}
+
+/**
+ * Send the customer a friendly confirmation that their request came through,
+ * with the estimate they saw. Replies route back to your Gmail.
+ */
+export async function confirmToCustomer(opts: {
+  to: string;
+  name: string;
+  estimateLine?: string | null;
+}): Promise<void> {
+  const first = opts.name.trim().split(/\s+/)[0] || "there";
+  const owner = process.env.NOTIFY_EMAIL;
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;color:#453738;">
+      <p style="font-size:16px;">Hi ${esc(first)},</p>
+      <p style="font-size:16px;line-height:1.5;">
+        Thanks for reaching out to Preston Hollow Mulchachos. We have your request
+        and we'll call or text shortly to confirm the material and pick a delivery
+        morning. Nothing is booked or charged yet.
+      </p>
+      ${
+        opts.estimateLine
+          ? `<p style="font-size:16px;background:#EDE4D8;border-radius:8px;padding:12px 16px;">
+               <strong>Your estimate:</strong> ${esc(opts.estimateLine)}<br/>
+               <span style="color:#6F5D5E;font-size:14px;">We bill for the volume actually spread.</span>
+             </p>`
+          : ""
+      }
+      <p style="font-size:16px;line-height:1.5;">
+        Questions in the meantime? Just reply to this email or call
+        <a href="tel:214-708-7503" style="color:#B7655D;">214-708-7503</a>.
+      </p>
+      <p style="font-size:16px;">— Preston Hollow Mulchachos</p>
+    </div>`;
+
+  await sendResend({
+    to: opts.to,
+    subject: "We got your request — Preston Hollow Mulchachos",
+    html,
+    replyTo: owner || undefined,
+  });
 }
 
 /** Escape user text before putting it in an HTML email. */
