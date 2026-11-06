@@ -31,6 +31,9 @@ export default function SiteFooter({ zips }: { zips?: string[] }) {
             </p>
           </div>
         </div>
+        <p className="mt-10 text-xs text-[var(--muted)]">
+          <a href="/privacy" className="hover:underline">Privacy and terms</a>
+        </p>
       </div>
     </footer>
   );

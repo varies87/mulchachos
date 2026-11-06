@@ -116,6 +116,10 @@ export const ZIP_NEIGHBORHOODS: Record<string, string> = {
   "75219": "Oak Lawn",
   "75231": "Lake Highlands",
   "75240": "North Dallas",
+  "75248": "Prestonwood",
+  "75244": "Valley View",
+  "75214": "Lakewood",
+  "75218": "White Rock",
 };
 
 export function neighborhoodFor(zip: string): string {
