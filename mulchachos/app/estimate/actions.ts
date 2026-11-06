@@ -27,7 +27,10 @@ export async function sendInquiry(formData: FormData) {
     quote_note: quoteNote || null,
   });
 
-  if (error) return { error: "Something went wrong. Please call instead." };
+  if (error) {
+    console.error("inquiry insert failed:", error.code, error.message, error.details, error.hint);
+    return { error: "Something went wrong. Please call 214-708-7503 instead." };
+  }
 
   const html = `
     <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;">

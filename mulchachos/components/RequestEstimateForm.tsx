@@ -44,6 +44,7 @@ interface Record {
   estimated_total: number;
   quote_note: string;
   zip: string;
+  beds: string; // e.g. 40x6_20x8, same format as the quote link
 }
 
 export default function RequestEstimateForm({
@@ -166,6 +167,7 @@ export default function RequestEstimateForm({
       <input type="hidden" name="edging" value={record.edging ? "1" : "0"} />
       <input type="hidden" name="estimated_total" value={record.estimated_total || ""} />
       <input type="hidden" name="quote_note" value={record.quote_note} />
+      <input type="hidden" name="beds" value={record.beds} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

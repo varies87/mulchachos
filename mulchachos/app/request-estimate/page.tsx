@@ -106,6 +106,7 @@ export default async function RequestEstimatePage({
             estimated_total: hasQuote ? quote!.total : 0,
             quote_note: summary?.note ?? "",
             zip: state.zip,
+            beds: state.beds.map((b) => `${b.length}x${b.width}`).join("_"),
           }}
         />
       </div>
