@@ -1,3 +1,4 @@
+import { unitPrice } from "@/lib/pricing";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -125,7 +126,7 @@ export default async function DeliveryZipPage({
               </span>
               <span className="mt-2 flex items-baseline justify-between">
                 <span className="text-sm font-medium">{m.name}</span>
-                <span className={"tnum text-xs text-[var(--muted)] " + MONO}>${m.cost_per_yard}</span>
+                <span className={"tnum text-xs text-[var(--muted)] " + MONO}>{unitPrice(m).short}</span>
               </span>
             </a>
           ))}

@@ -11,7 +11,7 @@ const FIELDS: { name: keyof PricingSettings; label: string; note: string; step?:
   { name: "labor_per_yard", label: "Spreading labor", note: "Per cubic yard" },
   { name: "delivery_fee", label: "Delivery", note: "Per trip" },
   { name: "yards_per_trip", label: "Yards per trip", note: "Above this, delivery charges again" },
-  { name: "minimum_job", label: "Job minimum", note: "No job prices below this" },
+  { name: "minimum_job", label: "Job minimum", note: "Rock jobs only. Mulch uses the mulch minimum instead" },
   { name: "limited_access_surcharge", label: "Limited access", note: "Per yard, wheelbarrow haul" },
   { name: "edging_per_foot", label: "Edging", note: "Per linear foot", step: "0.01" },
   { name: "instant_book_yard_cap", label: "Instant book cap", note: "Bigger jobs get reviewed by hand" },

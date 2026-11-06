@@ -1,4 +1,5 @@
 "use client";
+import { unitPrice } from "@/lib/pricing";
 
 import { Material } from "@/lib/materials";
 
@@ -36,7 +37,7 @@ export default function MaterialSwatch({
         </p>
         {showPrice && (
           <p className="tnum mt-0.5 font-[family-name:var(--font-mono)] text-xs text-[var(--muted)]">
-            ${material.cost_per_yard}/yd³
+            {unitPrice(material).short}
           </p>
         )}
       </div>

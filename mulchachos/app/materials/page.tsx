@@ -1,3 +1,4 @@
+import { unitPrice } from "@/lib/pricing";
 import type { Metadata } from "next";
 import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
@@ -79,7 +80,7 @@ function Group({ title, items }: { title: string; items: Item[] }) {
               <div className="mt-4 flex items-baseline justify-between">
                 <h3 className="text-lg font-semibold group-hover:text-[var(--clay)]">{m.name}</h3>
                 <span className={"tnum text-sm " + MONO}>
-                  ${m.cost_per_yard}/yd³
+                  {unitPrice(m).short}
                 </span>
               </div>
             </a>

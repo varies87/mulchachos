@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
 import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
-import { buildQuote, money } from "@/lib/pricing";
+import { buildQuote, money, volumeLabel } from "@/lib/pricing";
 import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -431,7 +431,7 @@ function Quote({
 
       {quote.minimumYardsApplied && (
         <p className="mt-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs text-[var(--ink-soft)]">
-          Your beds need {quote.yards.toFixed(2)} yd³, but our minimum is {quote.minimumYards} yd³. You are quoted at the minimum.
+          Your beds need {volumeLabel(material.category, quote.yards)}, but our minimum is {volumeLabel(material.category, quote.minimumYards)}. You are quoted at the minimum.
         </p>
       )}
 

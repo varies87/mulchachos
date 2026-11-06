@@ -36,6 +36,29 @@ export function nextTier(
   return ahead[0] ?? null;
 }
 
+// Mulch is sold by the 2 cu ft bag: 27 / 2 = 13.5 bags to a cubic yard.
+export const BAGS_PER_YARD = 13.5;
+
+/** "20 bags (1.48 yd³)" for mulch, "2 yd³" for rock. */
+export function volumeLabel(category: string, yards: number): string {
+  if (category === "mulch") {
+    return `${Math.round(yards * BAGS_PER_YARD)} bags (${yards.toFixed(2)} yd³)`;
+  }
+  return `${Number(yards.toFixed(2))} yd³`;
+}
+
+/** Customer-facing price: "$8" per bag for mulch, "$375" per cubic yard for rock. */
+export function unitPrice(m: { category: string; cost_per_yard: number }) {
+  const mulch = m.category === "mulch";
+  const n = mulch ? m.cost_per_yard / BAGS_PER_YARD : m.cost_per_yard;
+  const amount = `$${Number.isInteger(Math.round(n * 100) / 100) ? Math.round(n) : n.toFixed(2)}`;
+  return {
+    amount,
+    unit: mulch ? "per bag" : "per cubic yard",
+    short: mulch ? `${amount}/bag` : `${amount}/yd³`,
+  };
+}
+
 export function minYardsFor(s: PricingSettings, category: string): number {
   return category === "mulch" ? s.mulch_min_yards : s.rock_min_yards;
 }
@@ -120,7 +143,10 @@ export function buildQuote(input: QuoteInput): Quote {
   if (yards > 0) {
     lineItems.push({
       label: material.name,
-      detail: `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
+      detail:
+        material.category === "mulch"
+          ? `${volumeLabel("mulch", billedYards)} at $${(ratePerYard / BAGS_PER_YARD).toFixed(2)}/bag, delivered and spread`
+          : `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
       amount: billedYards * ratePerYard,
     });
 
@@ -167,7 +193,9 @@ export function buildQuote(input: QuoteInput): Quote {
   }
 
   const subtotal = lineItems.reduce((sum, l) => sum + l.amount, 0);
-  const minimumApplied = subtotal > 0 && subtotal < s.minimum_job;
+  // The dollar job minimum is for rock. Mulch has its own bag minimum instead.
+  const minimumApplied =
+    material.category !== "mulch" && subtotal > 0 && subtotal < s.minimum_job;
   const total = minimumApplied ? s.minimum_job : subtotal;
 
   // Cases where quoting sight-unseen would lose money or force a callback.

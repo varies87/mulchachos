@@ -10,6 +10,7 @@ import {
   getMaterialBySlug,
   getPricingSettings,
 } from "@/lib/materials";
+import { unitPrice, volumeLabel } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export async function generateMetadata({
   if (!m) return { title: "Material not found" };
   return {
     title: `${m.name} — delivered and spread`,
-    description: `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at $${m.cost_per_yard} per cubic yard.`,
+    description: `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at ${unitPrice(m).amount} ${unitPrice(m).unit}.`,
     alternates: { canonical: `/materials/${m.slug}` },
   };
 }
@@ -110,9 +111,9 @@ export default async function MaterialPage({
 
             <p className="mt-6 flex items-baseline gap-2">
               <span className={"tnum text-3xl font-extrabold " + MONO}>
-                ${material.cost_per_yard}
+                {unitPrice(material).amount}
               </span>
-              <span className="text-[var(--ink-soft)]">per cubic yard, delivered and spread</span>
+              <span className="text-[var(--ink-soft)]">{unitPrice(material).unit}, delivered and spread</span>
             </p>
 
             {!material.instant_bookable && (
@@ -124,7 +125,7 @@ export default async function MaterialPage({
 
             {minYards > 0 && (
               <p className="mt-3 text-sm text-[var(--muted)]">
-                {minYards} yd³ minimum on {isRock ? "rock" : "mulch"} jobs.
+                {volumeLabel(material.category, minYards)} minimum on {isRock ? "rock" : "mulch"} jobs.
               </p>
             )}
 
@@ -168,7 +169,7 @@ export default async function MaterialPage({
                 </span>
                 <span className="mt-2 flex items-baseline justify-between">
                   <span className="text-sm font-medium">{m.name}</span>
-                  <span className={"tnum text-xs text-[var(--muted)] " + MONO}>${m.cost_per_yard}</span>
+                  <span className={"tnum text-xs text-[var(--muted)] " + MONO}>{unitPrice(m).short}</span>
                 </span>
               </a>
             ))}

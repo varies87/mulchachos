@@ -9,7 +9,7 @@ import {
   getPricingSettings,
   type Material,
 } from "@/lib/materials";
-import { buildQuote, type Quote } from "@/lib/pricing";
+import { buildQuote, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
 
 /**
@@ -269,8 +269,8 @@ function ownerEmail(r: {
     rows += row(
       "Yards billed",
       q.minimumYardsApplied
-        ? `${q.billedYards.toFixed(2)} yd³ (${q.minimumYards} yd minimum applied)`
-        : `${q.billedYards.toFixed(2)} yd³`
+        ? `${volumeLabel(d.material.category, q.billedYards)} (minimum applied)`
+        : volumeLabel(d.material.category, q.billedYards)
     );
     rows += row("Truck trips", q.trips);
     rows += row("Add-ons", addOns || "None");
