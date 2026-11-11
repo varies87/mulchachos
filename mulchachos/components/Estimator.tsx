@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
 import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
-import { buildQuote, money, volumeLabel } from "@/lib/pricing";
+import { billingNote, buildQuote, money, volumeLabel } from "@/lib/pricing";
 import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -156,9 +156,8 @@ export default function Estimator({
         <div>
           <Step n="1" title="Measure your beds" />
           <p className="-mt-2 mb-5 text-[var(--ink-soft)]">
-            Pace them off or eyeball them. Rough numbers are fine,
-            because you are billed for the volume actually spread,
-            not for this estimate.
+            Pace them off or eyeball them. Rough numbers are fine.
+            We measure again before the job.
           </p>
 
           <div className="space-y-3">
@@ -436,9 +435,7 @@ function Quote({
       )}
 
       <p className={NOTE}>
-        This is an estimate to help you plan. We bill for the volume
-        actually spread, at the same {money(perYard)} per yard. If
-        your beds take less than this, you pay less.
+        This is an estimate to help you plan. {billingNote(material.category)}
       </p>
 
       <a href={href} className={PILL + " mt-6"}>

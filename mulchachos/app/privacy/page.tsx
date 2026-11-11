@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader, { PHONE } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { BILLING } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Privacy and terms",
@@ -40,8 +41,7 @@ export default function PrivacyPage() {
         <h2 className={H2}>Estimates</h2>
         <p className="mt-3">
           Prices from the estimator are estimates. We confirm the material and
-          volume before anything is booked, and we bill for what is actually
-          delivered and spread.
+          volume before anything is booked. {BILLING.both}
         </p>
 
         <h2 className={H2}>Questions or removal</h2>

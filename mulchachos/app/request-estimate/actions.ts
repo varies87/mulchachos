@@ -9,7 +9,7 @@ import {
   getPricingSettings,
   type Material,
 } from "@/lib/materials";
-import { buildQuote, volumeLabel, type Quote } from "@/lib/pricing";
+import { billingNote, buildQuote, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
 
 /**
@@ -132,7 +132,12 @@ export async function submitEstimateRequest(formData: FormData) {
       materialName && estimatedTotal
         ? `${materialName}, about ${usd(estimatedTotal)}`
         : materialName || null;
-    await confirmToCustomer({ to: email, name, estimateLine });
+    await confirmToCustomer({
+      to: email,
+      name,
+      estimateLine,
+      billing: detail ? billingNote(detail.material.category, true) : null,
+    });
   }
 
   return { ok: true };

@@ -40,8 +40,7 @@ const STEPS = [
     n: "03",
     title: "Spread the same day",
     body:
-      "Even depth, clean bed lines, driveway swept before we leave. " +
-      "You pay for what actually goes down.",
+      "Even depth, clean bed lines, driveway swept before we leave.",
   },
 ]
 

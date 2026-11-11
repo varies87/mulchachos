@@ -1,3 +1,4 @@
+import { BILLING } from "./pricing";
 // Emails you when someone sends a request or a question. Uses Resend, which is
 // already set up for this domain (the resend._domainkey and send records in
 // your DNS). Set three environment variables in Vercel:
@@ -74,6 +75,7 @@ export async function confirmToCustomer(opts: {
   to: string;
   name: string;
   estimateLine?: string | null;
+  billing?: string | null;
 }): Promise<void> {
   const first = opts.name.trim().split(/\s+/)[0] || "there";
   const owner = process.env.NOTIFY_EMAIL;
@@ -90,7 +92,7 @@ export async function confirmToCustomer(opts: {
         opts.estimateLine
           ? `<p style="font-size:16px;background:#EDE4D8;border-radius:8px;padding:12px 16px;">
                <strong>Your estimate:</strong> ${esc(opts.estimateLine)}<br/>
-               <span style="color:#6F5D5E;font-size:14px;">We bill for the volume actually spread.</span>
+               <span style="color:#6F5D5E;font-size:14px;">${esc(opts.billing ?? BILLING.both)}</span>
              </p>`
           : ""
       }

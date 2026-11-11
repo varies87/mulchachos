@@ -36,6 +36,29 @@ export function nextTier(
   return ahead[0] ?? null;
 }
 
+// How each material is billed. Every page and email uses these, so the
+// policy reads the same everywhere a customer might later point to.
+//   Mulch: billed for what is actually spread.
+//   Rock: billed for what we bring. It can't go back to the supplier, and
+//   any extra gets spread.
+export const BILLING = {
+  mulch: "Mulch is billed for what we actually spread.",
+  rock:
+    "Rock is billed for the amount we bring. We measure carefully to get it " +
+    "right, but rock can't be returned to the supplier once it's loaded, so " +
+    "if there's any extra, we spread it too.",
+  rockShort: "Rock is billed for the amount we bring. Any extra gets spread too.",
+  both:
+    "Mulch is billed for what we actually spread. Rock is billed for the " +
+    "amount we bring, and any extra gets spread too.",
+}
+
+/** The billing line for one material. */
+export function billingNote(category: string, short = false): string {
+  if (category === "mulch") return BILLING.mulch;
+  return short ? BILLING.rockShort : BILLING.rock;
+}
+
 // Mulch is sold by the 2 cu ft bag: 27 / 2 = 13.5 bags to a cubic yard.
 export const BAGS_PER_YARD = 13.5;
 

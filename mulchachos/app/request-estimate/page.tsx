@@ -65,6 +65,7 @@ export default async function RequestEstimatePage({
   const summary = hasQuote
     ? {
         materialName: material!.name,
+        category: material!.category,
         yards: quote!.billedYards,
         total: quote!.total,
         note:

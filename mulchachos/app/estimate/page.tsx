@@ -57,8 +57,8 @@ export default async function EstimatePage({
           Price your beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Rough measurements are fine. You are billed for the volume
-          we actually spread, at the rate quoted here.
+          Rough measurements are fine. We measure again before the
+          job, at the rate quoted here.
         </p>
       </div>
 

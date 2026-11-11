@@ -1,4 +1,5 @@
 "use client";
+import { billingNote, volumeLabel } from "@/lib/pricing";
 
 import { useRef, useState, useTransition } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
@@ -28,6 +29,7 @@ type Shot = {
 
 interface Summary {
   materialName: string;
+  category: string;
   yards: number;
   total: number;
   note: string;
@@ -143,13 +145,13 @@ export default function RequestEstimateForm({
             Your estimate
           </p>
           <p className="mt-2 text-lg font-semibold">
-            {summary.yards.toFixed(2)} yd³ of {summary.materialName.toLowerCase()}
+            {volumeLabel(summary.category, summary.yards)} of {summary.materialName.toLowerCase()}
           </p>
           <p className={"tnum mt-1 text-2xl font-extrabold " + MONO}>
             about {money(summary.total)}
           </p>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
-            We bill for the volume actually spread. Change anything?{" "}
+            {billingNote(summary.category)} Change anything?{" "}
             <a href="/estimate" className="font-medium text-[var(--clay)]">
               Edit your estimate
             </a>

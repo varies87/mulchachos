@@ -1,4 +1,4 @@
-import { unitPrice } from "@/lib/pricing";
+import { BILLING, unitPrice } from "@/lib/pricing";
 import type { Metadata } from "next";
 import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
@@ -42,8 +42,8 @@ export default async function MaterialsPage() {
           What goes in the beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Every price is per cubic yard, delivered and spread.
-          You are billed for the volume actually used.
+          Mulch is priced by the bag and rock by the cubic yard,
+          delivered and spread. {BILLING.both}
         </p>
       </section>
 
