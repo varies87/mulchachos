@@ -41,9 +41,14 @@ export default async function AboutPage() {
 
         <div className="mt-8 space-y-5 text-lg text-[var(--ink-soft)]">
           <p>
-            Mulchachos started with one trailer and a few
-            neighbors who needed mulch and could not get anyone
-            to call them back. It turned into a real crew.
+            Mulchachos started my freshman year of high school
+            with me and a wagon, inspired by the Boy Scouts&apos;
+            mulch sales.
+          </p>
+          <p>
+            Five years and hundreds of jobs later, it&apos;s a real
+            business: a regular crew, our own truck, and rock
+            bought in bulk straight from the supplier.
           </p>
           <p>
             We do one thing. We are not a full service landscape
