@@ -1,3 +1,4 @@
+import Image from "next/image";
 import DumpReel from "@/components/DumpReel";
 import JobGallery from "@/components/JobGallery";
 import TrustStrip from "@/components/TrustStrip";
@@ -115,6 +116,34 @@ export default async function Home() {
           we leave.
         </p>
         <JobGallery photos={photos} />
+      </section>
+
+      <section className="border-t border-[var(--line)]">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2">
+          <Image
+            src="/crew.jpg"
+            alt="The Preston Hollow Mulchachos crew in uniform with rakes, shovels, and a wheelbarrow"
+            width={1080}
+            height={1350}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="w-full rounded-xl"
+          />
+          <div>
+            <p className={MONO + " text-xs uppercase tracking-widest text-[var(--clay)]"}>
+              The crew
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold">
+              Same crew, every job.
+            </h2>
+            <p className="mt-4 text-lg text-[var(--ink-soft)]">
+              The person who quotes your job is the person who runs it. If
+              something is not right when we leave, you call and we come back.
+            </p>
+            <a href="/about" className="mt-6 inline-block font-medium text-[var(--clay)] underline underline-offset-4">
+              Who we are &rarr;
+            </a>
+          </div>
+        </div>
       </section>
 
       <Testimonials items={testimonials} />

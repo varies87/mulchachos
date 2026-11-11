@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import SiteHeader, { PHONE } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { getPricingSettings } from "@/lib/materials";
@@ -27,6 +28,16 @@ export default async function AboutPage() {
         <h1 className="text-4xl font-extrabold sm:text-6xl">
           Who we are.
         </h1>
+
+        <Image
+          src="/crew.jpg"
+          alt="The Preston Hollow Mulchachos crew in uniform with rakes, shovels, and a wheelbarrow"
+          width={1080}
+          height={1350}
+          priority
+          sizes="(max-width: 672px) 100vw, 672px"
+          className="mt-8 w-full rounded-xl"
+        />
 
         <div className="mt-8 space-y-5 text-lg text-[var(--ink-soft)]">
           <p>
