@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 const BASE = "https://prestonhollowmulchachos.com";
 

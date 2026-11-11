@@ -1,4 +1,5 @@
 import { supabaseServer } from "./supabase-server";
+import { supabasePublic } from "./supabase-public";
 
 export interface Material {
   id: string;
@@ -41,7 +42,7 @@ export interface PricingSettings {
 
 /** Public pages: only what customers should see, in the order you set. */
 export async function getActiveMaterials(): Promise<Material[]> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("materials")
     .select("*")
@@ -53,7 +54,7 @@ export async function getActiveMaterials(): Promise<Material[]> {
 
 /** One active material by slug, for its landing page. Null if hidden or gone. */
 export async function getMaterialBySlug(slug: string): Promise<Material | null> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("materials")
     .select("*")
@@ -73,7 +74,7 @@ export async function getAllMaterials(): Promise<Material[]> {
 }
 
 export async function getPricingSettings(): Promise<PricingSettings> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("pricing_settings")
     .select("*")
@@ -84,7 +85,7 @@ export async function getPricingSettings(): Promise<PricingSettings> {
 }
 
 export async function getDiscountTiers(): Promise<DiscountTier[]> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("discount_tiers")
     .select("*")
@@ -94,7 +95,7 @@ export async function getDiscountTiers(): Promise<DiscountTier[]> {
 }
 
 export async function getFabricTiers(): Promise<FabricTier[]> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("fabric_tiers")
     .select("*")

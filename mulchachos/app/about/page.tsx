@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import SiteHeader, { PHONE } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { getPricingSettings } from "@/lib/materials";
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Who we are",
@@ -17,8 +17,7 @@ const CTA =
   "inline-block rounded-full bg-[var(--clay)] px-6 py-3 " +
   "font-medium text-white hover:bg-[var(--clay-deep)]";
 
-export default async function AboutPage() {
-  const settings = await getPricingSettings();
+export default function AboutPage() {
 
   return (
     <main>
@@ -97,7 +96,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

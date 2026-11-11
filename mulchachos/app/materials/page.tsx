@@ -6,7 +6,8 @@ import WeedFabric from "@/components/WeedFabric";
 import SiteFooter from "@/components/SiteFooter";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Materials",

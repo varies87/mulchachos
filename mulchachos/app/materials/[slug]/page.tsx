@@ -12,7 +12,8 @@ import {
 } from "@/lib/materials";
 import { unitPrice, volumeLabel } from "@/lib/pricing";
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 const MONO = "font-[family-name:var(--font-mono)]";
 const CTA =

@@ -1,4 +1,5 @@
 import { supabaseServer } from "./supabase-server";
+import { supabasePublic } from "./supabase-public";
 
 /**
  * Your Google Business Profile review page. Shown as "See all our reviews on
@@ -31,7 +32,7 @@ export interface JobPhoto {
  * the Testimonials section hides itself until there is something true to show.
  */
 export async function getTestimonials(): Promise<Testimonial[]> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("testimonials")
     .select("*")
@@ -46,7 +47,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
  * falls back to the delivery videos until real photos are added.
  */
 export async function getJobPhotos(): Promise<JobPhoto[]> {
-  const sb = await supabaseServer();
+  const sb = supabasePublic();
   const { data, error } = await sb
     .from("job_photos")
     .select("*")

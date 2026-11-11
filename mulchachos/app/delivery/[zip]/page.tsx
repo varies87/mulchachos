@@ -8,7 +8,8 @@ import { PHONE } from "@/components/SiteHeader";
 import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
 import { neighborhoodFor } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 const MONO = "font-[family-name:var(--font-mono)]";
 const CTA =

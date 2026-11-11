@@ -1,12 +1,10 @@
 import Image from "next/image";
 import DumpReel from "@/components/DumpReel";
 import JobGallery from "@/components/JobGallery";
-import TrustStrip from "@/components/TrustStrip";
 import Testimonials from "@/components/Testimonials";
 import ServiceArea from "@/components/ServiceArea";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { getPricingSettings } from "@/lib/materials";
 import { getJobPhotos, getTestimonials } from "@/lib/content";
 import type { Metadata } from "next";
 
@@ -14,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes; admin saves refresh it immediately.
+export const revalidate = 300;
 
 const MONO = "font-[family-name:var(--font-mono)]";
 
@@ -25,33 +24,29 @@ const CTA =
 const STEPS = [
   {
     n: "01",
-    title: "Measure your beds",
+    title: "Price it online",
     body:
-      "Length times width, in feet. Rough is fine. We confirm " +
-      "the real number on site.",
+      "Measure your beds, length times width. You get an itemized " +
+      "price in about a minute. No account, nothing to pay now.",
   },
   {
     n: "02",
-    title: "We haul it in",
+    title: "We confirm and schedule",
     body:
-      "Delivery lands the morning of the job. Nothing sits in " +
-      "your driveway overnight.",
+      "A real person calls or texts to confirm the material and " +
+      "pick a morning. Delivery lands the day of the job.",
   },
   {
     n: "03",
-    title: "We spread and edge",
+    title: "Spread the same day",
     body:
-      "Even depth, clean bed lines, walks blown off. You come " +
-      "home and it is done.",
+      "Even depth, clean bed lines, driveway swept before we leave. " +
+      "You pay for what actually goes down.",
   },
-];
+]
 
 export default async function Home() {
-  const [settings, photos, testimonials] = await Promise.all([
-    getPricingSettings(),
-    getJobPhotos(),
-    getTestimonials(),
-  ]);
+  const [photos, testimonials] = await Promise.all([getJobPhotos(), getTestimonials()]);
 
   return (
     <main>
@@ -86,23 +81,18 @@ export default async function Home() {
 
       <DumpReel />
 
-      <TrustStrip />
-
-      <section className="border-y border-[var(--line)] bg-[var(--paper-warm)]">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 sm:grid-cols-3">
-          {STEPS.map((s) => (
-            <div key={s.n}>
-              <span className={MONO + " text-xs text-[var(--clay)]"}>
-                {s.n}
-              </span>
-              <h2 className="mt-3 text-xl font-semibold">
-                {s.title}
-              </h2>
-              <p className="mt-2 text-[var(--ink-soft)]">
-                {s.body}
-              </p>
-            </div>
-          ))}
+      <section className="border-b border-[var(--line)] bg-[var(--paper-warm)]">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <h2 className="text-3xl font-extrabold">How it works</h2>
+          <div className="mt-10 grid gap-10 sm:grid-cols-3">
+            {STEPS.map((s) => (
+              <div key={s.n}>
+                <span className={MONO + " text-xs text-[var(--clay)]"}>{s.n}</span>
+                <h3 className="mt-3 text-xl font-semibold">{s.title}</h3>
+                <p className="mt-2 text-[var(--ink-soft)]">{s.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -150,7 +140,24 @@ export default async function Home() {
 
       <ServiceArea />
 
-      <SiteFooter zips={settings.service_zips} />
+      <section className="bg-[var(--clay)] text-white">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-3xl font-extrabold">Ready for fresh beds?</h2>
+            <p className="mt-2 text-white/85">Get your price in about a minute.</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+            <a href="/estimate" className="inline-block rounded-full bg-white px-7 py-4 text-center text-lg font-medium text-[var(--clay)] hover:bg-white/90">
+              Price my beds
+            </a>
+            <a href="tel:214-708-7503" className="text-center font-medium text-white underline underline-offset-4">
+              or call 214-708-7503
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }

@@ -14,7 +14,7 @@ async function requireAdmin() {
 
 /** Public pages are statically cached, so every write has to bust them. */
 function refreshPublicPages() {
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/estimate");
   revalidatePath("/admin");
 }
@@ -132,7 +132,7 @@ export async function saveTestimonial(formData: FormData) {
     : await sb.from("testimonials").insert(row);
 
   if (error) return { error: error.message };
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/testimonials");
   return { ok: true };
 }
@@ -141,7 +141,7 @@ export async function deleteTestimonial(id: string) {
   const sb = await requireAdmin();
   const { error } = await sb.from("testimonials").delete().eq("id", id);
   if (error) return { error: error.message };
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/testimonials");
   return { ok: true };
 }
@@ -168,7 +168,7 @@ export async function saveJobPhoto(formData: FormData) {
     : await sb.from("job_photos").insert(row);
 
   if (error) return { error: error.message };
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/photos");
   return { ok: true };
 }
@@ -177,7 +177,7 @@ export async function deleteJobPhoto(id: string) {
   const sb = await requireAdmin();
   const { error } = await sb.from("job_photos").delete().eq("id", id);
   if (error) return { error: error.message };
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/photos");
   return { ok: true };
 }
