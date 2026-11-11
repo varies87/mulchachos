@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  // The sign-in link sends you back here with ?error= if it didn't work.
+  useEffect(() => {
+    const err = new URLSearchParams(window.location.search).get("error");
+    if (err) {
+      setState("error");
+      setMessage(err);
+    }
+  }, []);
 
   async function send() {
     if (!email.includes("@")) {
@@ -17,7 +26,7 @@ export default function AdminLogin() {
     setState("sending");
     const { error } = await supabaseBrowser().auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/admin` },
+      options: { emailRedirectTo: `${window.location.origin}/admin/auth/callback` },
     });
     if (error) {
       setState("error");
