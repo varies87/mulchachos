@@ -133,7 +133,7 @@ export default async function Home() {
               The crew
             </p>
             <h2 className="mt-3 text-3xl font-extrabold">
-              Same crew, every job.
+              Meet the crew.
             </h2>
             <p className="mt-4 text-lg text-[var(--ink-soft)]">
               The person who quotes your job is the person who runs it. If
