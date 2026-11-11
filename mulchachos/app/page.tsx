@@ -1,8 +1,6 @@
 import DumpReel from "@/components/DumpReel";
 import JobGallery from "@/components/JobGallery";
 import TrustStrip from "@/components/TrustStrip";
-import { Suspense } from "react";
-import Reviews from "@/components/Reviews";
 import Testimonials from "@/components/Testimonials";
 import ServiceArea from "@/components/ServiceArea";
 import SiteHeader from "@/components/SiteHeader";
@@ -119,10 +117,7 @@ export default async function Home() {
         <JobGallery photos={photos} />
       </section>
 
-      {/* Google reviews stream in after the page; admin testimonials show meanwhile. */}
-      <Suspense fallback={<Testimonials items={testimonials} />}>
-        <Reviews fallback={testimonials} />
-      </Suspense>
+      <Testimonials items={testimonials} />
 
       <ServiceArea />
 

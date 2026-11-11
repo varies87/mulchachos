@@ -37,21 +37,6 @@ export default function PrivacyPage() {
           advertising.
         </p>
 
-        <h2 className={H2}>Google reviews</h2>
-        <p className="mt-3">
-          The reviews on our home page come live from Google Maps through the
-          Google Maps Platform. When that section loads, your use of it is covered by
-          the{" "}
-          <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener noreferrer" className={LINK}>
-            Google Maps Terms of Service
-          </a>{" "}
-          and the{" "}
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className={LINK}>
-            Google Privacy Policy
-          </a>
-          , and by using this site you agree to be bound by them.
-        </p>
-
         <h2 className={H2}>Estimates</h2>
         <p className="mt-3">
           Prices from the estimator are estimates. We confirm the material and

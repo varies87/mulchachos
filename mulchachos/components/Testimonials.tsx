@@ -1,4 +1,4 @@
-import type { Testimonial } from "@/lib/content";
+import { GOOGLE_REVIEWS_URL, type Testimonial } from "@/lib/content";
 
 const MONO = "font-[family-name:var(--font-mono)]";
 
@@ -40,6 +40,17 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
             </figure>
           ))}
         </div>
+
+        {GOOGLE_REVIEWS_URL && (
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-block text-[var(--clay)] underline underline-offset-4"
+          >
+            See all our reviews on Google &rarr;
+          </a>
+        )}
       </div>
     </section>
   );

@@ -68,9 +68,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <a href="/admin/photos" className="text-[var(--muted)] hover:text-[var(--ink)]">
               Photos
             </a>
-            <a href="/admin/google" className="text-[var(--muted)] hover:text-[var(--ink)]">
-              Google
-            </a>
             <a href="/" className="text-[var(--muted)] hover:text-[var(--ink)]">
               View site
             </a>

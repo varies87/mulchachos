@@ -1,5 +1,11 @@
 import { supabaseServer } from "./supabase-server";
 
+/**
+ * Your Google Business Profile review page. Shown as "See all our reviews on
+ * Google" under the testimonials. Leave empty to hide the link.
+ */
+export const GOOGLE_REVIEWS_URL = "";
+
 export interface Testimonial {
   id: string;
   author: string;
