@@ -43,7 +43,7 @@ export default async function AboutPage() {
           <p>
             Mulchachos started my freshman year of high school
             with a wagon, inspired by the Boy Scouts&apos; mulch
-            sales. Five years and hundreds of jobs later, we have
+            sales. Four years and hundreds of jobs later, we have
             a regular crew, our own truck, and rock bought in bulk
             straight from the supplier.
           </p>
