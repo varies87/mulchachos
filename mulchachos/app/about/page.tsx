@@ -56,9 +56,18 @@ export default async function AboutPage() {
             runs it. If something is not right when we leave,
             you call me and we come back.
           </p>
-          <p className="font-semibold text-[var(--ink)]">
-            Harrison, owner
-          </p>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/harrison.jpg"
+              alt="Harrison, owner of Preston Hollow Mulchachos"
+              width={56}
+              height={56}
+              className="h-14 w-14 rounded-full object-cover"
+            />
+            <p className="font-semibold text-[var(--ink)]">
+              Harrison, owner
+            </p>
+          </div>
         </div>
 
         <div className="mt-12 border-t border-[var(--line)] pt-10">
