@@ -42,24 +42,24 @@ export default async function AboutPage() {
         <div className="mt-8 space-y-5 text-lg text-[var(--ink-soft)]">
           <p>
             Mulchachos started my freshman year of high school
-            with me and a wagon, inspired by the Boy Scouts&apos;
-            mulch sales.
+            with a wagon, inspired by the Boy Scouts&apos; mulch
+            sales. Five years and hundreds of jobs later, we have
+            a regular crew, our own truck, and rock bought in bulk
+            straight from the supplier.
           </p>
           <p>
-            Five years and hundreds of jobs later, it&apos;s a real
-            business: a regular crew, our own truck, and rock
-            bought in bulk straight from the supplier.
+            We&apos;re growing, and we plan to keep growing. As we
+            do, the standard stays the same: show up when we say
+            we will, spread it evenly, and sweep the driveway
+            before we leave.
           </p>
           <p>
-            We do one thing. We are not a full service landscape
-            company squeezing your bed refresh in between bigger
-            jobs, which is why we can price it in a minute
-            instead of scheduling a visit to come look at it.
+            You can price your beds online in about a minute, and
+            a real person on our team will call or text you back.
           </p>
           <p>
-            The person who quotes your job is the person who
-            runs it. If something is not right when we leave,
-            you call me and we come back.
+            If something isn&apos;t right when we leave, call me
+            and we&apos;ll come back and fix it.
           </p>
           <div className="flex items-center gap-3">
             <Image
