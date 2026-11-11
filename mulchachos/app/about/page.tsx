@@ -61,13 +61,13 @@ export default async function AboutPage() {
             If something isn&apos;t right when we leave, call me
             and we&apos;ll come back and fix it.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Image
               src="/harrison.jpg"
               alt="Harrison, owner of Preston Hollow Mulchachos"
-              width={56}
-              height={56}
-              className="h-14 w-14 rounded-full object-cover"
+              width={88}
+              height={88}
+              className="h-[88px] w-[88px] rounded-full object-cover"
             />
             <p className="font-semibold text-[var(--ink)]">
               Harrison, owner
