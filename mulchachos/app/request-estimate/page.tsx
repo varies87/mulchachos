@@ -112,7 +112,7 @@ export default async function RequestEstimatePage({
         />
       </div>
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

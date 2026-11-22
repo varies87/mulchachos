@@ -190,7 +190,7 @@ export default async function MaterialPage({
         </section>
       )}
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

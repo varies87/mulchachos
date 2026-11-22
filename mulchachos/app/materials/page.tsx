@@ -4,7 +4,7 @@ import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import WeedFabric from "@/components/WeedFabric";
 import SiteFooter from "@/components/SiteFooter";
-import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
+import { getActiveMaterials } from "@/lib/materials";
 
 // Cached and refreshed every 5 minutes; admin saves refresh it immediately.
 export const revalidate = 300;
@@ -25,10 +25,7 @@ const BTN =
   "hover:bg-[var(--clay)] hover:text-white";
 
 export default async function MaterialsPage() {
-  const [materials, settings] = await Promise.all([
-    getActiveMaterials(),
-    getPricingSettings(),
-  ]);
+  const materials = await getActiveMaterials();
 
   const mulch = materials.filter((m) => m.category === "mulch");
   const rock = materials.filter((m) => m.category !== "mulch");
@@ -52,7 +49,7 @@ export default async function MaterialsPage() {
 
       <WeedFabric />
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

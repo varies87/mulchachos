@@ -49,7 +49,7 @@ export default async function DeliveryZipPage({
   const { zip } = await params;
   if (!/^\d{5}$/.test(zip)) notFound();
 
-  const [{ serviced, settings }, materials] = await Promise.all([
+  const [{ serviced }, materials] = await Promise.all([
     isServiced(zip),
     getActiveMaterials(),
   ]);
@@ -138,7 +138,7 @@ export default async function DeliveryZipPage({
         </a>
       </section>
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

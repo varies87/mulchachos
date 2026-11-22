@@ -63,12 +63,6 @@ export default async function Home() {
           <span className="text-[var(--clay)]">delivered and spread.</span>
         </h1>
 
-        <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
-          Most suppliers dump a pile in your driveway. We bring it, spread
-          it, and sweep up before we leave. Get an estimate online in about
-          a minute, with nothing to pay now.
-        </p>
-
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
           <a href="/estimate" className={CTA + " w-full text-center sm:w-auto"}>
             Get my estimate
