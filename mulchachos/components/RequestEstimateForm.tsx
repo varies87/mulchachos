@@ -6,6 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase-browser";
 import { submitEstimateRequest } from "@/app/request-estimate/actions";
 import { money } from "@/lib/pricing";
 import { PHONE } from "./SiteHeader";
+import { track } from "@/lib/pixel";
 
 const FIELD =
   "w-full rounded-lg border border-[var(--line)] px-3 py-2.5 " +
@@ -117,6 +118,9 @@ export default function RequestEstimateForm({
       else {
         setError("");
         setSent(true);
+        // Tells Meta an ad click turned into a job request. Material type
+        // only; no name, contact, address, or price.
+        track("Lead", summary ? { content_category: summary.category } : undefined);
       }
     });
   }

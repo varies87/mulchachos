@@ -34,8 +34,17 @@ export default function PrivacyPage() {
           A few services run the site for us: Supabase stores requests and photos,
           Resend sends the confirmation and notification emails, and Vercel hosts
           the site and counts page visits without identifying you. We don&apos;t sell
-          or share your information with anyone else, and we don&apos;t use it for
-          advertising.
+          your information.
+        </p>
+
+        <h2 className={H2}>Advertising</h2>
+        <p className="mt-3">
+          We use the Meta Pixel so we can tell whether our Facebook and Instagram
+          ads work. It lets Meta record which pages you visit here and whether a
+          job request was sent, and Meta may use that to show you our ads. The
+          details you type into our forms are never sent to Meta. You can manage
+          ad tracking in your Facebook or Instagram ad settings, or block it with
+          your browser&apos;s tracking protection.
         </p>
 
         <h2 className={H2}>Estimates</h2>

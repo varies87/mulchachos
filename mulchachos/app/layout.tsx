@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Public_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import MetaPixel from "@/components/MetaPixel";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import BusinessSchema from "@/components/BusinessSchema";
 import "./globals.css";
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BusinessSchema />
         {children}
         <Analytics />
+        <MetaPixel />
         <SpeedInsights />
       </body>
     </html>
