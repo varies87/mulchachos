@@ -1,5 +1,5 @@
 "use client";
-import { billingNote, volumeLabel } from "@/lib/pricing";
+import { ROCK_PRICE_NOTE, billingNote, volumeLabel } from "@/lib/pricing";
 
 import { useRef, useState, useTransition } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
@@ -31,7 +31,8 @@ interface Summary {
   materialName: string;
   category: string;
   yards: number;
-  total: number;
+  /** Null for rock: we text the price instead of showing it. */
+  total: number | null;
   note: string;
 }
 
@@ -147,9 +148,13 @@ export default function RequestEstimateForm({
           <p className="mt-2 text-lg font-semibold">
             {volumeLabel(summary.category, summary.yards)} of {summary.materialName.toLowerCase()}
           </p>
-          <p className={"tnum mt-1 text-2xl font-extrabold " + MONO}>
-            about {money(summary.total)}
-          </p>
+          {summary.total != null ? (
+            <p className={"tnum mt-1 text-2xl font-extrabold " + MONO}>
+              about {money(summary.total)}
+            </p>
+          ) : (
+            <p className="mt-1 text-[var(--ink-soft)]">{ROCK_PRICE_NOTE}</p>
+          )}
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             {billingNote(summary.category)} Change anything?{" "}
             <a href="/estimate" className="font-medium text-[var(--clay)]">

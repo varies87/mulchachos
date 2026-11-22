@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
 import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
-import { billingNote, buildQuote, money, volumeLabel } from "@/lib/pricing";
+import { ROCK_PRICE_NOTE, billingNote, buildQuote, money, showsPrice, volumeLabel } from "@/lib/pricing";
 import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -109,6 +109,8 @@ export default function Estimator({
   );
 
   const ready = squareFeet > 0;
+  // Rock shows the quantity only; we text the price (see showsPrice).
+  const priced = showsPrice(material.category);
 
   // The material rate is all-in: delivery and spreading are already in it.
   // If a shop ever sets labor_per_yard above zero, it shows as its own line
@@ -132,10 +134,12 @@ export default function Estimator({
       edging,
     });
 
-  const note = ready
-    ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
-      `$${perYard}/yd³, about $${quote.total.toFixed(0)} total`
-    : "No estimate built yet";
+  const note = !ready
+    ? "No estimate built yet"
+    : priced
+      ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
+        `$${perYard}/yd³, about $${quote.total.toFixed(0)} total`
+      : `${quote.billedYards.toFixed(2)} yd³ of ${material.name}, price to be texted`;
 
   function edit(id: number, key: "length" | "width", v: string) {
     const clean = v.replace(/[^\d.]/g, "");
@@ -204,7 +208,7 @@ export default function Estimator({
           <Step n="4" title="Weed fabric?" />
           <Check on={fabric} set={setFabric} label="Lay heavy duty weed fabric first" note={material.category === "rock" ? "Strongly recommended under rock. Stone does not break down, so weeds that come up stay up." : "Optional under mulch. Most beds do better letting mulch feed the soil."} />
 
-          <WeedFabric selected={fabric} onSelect={setFabric} compact />
+          <WeedFabric selected={fabric} onSelect={setFabric} compact priced={priced} />
 
           <div className="mt-10 border-t border-[var(--line)] pt-6">
             <button type="button" onClick={() => setExtras(!extras)} className={ACTION}>
@@ -229,8 +233,10 @@ export default function Estimator({
 
         <aside className="lg:sticky lg:top-24 lg:self-start" aria-live="polite">
           <div className={PANEL}>
-            {ready ? (
+            {ready && priced ? (
               <Quote quote={quote} material={material} perYard={perYard} settings={settings} href={quoteHref} />
+            ) : ready ? (
+              <QuantityOnly quote={quote} material={material} href={quoteHref} />
             ) : (
               <p className="text-[var(--ink-soft)]">
                 Enter a bed size and your estimate builds here.
@@ -244,7 +250,7 @@ export default function Estimator({
         <InquiryForm quoteNote={note} />
       </div>
 
-      {ready && <MobileBar quote={quote} perYard={perYard} href={quoteHref} />}
+      {ready && <MobileBar quote={quote} perYard={perYard} priced={priced} href={quoteHref} />}
     </div>
   );
 }
@@ -448,26 +454,115 @@ function Quote({
   );
 }
 
+/**
+ * Rock: how much the beds need and what's included, with no dollar figures.
+ * The full quote is rebuilt on the server for the owner email.
+ */
+function QuantityOnly({
+  quote,
+  material,
+  href,
+}: {
+  quote: ReturnType<typeof buildQuote>;
+  material: Material;
+  href: string;
+}) {
+  const cap = " text-xs uppercase tracking-widest text-[var(--muted)]";
+
+  return (
+    <>
+      <p className={MONO + cap}>Your beds need</p>
+      <p className="mt-2 flex items-baseline gap-2">
+        <span className="tnum text-4xl font-extrabold">
+          {quote.billedYards.toFixed(2)} yd³
+        </span>
+        <span className="text-sm text-[var(--ink-soft)]">
+          of {material.name.toLowerCase()}
+        </span>
+      </p>
+
+      {quote.lineItems.length > 0 && (
+        <ul className={ITEMS}>
+          {quote.lineItems.map((li) => (
+            <li key={li.label}>
+              {li.label}
+              {li.label === material.name ? (
+                <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                  Delivered and spread
+                </span>
+              ) : (
+                li.detail && (
+                  <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                    {li.detail.replace(/ at \$.*$/, "")}
+                  </span>
+                )
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {quote.minimumYardsApplied && (
+        <p className="mb-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs text-[var(--ink-soft)]">
+          Your beds need {volumeLabel(material.category, quote.yards)}, but our minimum is {volumeLabel(material.category, quote.minimumYards)}, so we&apos;d bring the minimum.
+        </p>
+      )}
+
+      <div className={TOTALROW}>
+        <span className="text-lg font-semibold">Price</span>
+        <span className="text-right text-sm text-[var(--ink-soft)]">
+          {ROCK_PRICE_NOTE}
+        </span>
+      </div>
+
+      <p className={NOTE}>
+        Rock prices depend on the stone, the haul, and how easy the beds are
+        to reach, so we price each job ourselves. {billingNote(material.category)}
+      </p>
+
+      <a href={href} className={PILL + " mt-6"}>
+        Send request to Mulchachos
+      </a>
+      <p className="mt-3 text-center text-xs text-[var(--muted)]">
+        No payment, nothing booked yet. We call or text with your price first.
+      </p>
+    </>
+  );
+}
+
 function MobileBar({
   quote,
   perYard,
+  priced,
   href,
 }: {
   quote: ReturnType<typeof buildQuote>;
   perYard: number;
+  priced: boolean;
   href: string;
 }) {
   return (
     <div className={BAR}>
       <div className="flex items-center justify-between gap-4">
-        <div role="status" aria-live="polite">
-          <p className={"tnum text-2xl font-extrabold " + MONO}>
-            about {money(quote.total)}
-          </p>
-          <p className="text-xs text-[var(--muted)]">
-            {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
-          </p>
-        </div>
+        {priced ? (
+          <div role="status" aria-live="polite">
+            <p className={"tnum text-2xl font-extrabold " + MONO}>
+              about {money(quote.total)}
+            </p>
+            <p className="text-xs text-[var(--muted)]">
+              {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
+            </p>
+          </div>
+        ) : (
+          <div role="status" aria-live="polite">
+            <p className={"tnum text-2xl font-extrabold " + MONO}>
+              {quote.billedYards.toFixed(2)} yd³
+            </p>
+            <p className="text-xs text-[var(--muted)]">
+              We&apos;ll text you a price
+            </p>
+          </div>
+        )}
         <a href={href} className={"shrink-0 " + PILL}>
           Send request
         </a>

@@ -36,10 +36,13 @@ export default function WeedFabric({
   selected,
   onSelect,
   compact = false,
+  priced = true,
 }: {
   selected?: boolean;
   onSelect?: (v: boolean) => void;
   compact?: boolean;
+  /** False for rock, where the estimator shows no dollar figures. */
+  priced?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const interactive = typeof onSelect === "function";
@@ -106,7 +109,9 @@ export default function WeedFabric({
               {selected ? "Added to your estimate" : "Add weed fabric to my estimate"}
             </span>
             <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-              {selected ? "It is priced in above. Untick to remove it." : "Your total updates as soon as you tick this."}
+              {priced
+                ? selected ? "It is priced in above. Untick to remove it." : "Your total updates as soon as you tick this."
+                : selected ? "It is included in your request. Untick to remove it." : "Tick this and we include it in your price."}
             </span>
           </span>
         </label>

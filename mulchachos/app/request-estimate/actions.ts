@@ -9,7 +9,7 @@ import {
   getPricingSettings,
   type Material,
 } from "@/lib/materials";
-import { billingNote, buildQuote, volumeLabel, type Quote } from "@/lib/pricing";
+import { billingNote, buildQuote, showsPrice, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
 
 /**
@@ -60,6 +60,20 @@ export async function submitEstimateRequest(formData: FormData) {
   const limitedAccess = s("limited_access") === "1";
   const edging = s("edging") === "1";
 
+  // Rebuild the quote with current prices before saving. Rock customers are
+  // never shown a total, so the server's number is the one that gets stored.
+  const beds = decodeQuote({ b: s("beds") }).beds;
+  const detail = await rebuildQuote({
+    slug: s("material_slug"),
+    beds,
+    fallbackSquareFeet: squareFeet ?? 0,
+    depthInches: depthInches ?? 3,
+    zip,
+    weedFabric,
+    limitedAccess,
+    edging,
+  });
+
   const sb = await supabaseServer();
   const { error } = await sb.from("estimate_requests").insert({
     name,
@@ -75,7 +89,7 @@ export async function submitEstimateRequest(formData: FormData) {
     weed_fabric: weedFabric,
     limited_access: limitedAccess,
     edging: edging,
-    estimated_total: estimatedTotal,
+    estimated_total: estimatedTotal ?? detail?.quote.total ?? null,
     quote_note: s("quote_note") || null,
     preferred_time: preferredTime || null,
     notes: notes || null,
@@ -91,18 +105,6 @@ export async function submitEstimateRequest(formData: FormData) {
   // Email it to you. Never let a mail failure fail the request itself.
   const usd = (n: number | null) =>
     n ? n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) : null;
-
-  const beds = decodeQuote({ b: s("beds") }).beds;
-  const detail = await rebuildQuote({
-    slug: s("material_slug"),
-    beds,
-    fallbackSquareFeet: squareFeet ?? 0,
-    depthInches: depthInches ?? 3,
-    zip,
-    weedFabric,
-    limitedAccess,
-    edging,
-  });
 
   const html = ownerEmail({
     name, phone, email, address, zip, preferredTime, notes,
@@ -129,9 +131,11 @@ export async function submitEstimateRequest(formData: FormData) {
   // Confirmation to the customer, so they know it went through.
   if (email && looksLikeEmail(email)) {
     const estimateLine =
-      materialName && estimatedTotal
-        ? `${materialName}, about ${usd(estimatedTotal)}`
-        : materialName || null;
+      detail && !showsPrice(detail.material.category)
+        ? `${volumeLabel(detail.material.category, detail.quote.billedYards)} of ${detail.material.name}. We'll text you a price, usually the same day.`
+        : materialName && estimatedTotal
+          ? `${materialName}, about ${usd(estimatedTotal)}`
+          : materialName || null;
     await confirmToCustomer({
       to: email,
       name,
@@ -304,7 +308,9 @@ function ownerEmail(r: {
     }
     rows += `<tr><td style="padding:10px 16px 6px 0;font-weight:bold;color:#453738;border-top:1px solid #E5DCD0;">Total</td><td style="padding:10px 0 6px;text-align:right;font-weight:bold;color:#453738;border-top:1px solid #E5DCD0;">${dollars(q.total)}</td></tr>`;
     if (q.deposit > 0) rows += row("Deposit", dollars(q.deposit));
-    if (r.customerSaw && Math.abs(r.customerSaw - q.total) >= 1) {
+    if (d && !showsPrice(d.material.category)) {
+      rows += row("Note", "They saw the quantity only, no price. Text them this total.");
+    } else if (r.customerSaw && Math.abs(r.customerSaw - q.total) >= 1) {
       rows += row("Note", `Their screen showed ${dollars(r.customerSaw)}. The total above uses your current prices.`);
     }
   }

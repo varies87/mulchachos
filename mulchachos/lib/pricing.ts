@@ -70,12 +70,29 @@ export function volumeLabel(category: string, yards: number): string {
   return `${Number(yards.toFixed(2))} yd³`;
 }
 
-/** Customer-facing price: "$8" per bag for mulch, "$375" per cubic yard for rock. */
+// Which prices the public site shows. Mulch is cheap and simple, so the
+// number helps. Rock is a big ticket that reads better after a conversation,
+// so customers see the quantity and we text them the price. The estimate is
+// still calculated on the server for the owner email and the admin panel.
+export function showsPrice(category: string): boolean {
+  return category === "mulch";
+}
+
+export const ROCK_PRICE_NOTE = "We'll text you a price, usually the same day.";
+
+/**
+ * Customer-facing price: "$8" per bag for mulch. Rock shows "Priced per job"
+ * instead of its per-yard rate (see showsPrice).
+ */
 export function unitPrice(m: { category: string; cost_per_yard: number }) {
+  if (!showsPrice(m.category)) {
+    return { priced: false, amount: "Priced per job", unit: "", short: "Priced per job" };
+  }
   const mulch = m.category === "mulch";
   const n = mulch ? m.cost_per_yard / BAGS_PER_YARD : m.cost_per_yard;
   const amount = `$${Number.isInteger(Math.round(n * 100) / 100) ? Math.round(n) : n.toFixed(2)}`;
   return {
+    priced: true,
     amount,
     unit: mulch ? "per bag" : "per cubic yard",
     short: mulch ? `${amount}/bag` : `${amount}/yd³`,

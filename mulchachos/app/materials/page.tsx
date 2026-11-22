@@ -42,7 +42,7 @@ export default async function MaterialsPage() {
           What goes in the beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Mulch is priced by the bag and rock by the cubic yard,
+          Mulch is priced by the bag and rock is priced per job, both
           delivered and spread. {BILLING.both}
         </p>
       </section>

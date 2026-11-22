@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Estimator from "@/components/Estimator";
+import { showsPrice } from "@/lib/pricing";
 import SiteHeader from "@/components/SiteHeader";
 import {
   getActiveMaterials,
@@ -34,6 +35,13 @@ export default async function EstimatePage({
   const initial =
     materials.find((m) => m.slug === material) ?? materials[0];
 
+  // Rock rates never reach the browser: the estimator only needs them for
+  // the quantity, and we text rock prices instead of showing them.
+  const strip = <T extends { category: string; cost_per_yard: number }>(m: T): T =>
+    showsPrice(m.category) ? m : { ...m, cost_per_yard: 0 };
+  const publicMaterials = materials.map(strip);
+  const publicInitial = initial ? strip(initial) : initial;
+
   if (!initial) {
     return (
       <main>
@@ -62,7 +70,7 @@ export default async function EstimatePage({
         </p>
       </div>
 
-      <Estimator materials={materials} settings={settings} tiers={tiers} fabricTiers={fabricTiers} initial={initial} />
+      <Estimator materials={publicMaterials} settings={settings} tiers={tiers} fabricTiers={fabricTiers} initial={publicInitial} />
     </main>
   );
 }

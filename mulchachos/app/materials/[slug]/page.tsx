@@ -30,7 +30,9 @@ export async function generateMetadata({
   if (!m) return { title: "Material not found" };
   return {
     title: `${m.name} — delivered and spread`,
-    description: `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at ${unitPrice(m).amount} ${unitPrice(m).unit}.`,
+    description: unitPrice(m).priced
+      ? `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at ${unitPrice(m).amount} ${unitPrice(m).unit}.`
+      : `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex. Measure your beds online and we'll text you a price.`,
     alternates: { canonical: `/materials/${m.slug}` },
   };
 }
@@ -110,12 +112,22 @@ export default async function MaterialPage({
             <h1 className="mt-3 text-4xl font-extrabold sm:text-5xl">{material.name}</h1>
             <p className="mt-4 text-lg text-[var(--ink-soft)]">{material.blurb}</p>
 
-            <p className="mt-6 flex items-baseline gap-2">
-              <span className={"tnum text-3xl font-extrabold " + MONO}>
-                {unitPrice(material).amount}
-              </span>
-              <span className="text-[var(--ink-soft)]">{unitPrice(material).unit}, delivered and spread</span>
-            </p>
+            {unitPrice(material).priced ? (
+              <p className="mt-6 flex items-baseline gap-2">
+                <span className={"tnum text-3xl font-extrabold " + MONO}>
+                  {unitPrice(material).amount}
+                </span>
+                <span className="text-[var(--ink-soft)]">{unitPrice(material).unit}, delivered and spread</span>
+              </p>
+            ) : (
+              <p className="mt-6 text-[var(--ink-soft)]">
+                <span className="text-2xl font-extrabold text-[var(--ink)]">Priced per job</span>
+                <span className="mt-1 block">
+                  Delivered and spread. Measure your beds online and we&apos;ll
+                  text you a price, usually the same day.
+                </span>
+              </p>
+            )}
 
             {!material.instant_bookable && (
               <p className="mt-3 rounded-lg bg-[var(--paper-deep)] p-3 text-sm text-[var(--ink-soft)]">
