@@ -112,6 +112,11 @@ export default function RequestEstimateForm({
   function submit(formData: FormData) {
     const paths = shots.filter((s) => s.state === "done" && s.path).map((s) => s.path!);
     formData.set("photo_paths", JSON.stringify(paths));
+    // One ID for both the browser pixel and the server's Conversions API
+    // event, so Meta counts this lead once.
+    const eventId = crypto.randomUUID();
+    formData.set("event_id", eventId);
+    formData.set("page_url", window.location.href);
     start(async () => {
       const res = await submitEstimateRequest(formData);
       if (res?.error) setError(res.error);
@@ -120,7 +125,7 @@ export default function RequestEstimateForm({
         setSent(true);
         // Tells Meta an ad click turned into a job request. Material type
         // only; no name, contact, address, or price.
-        track("Lead", summary ? { content_category: summary.category } : undefined);
+        track("Lead", summary ? { content_category: summary.category } : undefined, eventId);
       }
     });
   }

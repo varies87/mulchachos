@@ -11,6 +11,8 @@ import {
 } from "@/lib/materials";
 import { amountLabel, billingNote, buildQuote, showsPrice, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
+import { sendLeadToMeta } from "@/lib/meta-capi";
+import { cookies, headers } from "next/headers";
 
 /**
  * A request to be contacted about a job. Like inquiries, RLS allows the insert
@@ -141,6 +143,22 @@ export async function submitEstimateRequest(formData: FormData) {
       name,
       estimateLine,
       billing: detail ? billingNote(detail.material.category, true) : null,
+    });
+  }
+
+  // Report the lead to Meta from the server too (see lib/meta-capi.ts).
+  const eventId = s("event_id");
+  if (eventId) {
+    const [h, jar] = await Promise.all([headers(), cookies()]);
+    await sendLeadToMeta({
+      eventId,
+      sourceUrl: s("page_url") || "https://prestonhollowmulchachos.com/request-estimate",
+      name, email, phone, zip,
+      category: detail?.material.category ?? null,
+      ip: h.get("x-forwarded-for")?.split(",")[0].trim() ?? null,
+      userAgent: h.get("user-agent"),
+      fbp: jar.get("_fbp")?.value ?? null,
+      fbc: jar.get("_fbc")?.value ?? null,
     });
   }
 
