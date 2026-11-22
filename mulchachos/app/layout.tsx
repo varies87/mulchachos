@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | Preston Hollow Mulchachos",
   },
   description:
-    "Bulk mulch, decomposed granite, and river rock delivered and spread across the Dallas–Fort Worth metroplex — anywhere within about 30 minutes of Northwest Dallas. Get an estimate online in about a minute.",
+    "Bulk mulch, decomposed granite, and river rock delivered and spread across Dallas and nearby cities. Get an estimate online in about a minute.",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Preston Hollow Mulchachos — mulch and rock, delivered and spread",
     description:
-      "Get an estimate online in about a minute. Bulk mulch and rock delivered and spread across DFW.",
+      "Get an estimate online in about a minute. Bulk mulch and rock delivered and spread across Dallas.",
   },
 };
 

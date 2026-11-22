@@ -13,7 +13,6 @@ const FIELDS: { name: keyof PricingSettings; label: string; note: string; step?:
   { name: "yards_per_trip", label: "Yards per trip", note: "Above this, delivery charges again" },
   { name: "minimum_job", label: "Job minimum", note: "Rock jobs only. Mulch uses the mulch minimum instead" },
   { name: "limited_access_surcharge", label: "Limited access", note: "Per yard, wheelbarrow haul" },
-  { name: "edging_per_foot", label: "Edging", note: "Per linear foot", step: "0.01" },
   { name: "instant_book_yard_cap", label: "Instant book cap", note: "Bigger jobs get reviewed by hand" },
   { name: "deposit_rate", label: "Deposit rate", note: "0.5 means half up front", step: "0.05" },
 ];

@@ -18,8 +18,8 @@ const CTA =
 
 const STEPS = [
   { n: "01", t: "Measure your beds", b: "Measure length by width and pick a material. Mulch is priced on the spot. For rock, we text you a price." },
-  { n: "02", t: "We haul it in", b: "Delivery lands the morning of the job. Nothing sits in your driveway overnight." },
-  { n: "03", t: "We spread and edge", b: "Even depth, clean bed lines, walks blown off. You come home and it is done." },
+  { n: "02", t: "We text to confirm", b: "We go over the material and the amount, and pick a morning that works for you." },
+  { n: "03", t: "Delivered and spread in one visit", b: "Spread to an even depth, walks blown off. You come home and it is done." },
 ];
 
 async function isServiced(zip: string) {
@@ -92,8 +92,8 @@ export default async function DeliveryZipPage({
         </h1>
         <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
           Bulk mulch, decomposed granite, and river rock, delivered and spread
-          right here in {zip}. Get an estimate online in about a minute, and a
-          real person on our team will call or text you back.
+          right here in {zip}. Most suppliers dump a pile in your driveway; we
+          spread it. Get an estimate online in about a minute.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-5">
           <a href="/estimate" className={CTA}>Get my estimate</a>

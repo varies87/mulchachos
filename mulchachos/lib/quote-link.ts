@@ -9,7 +9,6 @@ export interface QuoteLinkState {
   zip: string;
   fabric: boolean;
   access: boolean;
-  edging: boolean;
 }
 
 const flag = (v: boolean) => (v ? "1" : "0");
@@ -27,7 +26,6 @@ export function encodeQuote(s: QuoteLinkState): string {
   if (s.zip) p.set("z", s.zip);
   if (s.fabric) p.set("wf", flag(s.fabric));
   if (s.access) p.set("la", flag(s.access));
-  if (s.edging) p.set("ed", flag(s.edging));
   return p.toString();
 }
 
@@ -50,6 +48,5 @@ export function decodeQuote(params: Record<string, string | undefined>): QuoteLi
     zip: (params.z ?? "").replace(/\D/g, "").slice(0, 5),
     fabric: params.wf === "1",
     access: params.la === "1",
-    edging: params.ed === "1",
   };
 }

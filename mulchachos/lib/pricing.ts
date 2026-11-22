@@ -78,10 +78,29 @@ export function showsPrice(category: string): boolean {
   return category === "mulch";
 }
 
-export const ROCK_PRICE_NOTE = "We'll text you a price, usually the same day.";
+export const ROCK_PRICE_NOTE = "We'll text you a price, usually within a day.";
 
 // Weed fabric is never priced on the site, so its cost can be set per job.
 export const FABRIC_PRICE_NOTE = "Priced with your job. We'll text you that part.";
+
+/**
+ * Amount in words a homeowner understands: "32 bags" for mulch,
+ * "2.5 cubic yards" for rock. volumeLabel keeps the yd³ detail for emails.
+ */
+export function amountLabel(category: string, yards: number): string {
+  if (category === "mulch") {
+    const bags = Math.round(yards * BAGS_PER_YARD);
+    return `${bags} ${bags === 1 ? "bag" : "bags"}`;
+  }
+  const n = Number(yards.toFixed(2));
+  return `${n} cubic ${n === 1 ? "yard" : "yards"}`;
+}
+
+/** "$8" or "$7.63": whole dollars when the price is whole. */
+export function bagPrice(ratePerYard: number): string {
+  const n = Math.round((ratePerYard / BAGS_PER_YARD) * 100) / 100;
+  return Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
+}
 
 /**
  * Customer-facing price: "$8" per bag for mulch. Rock shows "Priced per job"
@@ -127,7 +146,6 @@ export interface QuoteInput {
   depthInches: number;
   zip: string;
   limitedAccess: boolean;
-  edgingFeet: number;
 }
 
 export interface LineItem {
@@ -165,7 +183,7 @@ export interface Quote {
 
 export function buildQuote(input: QuoteInput): Quote {
   const { material, settings, tiers, fabricTiers, weedFabric, squareFeet,
-          depthInches, zip, limitedAccess, edgingFeet } = input;
+          depthInches, zip, limitedAccess } = input;
   const s = settings;
 
   const rawYards = yardsNeeded(squareFeet, depthInches);
@@ -195,7 +213,7 @@ export function buildQuote(input: QuoteInput): Quote {
       label: material.name,
       detail:
         material.category === "mulch"
-          ? `${volumeLabel("mulch", billedYards)} at $${(ratePerYard / BAGS_PER_YARD).toFixed(2)}/bag, delivered and spread`
+          ? `${amountLabel("mulch", billedYards)} at ${bagPrice(ratePerYard)} a bag, delivered and spread`
           : `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
       amount: billedYards * ratePerYard,
     });
@@ -235,13 +253,6 @@ export function buildQuote(input: QuoteInput): Quote {
     });
   }
 
-  if (edgingFeet > 0) {
-    lineItems.push({
-      label: "Edging and weed pull",
-      detail: `${edgingFeet} ft of bed edge`,
-      amount: edgingFeet * s.edging_per_foot,
-    });
-  }
 
   const subtotal = lineItems.reduce((sum, l) => sum + l.amount, 0);
   // The dollar job minimum is for rock. Mulch has its own bag minimum instead.

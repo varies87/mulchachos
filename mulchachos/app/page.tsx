@@ -24,24 +24,24 @@ const CTA =
 const STEPS = [
   {
     n: "01",
-    title: "Measure it online",
+    title: "Measure online",
     body:
-      "Measure your beds, length times width. Mulch is priced on the " +
-      "spot. For rock, you see how much you need and we text you a " +
-      "price. No account, nothing to pay now.",
+      "Length times width for each bed. Mulch is priced on the spot. " +
+      "For rock, you see how much you need and we text you a price.",
   },
   {
     n: "02",
-    title: "We confirm and schedule",
+    title: "We text to confirm",
     body:
-      "A real person calls or texts to confirm the material and " +
-      "pick a morning. Delivery lands the day of the job.",
+      "We go over the material and the amount, and pick a morning " +
+      "that works for you.",
   },
   {
     n: "03",
-    title: "Spread the same day",
+    title: "Delivered and spread in one visit",
     body:
-      "Even depth, clean bed lines, driveway swept before we leave.",
+      "We dump it where it is easiest to work from and spread it the " +
+      "same morning. Nothing sits in your driveway.",
   },
 ]
 
@@ -54,19 +54,19 @@ export default async function Home() {
 
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-10 sm:pt-14">
         <p className={MONO + " text-xs uppercase tracking-widest text-[var(--clay)]"}>
-          Dallas–Fort Worth · mulch &amp; rock delivery
+          Preston Hollow · Dallas
         </p>
 
         <h1 className="mt-4 max-w-3xl text-[2.6rem] font-extrabold leading-[1.02] sm:text-7xl sm:leading-[0.95]">
-          Fresh beds
+          Mulch and rock,
           <br />
-          <span className="text-[var(--clay)]">by the weekend.</span>
+          <span className="text-[var(--clay)]">delivered and spread.</span>
         </h1>
 
         <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
-          Bulk mulch, rock, and decomposed granite — delivered{" "}
-          <em>and</em> spread, anywhere in DFW. Get an estimate online in
-          about a minute. No account, nothing to pay now.
+          Most suppliers dump a pile in your driveway. We bring it, spread
+          it, and sweep up before we leave. Get an estimate online in about
+          a minute, with nothing to pay now.
         </p>
 
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
@@ -98,12 +98,10 @@ export default async function Home() {
 
       <section id="work" className="mx-auto max-w-6xl px-6 py-20">
         <h2 className="text-3xl font-extrabold">
-          Deliveries this season
+          Recent jobs
         </h2>
         <p className="mb-8 mt-3 max-w-xl text-[var(--ink-soft)]">
-          Every load goes down the same way. Dumped where you
-          want it, spread the same day, driveway swept before
-          we leave.
+          A few loads from around Dallas this season.
         </p>
         <JobGallery photos={photos} />
       </section>
@@ -120,18 +118,20 @@ export default async function Home() {
           />
           <div>
             <p className={MONO + " text-xs uppercase tracking-widest text-[var(--clay)]"}>
-              The crew
+              Who shows up
             </p>
             <h2 className="mt-3 text-3xl font-extrabold">
-              Meet the crew.
+              Started with a wagon.
             </h2>
             <p className="mt-4 text-lg text-[var(--ink-soft)]">
-              You deal with a real person on our team from the first text
-              to the last wheelbarrow. If something is not right when we
-              leave, you call and we come back.
+              Harrison started Mulchachos his freshman year of high school,
+              inspired by the Boy Scouts&apos; mulch sales. Four years and
+              hundreds of jobs later, there is a regular crew and our own
+              truck. If something is not right when we leave, call and we
+              come back.
             </p>
             <a href="/about" className="mt-6 inline-block font-medium text-[var(--clay)] underline underline-offset-4">
-              Who we are &rarr;
+              Our story &rarr;
             </a>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default async function Home() {
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-3xl font-extrabold">Ready for fresh beds?</h2>
-            <p className="mt-2 text-white/85">Get your estimate in about a minute.</p>
+            <p className="mt-2 text-white/85">Measure your beds and see what you need.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
             <a href="/estimate" className="inline-block rounded-full bg-white px-7 py-4 text-center text-lg font-medium text-[var(--clay)] hover:bg-white/90">

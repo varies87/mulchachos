@@ -31,7 +31,7 @@ export default function BusinessSchema() {
     "@id": "https://prestonhollowmulchachos.com/#business",
     name: "Preston Hollow Mulchachos",
     description:
-      "Bulk mulch, decomposed granite, and river rock delivered and spread across the Dallas–Fort Worth metroplex.",
+      "Bulk mulch, decomposed granite, and river rock delivered and spread across Dallas and nearby cities.",
     url: "https://prestonhollowmulchachos.com",
     telephone: "214-708-7503",
     priceRange: "$$",

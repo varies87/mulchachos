@@ -1,5 +1,5 @@
 "use client";
-import { ROCK_PRICE_NOTE, billingNote, volumeLabel } from "@/lib/pricing";
+import { ROCK_PRICE_NOTE, amountLabel, billingNote } from "@/lib/pricing";
 
 import { useRef, useState, useTransition } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
@@ -45,7 +45,6 @@ interface Record {
   depth_inches: number;
   weed_fabric: boolean;
   limited_access: boolean;
-  edging: boolean;
   estimated_total: number;
   quote_note: string;
   zip: string;
@@ -128,7 +127,7 @@ export default function RequestEstimateForm({
         <h2 className="text-2xl font-extrabold">Request sent.</h2>
         <p className="mt-3 text-[var(--ink-soft)]">
           Thanks — nothing is booked or charged. We will call or text to go over
-          the material and pick a delivery morning, usually the same day. Want to
+          the material and pick a delivery morning, usually within a day. Want to
           talk it through now? Reach us at{" "}
           <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
             {PHONE}
@@ -148,7 +147,7 @@ export default function RequestEstimateForm({
             Your estimate
           </p>
           <p className="mt-2 text-lg font-semibold">
-            {volumeLabel(summary.category, summary.yards)} of {summary.materialName.toLowerCase()}
+            {amountLabel(summary.category, summary.yards)} of {summary.materialName.toLowerCase()}
           </p>
           {summary.total != null ? (
             <>
@@ -180,7 +179,6 @@ export default function RequestEstimateForm({
       <input type="hidden" name="depth_inches" value={record.depth_inches} />
       <input type="hidden" name="weed_fabric" value={record.weed_fabric ? "1" : "0"} />
       <input type="hidden" name="limited_access" value={record.limited_access ? "1" : "0"} />
-      <input type="hidden" name="edging" value={record.edging ? "1" : "0"} />
       <input type="hidden" name="estimated_total" value={record.estimated_total || ""} />
       <input type="hidden" name="quote_note" value={record.quote_note} />
       <input type="hidden" name="beds" value={record.beds} />

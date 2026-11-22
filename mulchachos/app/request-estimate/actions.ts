@@ -9,7 +9,7 @@ import {
   getPricingSettings,
   type Material,
 } from "@/lib/materials";
-import { billingNote, buildQuote, showsPrice, volumeLabel, type Quote } from "@/lib/pricing";
+import { amountLabel, billingNote, buildQuote, showsPrice, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
 
 /**
@@ -58,7 +58,6 @@ export async function submitEstimateRequest(formData: FormData) {
   const notes = s("notes");
   const weedFabric = s("weed_fabric") === "1";
   const limitedAccess = s("limited_access") === "1";
-  const edging = s("edging") === "1";
 
   // Rebuild the quote with current prices before saving. Rock customers are
   // never shown a total, so the server's number is the one that gets stored.
@@ -71,7 +70,6 @@ export async function submitEstimateRequest(formData: FormData) {
     zip,
     weedFabric,
     limitedAccess,
-    edging,
   });
 
   const sb = await supabaseServer();
@@ -88,7 +86,6 @@ export async function submitEstimateRequest(formData: FormData) {
     depth_inches: depthInches,
     weed_fabric: weedFabric,
     limited_access: limitedAccess,
-    edging: edging,
     // The server total is the real one (it includes weed fabric, which the
     // customer never sees). Fall back to the form only if it can't be rebuilt.
     estimated_total: detail?.quote.total ?? estimatedTotal,
@@ -114,7 +111,7 @@ export async function submitEstimateRequest(formData: FormData) {
     beds,
     squareFeet,
     depthInches,
-    weedFabric, limitedAccess, edging,
+    weedFabric, limitedAccess,
     customerSaw: estimatedTotal,
     materialName,
     detail,
@@ -134,7 +131,7 @@ export async function submitEstimateRequest(formData: FormData) {
   if (email && looksLikeEmail(email)) {
     const estimateLine =
       detail && !showsPrice(detail.material.category)
-        ? `${volumeLabel(detail.material.category, detail.quote.billedYards)} of ${detail.material.name}. We'll text you a price, usually the same day.`
+        ? `${amountLabel(detail.material.category, detail.quote.billedYards)} of ${detail.material.name}. We'll text you a price, usually within a day.`
         : materialName && estimatedTotal
           ? `${materialName}, about ${usd(estimatedTotal)}` +
             (weedFabric ? ", plus weed fabric. We'll text you that price." : "")
@@ -159,7 +156,6 @@ interface QuoteDetail {
   material: Material;
   quote: Quote;
   squareFeet: number;
-  edgingFeet: number;
 }
 
 /**
@@ -175,7 +171,6 @@ async function rebuildQuote(opts: {
   zip: string;
   weedFabric: boolean;
   limitedAccess: boolean;
-  edging: boolean;
 }): Promise<QuoteDetail | null> {
   if (!opts.slug) return null;
   try {
@@ -191,9 +186,6 @@ async function rebuildQuote(opts: {
     const bedSqft = opts.beds.reduce((sum, b) => sum + b.length * b.width, 0);
     const squareFeet = bedSqft || opts.fallbackSquareFeet;
     if (squareFeet <= 0) return null;
-    const edgingFeet = opts.edging
-      ? opts.beds.reduce((sum, b) => sum + 2 * (b.length + b.width), 0)
-      : 0;
 
     const quote = buildQuote({
       material,
@@ -205,9 +197,8 @@ async function rebuildQuote(opts: {
       depthInches: opts.depthInches,
       zip: opts.zip,
       limitedAccess: opts.limitedAccess,
-      edgingFeet,
     });
-    return { material, quote, squareFeet, edgingFeet };
+    return { material, quote, squareFeet };
   } catch (err) {
     console.error("could not rebuild quote for email:", err);
     return null;
@@ -237,7 +228,6 @@ function ownerEmail(r: {
   depthInches: number | null;
   weedFabric: boolean;
   limitedAccess: boolean;
-  edging: boolean;
   customerSaw: number | null;
   materialName: string;
   detail: QuoteDetail | null;
@@ -257,7 +247,6 @@ function ownerEmail(r: {
   const addOns = [
     r.weedFabric ? "Weed fabric" : null,
     r.limitedAccess ? "Limited access (wheelbarrow haul)" : null,
-    r.edging ? `Edging and weed pull${d?.edgingFeet ? ` (${d.edgingFeet} ft)` : ""}` : null,
   ].filter(Boolean).join(", ");
 
   // --- Customer -------------------------------------------------------------

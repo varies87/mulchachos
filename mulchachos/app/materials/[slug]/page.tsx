@@ -10,7 +10,7 @@ import {
   getMaterialBySlug,
   getPricingSettings,
 } from "@/lib/materials";
-import { unitPrice, volumeLabel } from "@/lib/pricing";
+import { amountLabel, unitPrice } from "@/lib/pricing";
 
 // Cached and refreshed every 5 minutes; admin saves refresh it immediately.
 export const revalidate = 300;
@@ -31,8 +31,8 @@ export async function generateMetadata({
   return {
     title: `${m.name} — delivered and spread`,
     description: unitPrice(m).priced
-      ? `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex at ${unitPrice(m).amount} ${unitPrice(m).unit}.`
-      : `${m.blurb} Delivered and spread across the Dallas–Fort Worth metroplex. Measure your beds online and we'll text you a price.`,
+      ? `${m.blurb} Delivered and spread across Dallas and nearby cities at ${unitPrice(m).amount} ${unitPrice(m).unit}.`
+      : `${m.blurb} Delivered and spread across Dallas and nearby cities. Measure your beds online and we'll text you a price.`,
     alternates: { canonical: `/materials/${m.slug}` },
   };
 }
@@ -79,11 +79,11 @@ export default async function MaterialPage({
         },
         {
           head: "It feeds the bed",
-          body: "Hardwood breaks down into the soil over a season, which is the point. Cedar holds its color and keeps insects out.",
+          body: "Hardwood breaks down into the soil over a season, which is the point. Cedar holds its color longer.",
         },
         {
-          head: "Even depth, clean lines",
-          body: "We spread to an even depth, edge the bed, and blow off the walks before we leave.",
+          head: "Spread evenly, cleaned up after",
+          body: "We spread to an even depth and blow off the walks before we leave.",
         },
       ];
 
@@ -124,7 +124,7 @@ export default async function MaterialPage({
                 <span className="text-2xl font-extrabold text-[var(--ink)]">Priced per job</span>
                 <span className="mt-1 block">
                   Delivered and spread. Measure your beds online and we&apos;ll
-                  text you a price, usually the same day.
+                  text you a price, usually within a day.
                 </span>
               </p>
             )}
@@ -138,7 +138,7 @@ export default async function MaterialPage({
 
             {minYards > 0 && (
               <p className="mt-3 text-sm text-[var(--muted)]">
-                {volumeLabel(material.category, minYards)} minimum on {isRock ? "rock" : "mulch"} jobs.
+                {amountLabel(material.category, minYards)} minimum on {isRock ? "rock" : "mulch"} jobs.
               </p>
             )}
 

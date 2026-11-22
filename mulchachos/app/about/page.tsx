@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   title: "Who we are",
   description:
     "Preston Hollow Mulchachos is a local mulch and rock crew " +
-    "serving the Dallas–Fort Worth metroplex.",
+    "that started with a wagon in Preston Hollow and now serves " +
+    "Dallas and the cities around it.",
 };
 
 const CTA =
@@ -43,8 +44,7 @@ export default function AboutPage() {
             Mulchachos started my freshman year of high school
             with a wagon, inspired by the Boy Scouts&apos; mulch
             sales. Four years and hundreds of jobs later, we have
-            a regular crew, our own truck, and rock bought in bulk
-            straight from the supplier.
+            a regular crew and our own truck.
           </p>
           <p>
             We&apos;re growing, and we plan to keep growing. As we
@@ -53,8 +53,8 @@ export default function AboutPage() {
             before we leave.
           </p>
           <p>
-            You can get an estimate online in about a minute, and
-            a real person on our team will call or text you back.
+            Get an estimate online and we&apos;ll text you back to
+            confirm the details.
           </p>
           <p>
             If something isn&apos;t right when we leave, call me
@@ -79,9 +79,8 @@ export default function AboutPage() {
             Where we work
           </h2>
           <p className="mt-3 text-[var(--ink-soft)]">
-            We run out of Northwest Dallas and cover the whole
-            Dallas–Fort Worth metroplex — just about anywhere
-            within 30 minutes, from University Park and Highland
+            We run out of Northwest Dallas and work across Dallas and
+            the cities around it, from University Park and Highland
             Park to Irving, Carrollton, Plano, and Grand Prairie.
           </p>
 

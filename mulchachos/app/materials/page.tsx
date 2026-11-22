@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Materials",
   description:
     "Mulch, decomposed granite, and river rock we deliver and " +
-    "spread across the Dallas–Fort Worth metroplex.",
+    "spread across Dallas and nearby cities.",
   alternates: { canonical: "/materials" },
 };
 

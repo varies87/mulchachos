@@ -20,7 +20,7 @@ export default function SiteHeader() {
 
         {/* Wide screens: full text nav. */}
         <nav className="ml-auto hidden items-center gap-5 text-sm sm:flex">
-          <a href="/estimate" className={LINK}>Estimator</a>
+          <a href="/estimate" className={LINK}>Get an estimate</a>
           <a href="/materials" className={LINK}>Materials</a>
           <a href={"tel:" + PHONE} className={CALL}>{PHONE}</a>
         </nav>
