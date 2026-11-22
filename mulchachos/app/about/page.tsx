@@ -53,7 +53,7 @@ export default function AboutPage() {
             before we leave.
           </p>
           <p>
-            You can price your beds online in about a minute, and
+            You can get an estimate online in about a minute, and
             a real person on our team will call or text you back.
           </p>
           <p>
@@ -87,7 +87,7 @@ export default function AboutPage() {
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a href="/estimate" className={CTA}>
-              Price my beds
+              Get my estimate
             </a>
             <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
               or call {PHONE}

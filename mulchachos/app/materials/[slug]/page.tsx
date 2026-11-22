@@ -129,7 +129,7 @@ export default async function MaterialPage({
               </p>
             )}
 
-            {!material.instant_bookable && (
+            {!material.instant_bookable && unitPrice(material).priced && (
               <p className="mt-3 rounded-lg bg-[var(--paper-deep)] p-3 text-sm text-[var(--ink-soft)]">
                 Priced by load and haul distance, so this one gets a quick call
                 to confirm before we book it.
@@ -144,7 +144,7 @@ export default async function MaterialPage({
 
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <a href={`/estimate?material=${material.slug}`} className={CTA}>
-                Price this material
+                Get an estimate
               </a>
               <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
                 or call {PHONE}

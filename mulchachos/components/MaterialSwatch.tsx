@@ -48,7 +48,7 @@ export default function MaterialSwatch({
 
   if (href) {
     return (
-      <a href={href} className={base} aria-label={`Price a job in ${material.name}`}>
+      <a href={href} className={base} aria-label={`Get an estimate for ${material.name}`}>
         {inner}
       </a>
     );

@@ -80,6 +80,9 @@ export function showsPrice(category: string): boolean {
 
 export const ROCK_PRICE_NOTE = "We'll text you a price, usually the same day.";
 
+// Weed fabric is never priced on the site, so its cost can be set per job.
+export const FABRIC_PRICE_NOTE = "Priced with your job. We'll text you that part.";
+
 /**
  * Customer-facing price: "$8" per bag for mulch. Rock shows "Priced per job"
  * instead of its per-yard rate (see showsPrice).
@@ -128,6 +131,8 @@ export interface QuoteInput {
 }
 
 export interface LineItem {
+  /** "fabric" marks the weed fabric line, whose price customers never see. */
+  kind?: "material" | "fabric" | "other";
   label: string;
   detail?: string;
   amount: number;
@@ -148,6 +153,10 @@ export interface Quote {
   lineItems: LineItem[];
   subtotal: number;
   total: number;
+  /** Weed fabric's share of the total. Customers see total minus this. */
+  fabricAmount: number;
+  /** What a customer is shown: the total without weed fabric. */
+  shownTotal: number;
   minimumApplied: boolean;
   deposit: number;
   instantBookable: boolean;
@@ -182,6 +191,7 @@ export function buildQuote(input: QuoteInput): Quote {
   // so nothing shows as a $0 line item.
   if (yards > 0) {
     lineItems.push({
+      kind: "material",
       label: material.name,
       detail:
         material.category === "mulch"
@@ -193,6 +203,7 @@ export function buildQuote(input: QuoteInput): Quote {
     if (weedFabric) {
       const fab = fabricPrice(fabricTiers, squareFeet);
       lineItems.push({
+        kind: "fabric",
         label: "Heavy duty weed fabric",
         detail: `${squareFeet.toLocaleString()} sq ft at $${(fab / squareFeet).toFixed(2)}/sq ft`,
         amount: fab,
@@ -237,6 +248,10 @@ export function buildQuote(input: QuoteInput): Quote {
   const minimumApplied =
     material.category !== "mulch" && subtotal > 0 && subtotal < s.minimum_job;
   const total = minimumApplied ? s.minimum_job : subtotal;
+  const fabricAmount = lineItems
+    .filter((l) => l.kind === "fabric")
+    .reduce((sum, l) => sum + l.amount, 0);
+  const shownTotal = Math.max(0, total - fabricAmount);
 
   // Cases where quoting sight-unseen would lose money or force a callback.
   const reviewReasons: string[] = [];
@@ -265,6 +280,8 @@ export function buildQuote(input: QuoteInput): Quote {
     lineItems,
     subtotal,
     total,
+    fabricAmount,
+    shownTotal,
     minimumApplied,
     deposit: Math.round(total * s.deposit_rate),
     instantBookable: reviewReasons.length === 0 && billedYards > 0,

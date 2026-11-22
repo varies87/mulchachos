@@ -40,7 +40,7 @@ export default function PrivacyPage() {
 
         <h2 className={H2}>Estimates</h2>
         <p className="mt-3">
-          Prices from the estimator are estimates. We confirm the material and
+          Prices and quantities from the estimator are estimates. We confirm the material and
           volume before anything is booked. {BILLING.both}
         </p>
 

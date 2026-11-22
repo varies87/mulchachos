@@ -89,7 +89,9 @@ export async function submitEstimateRequest(formData: FormData) {
     weed_fabric: weedFabric,
     limited_access: limitedAccess,
     edging: edging,
-    estimated_total: estimatedTotal ?? detail?.quote.total ?? null,
+    // The server total is the real one (it includes weed fabric, which the
+    // customer never sees). Fall back to the form only if it can't be rebuilt.
+    estimated_total: detail?.quote.total ?? estimatedTotal,
     quote_note: s("quote_note") || null,
     preferred_time: preferredTime || null,
     notes: notes || null,
@@ -134,7 +136,8 @@ export async function submitEstimateRequest(formData: FormData) {
       detail && !showsPrice(detail.material.category)
         ? `${volumeLabel(detail.material.category, detail.quote.billedYards)} of ${detail.material.name}. We'll text you a price, usually the same day.`
         : materialName && estimatedTotal
-          ? `${materialName}, about ${usd(estimatedTotal)}`
+          ? `${materialName}, about ${usd(estimatedTotal)}` +
+            (weedFabric ? ", plus weed fabric. We'll text you that price." : "")
           : materialName || null;
     await confirmToCustomer({
       to: email,
@@ -310,6 +313,8 @@ function ownerEmail(r: {
     if (q.deposit > 0) rows += row("Deposit", dollars(q.deposit));
     if (d && !showsPrice(d.material.category)) {
       rows += row("Note", "They saw the quantity only, no price. Text them this total.");
+    } else if (q.fabricAmount > 0) {
+      rows += row("Note", `They saw ${dollars(q.shownTotal)} before weed fabric. The fabric price wasn't shown, so text them the full total.`);
     } else if (r.customerSaw && Math.abs(r.customerSaw - q.total) >= 1) {
       rows += row("Note", `Their screen showed ${dollars(r.customerSaw)}. The total above uses your current prices.`);
     }

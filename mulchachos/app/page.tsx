@@ -24,10 +24,11 @@ const CTA =
 const STEPS = [
   {
     n: "01",
-    title: "Price it online",
+    title: "Measure it online",
     body:
-      "Measure your beds, length times width. You get an itemized " +
-      "price in about a minute. No account, nothing to pay now.",
+      "Measure your beds, length times width. Mulch is priced on the " +
+      "spot. For rock, you see how much you need and we text you a " +
+      "price. No account, nothing to pay now.",
   },
   {
     n: "02",
@@ -64,13 +65,13 @@ export default async function Home() {
 
         <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
           Bulk mulch, rock, and decomposed granite — delivered{" "}
-          <em>and</em> spread, anywhere in DFW. Price your beds online in
+          <em>and</em> spread, anywhere in DFW. Get an estimate online in
           about a minute. No account, nothing to pay now.
         </p>
 
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
           <a href="/estimate" className={CTA + " w-full text-center sm:w-auto"}>
-            Price my beds
+            Get my estimate
           </a>
           <a href="tel:214-708-7503" className="text-center text-base font-medium text-[var(--clay)] sm:text-left">
             or call 214-708-7503
@@ -125,8 +126,9 @@ export default async function Home() {
               Meet the crew.
             </h2>
             <p className="mt-4 text-lg text-[var(--ink-soft)]">
-              The person who quotes your job is the person who runs it. If
-              something is not right when we leave, you call and we come back.
+              You deal with a real person on our team from the first text
+              to the last wheelbarrow. If something is not right when we
+              leave, you call and we come back.
             </p>
             <a href="/about" className="mt-6 inline-block font-medium text-[var(--clay)] underline underline-offset-4">
               Who we are &rarr;
@@ -143,11 +145,11 @@ export default async function Home() {
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-3xl font-extrabold">Ready for fresh beds?</h2>
-            <p className="mt-2 text-white/85">Get your price in about a minute.</p>
+            <p className="mt-2 text-white/85">Get your estimate in about a minute.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
             <a href="/estimate" className="inline-block rounded-full bg-white px-7 py-4 text-center text-lg font-medium text-[var(--clay)] hover:bg-white/90">
-              Price my beds
+              Get my estimate
             </a>
             <a href="tel:214-708-7503" className="text-center font-medium text-white underline underline-offset-4">
               or call 214-708-7503

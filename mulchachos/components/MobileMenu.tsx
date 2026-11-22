@@ -34,7 +34,7 @@ export default function MobileMenu({ phone }: { phone: string }) {
           <nav className="absolute inset-x-0 top-full z-50 border-b border-[var(--line)] bg-[var(--paper)] shadow-sm">
             <div className="mx-auto max-w-6xl px-5 py-2">
               <a href="/estimate" onClick={() => setOpen(false)} className="block border-b border-[var(--line)] py-3.5 text-lg font-medium text-[var(--clay)]">
-                Price my beds
+                Get my estimate
               </a>
               <a href="/materials" onClick={() => setOpen(false)} className="block border-b border-[var(--line)] py-3.5 text-lg text-[var(--ink)]">
                 Materials

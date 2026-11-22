@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
 import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
-import { ROCK_PRICE_NOTE, billingNote, buildQuote, money, showsPrice, volumeLabel } from "@/lib/pricing";
+import { FABRIC_PRICE_NOTE, ROCK_PRICE_NOTE, billingNote, buildQuote, money, showsPrice, volumeLabel } from "@/lib/pricing";
 import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
@@ -138,7 +138,8 @@ export default function Estimator({
     ? "No estimate built yet"
     : priced
       ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
-        `$${perYard}/yd³, about $${quote.total.toFixed(0)} total`
+        `$${perYard}/yd³, about $${quote.total.toFixed(0)} total` +
+        (fabric ? ", plus weed fabric (price to be texted)" : "")
       : `${quote.billedYards.toFixed(2)} yd³ of ${material.name}, price to be texted`;
 
   function edit(id: number, key: "length" | "width", v: string) {
@@ -208,7 +209,7 @@ export default function Estimator({
           <Step n="4" title="Weed fabric?" />
           <Check on={fabric} set={setFabric} label="Lay heavy duty weed fabric first" note={material.category === "rock" ? "Strongly recommended under rock. Stone does not break down, so weeds that come up stay up." : "Optional under mulch. Most beds do better letting mulch feed the soil."} />
 
-          <WeedFabric selected={fabric} onSelect={setFabric} compact priced={priced} />
+          <WeedFabric selected={fabric} onSelect={setFabric} compact />
 
           <div className="mt-10 border-t border-[var(--line)] pt-6">
             <button type="button" onClick={() => setExtras(!extras)} className={ACTION}>
@@ -398,12 +399,12 @@ function Quote({
               {li.label}
               {li.detail && (
                 <span className="mt-0.5 block text-xs text-[var(--muted)]">
-                  {li.detail}
+                  {li.kind === "fabric" ? FABRIC_PRICE_NOTE : li.detail}
                 </span>
               )}
             </dt>
             <dd className={"tnum whitespace-nowrap " + MONO}>
-              {money(li.amount)}
+              {li.kind === "fabric" ? "Texted" : money(li.amount)}
             </dd>
           </div>
         ))}
@@ -416,7 +417,14 @@ function Quote({
       )}
 
       <div className={TOTALROW}>
-        <span className="text-lg font-semibold">Estimated total</span>
+        <span className="text-lg font-semibold">
+          Estimated total
+          {quote.lineItems.some((l) => l.kind === "fabric") && (
+            <span className="block text-xs font-normal text-[var(--muted)]">
+              Before weed fabric
+            </span>
+          )}
+        </span>
         <span className={"tnum text-2xl " + MONO}>
           {money(quote.total)}
         </span>
@@ -493,7 +501,7 @@ function QuantityOnly({
               ) : (
                 li.detail && (
                   <span className="mt-0.5 block text-xs text-[var(--muted)]">
-                    {li.detail.replace(/ at \$.*$/, "")}
+                    {li.kind === "fabric" ? "Laid and pinned before the rock" : li.detail.replace(/ at \$.*$/, "")}
                   </span>
                 )
               )}
@@ -551,6 +559,7 @@ function MobileBar({
             </p>
             <p className="text-xs text-[var(--muted)]">
               {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
+              {quote.lineItems.some((l) => l.kind === "fabric") && ", plus weed fabric"}
             </p>
           </div>
         ) : (

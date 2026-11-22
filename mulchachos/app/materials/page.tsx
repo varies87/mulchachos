@@ -88,7 +88,7 @@ function Group({ title, items }: { title: string; items: Item[] }) {
 
             <p className="mt-2 text-[var(--ink-soft)]">{m.blurb}</p>
 
-            {!m.instant_bookable && (
+            {!m.instant_bookable && unitPrice(m).priced && (
               <p className="mt-2 text-sm text-[var(--muted)]">
                 Quoted by load and haul distance.
               </p>
@@ -96,7 +96,7 @@ function Group({ title, items }: { title: string; items: Item[] }) {
 
             <div className="mt-4 flex items-center gap-4">
               <a href={"/estimate?material=" + m.slug} className={BTN}>
-                Price this
+                Get an estimate
               </a>
               <a href={"/materials/" + m.slug} className="text-sm font-medium text-[var(--clay)]">
                 Details

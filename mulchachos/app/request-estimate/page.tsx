@@ -70,11 +70,13 @@ export default async function RequestEstimatePage({
         materialName: material!.name,
         category: material!.category,
         yards: quote!.billedYards,
-        total: priced ? quote!.total : null,
+        // Never includes weed fabric, which is priced per job.
+        total: priced ? quote!.shownTotal : null,
+        fabric: state.fabric,
         note:
           `${quote!.billedYards.toFixed(2)} yd³ of ${material!.name}` +
-          (priced ? `, about ${money(quote!.total)}` : ", price to be texted") +
-          (state.fabric ? ", with weed fabric" : ""),
+          (priced ? `, about ${money(quote!.shownTotal)}` : ", price to be texted") +
+          (state.fabric ? ", plus weed fabric (price to be texted)" : ""),
       }
     : null;
 
@@ -107,7 +109,7 @@ export default async function RequestEstimatePage({
             weed_fabric: state.fabric,
             limited_access: state.access,
             edging: state.edging,
-            estimated_total: priced ? quote!.total : 0,
+            estimated_total: priced ? quote!.shownTotal : 0,
             quote_note: summary?.note ?? "",
             zip: state.zip,
             beds: state.beds.map((b) => `${b.length}x${b.width}`).join("_"),

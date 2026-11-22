@@ -33,6 +33,8 @@ interface Summary {
   yards: number;
   /** Null for rock: we text the price instead of showing it. */
   total: number | null;
+  /** Weed fabric picked. Its price is texted, never shown. */
+  fabric: boolean;
   note: string;
 }
 
@@ -149,9 +151,16 @@ export default function RequestEstimateForm({
             {volumeLabel(summary.category, summary.yards)} of {summary.materialName.toLowerCase()}
           </p>
           {summary.total != null ? (
-            <p className={"tnum mt-1 text-2xl font-extrabold " + MONO}>
-              about {money(summary.total)}
-            </p>
+            <>
+              <p className={"tnum mt-1 text-2xl font-extrabold " + MONO}>
+                about {money(summary.total)}
+              </p>
+              {summary.fabric && (
+                <p className="mt-1 text-sm text-[var(--ink-soft)]">
+                  Plus weed fabric. We&apos;ll text you that price.
+                </p>
+              )}
+            </>
           ) : (
             <p className="mt-1 text-[var(--ink-soft)]">{ROCK_PRICE_NOTE}</p>
           )}
