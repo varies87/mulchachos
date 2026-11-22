@@ -9,8 +9,10 @@ import {
   getPricingSettings,
   type Material,
 } from "@/lib/materials";
-import { billingNote, buildQuote, volumeLabel, type Quote } from "@/lib/pricing";
+import { amountLabel, billingNote, buildQuote, showsPrice, volumeLabel, type Quote } from "@/lib/pricing";
 import { decodeQuote } from "@/lib/quote-link";
+import { sendLeadToMeta } from "@/lib/meta-capi";
+import { cookies, headers } from "next/headers";
 
 /**
  * A request to be contacted about a job. Like inquiries, RLS allows the insert
@@ -58,7 +60,19 @@ export async function submitEstimateRequest(formData: FormData) {
   const notes = s("notes");
   const weedFabric = s("weed_fabric") === "1";
   const limitedAccess = s("limited_access") === "1";
-  const edging = s("edging") === "1";
+
+  // Rebuild the quote with current prices before saving. Rock customers are
+  // never shown a total, so the server's number is the one that gets stored.
+  const beds = decodeQuote({ b: s("beds") }).beds;
+  const detail = await rebuildQuote({
+    slug: s("material_slug"),
+    beds,
+    fallbackSquareFeet: squareFeet ?? 0,
+    depthInches: depthInches ?? 3,
+    zip,
+    weedFabric,
+    limitedAccess,
+  });
 
   const sb = await supabaseServer();
   const { error } = await sb.from("estimate_requests").insert({
@@ -74,8 +88,9 @@ export async function submitEstimateRequest(formData: FormData) {
     depth_inches: depthInches,
     weed_fabric: weedFabric,
     limited_access: limitedAccess,
-    edging: edging,
-    estimated_total: estimatedTotal,
+    // The server total is the real one (it includes weed fabric, which the
+    // customer never sees). Fall back to the form only if it can't be rebuilt.
+    estimated_total: detail?.quote.total ?? estimatedTotal,
     quote_note: s("quote_note") || null,
     preferred_time: preferredTime || null,
     notes: notes || null,
@@ -92,25 +107,13 @@ export async function submitEstimateRequest(formData: FormData) {
   const usd = (n: number | null) =>
     n ? n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) : null;
 
-  const beds = decodeQuote({ b: s("beds") }).beds;
-  const detail = await rebuildQuote({
-    slug: s("material_slug"),
-    beds,
-    fallbackSquareFeet: squareFeet ?? 0,
-    depthInches: depthInches ?? 3,
-    zip,
-    weedFabric,
-    limitedAccess,
-    edging,
-  });
-
   const html = ownerEmail({
     name, phone, email, address, zip, preferredTime, notes,
     photoCount: photoPaths.length,
     beds,
     squareFeet,
     depthInches,
-    weedFabric, limitedAccess, edging,
+    weedFabric, limitedAccess,
     customerSaw: estimatedTotal,
     materialName,
     detail,
@@ -129,14 +132,33 @@ export async function submitEstimateRequest(formData: FormData) {
   // Confirmation to the customer, so they know it went through.
   if (email && looksLikeEmail(email)) {
     const estimateLine =
-      materialName && estimatedTotal
-        ? `${materialName}, about ${usd(estimatedTotal)}`
-        : materialName || null;
+      detail && !showsPrice(detail.material.category)
+        ? `${amountLabel(detail.material.category, detail.quote.billedYards)} of ${detail.material.name}. We'll text you a price, usually within a day.`
+        : materialName && estimatedTotal
+          ? `${materialName}, about ${usd(estimatedTotal)}` +
+            (weedFabric ? ", plus weed fabric. We'll text you that price." : "")
+          : materialName || null;
     await confirmToCustomer({
       to: email,
       name,
       estimateLine,
       billing: detail ? billingNote(detail.material.category, true) : null,
+    });
+  }
+
+  // Report the lead to Meta from the server too (see lib/meta-capi.ts).
+  const eventId = s("event_id");
+  if (eventId) {
+    const [h, jar] = await Promise.all([headers(), cookies()]);
+    await sendLeadToMeta({
+      eventId,
+      sourceUrl: s("page_url") || "https://prestonhollowmulchachos.com/request-estimate",
+      name, email, phone, zip,
+      category: detail?.material.category ?? null,
+      ip: h.get("x-forwarded-for")?.split(",")[0].trim() ?? null,
+      userAgent: h.get("user-agent"),
+      fbp: jar.get("_fbp")?.value ?? null,
+      fbc: jar.get("_fbc")?.value ?? null,
     });
   }
 
@@ -152,7 +174,6 @@ interface QuoteDetail {
   material: Material;
   quote: Quote;
   squareFeet: number;
-  edgingFeet: number;
 }
 
 /**
@@ -168,7 +189,6 @@ async function rebuildQuote(opts: {
   zip: string;
   weedFabric: boolean;
   limitedAccess: boolean;
-  edging: boolean;
 }): Promise<QuoteDetail | null> {
   if (!opts.slug) return null;
   try {
@@ -184,9 +204,6 @@ async function rebuildQuote(opts: {
     const bedSqft = opts.beds.reduce((sum, b) => sum + b.length * b.width, 0);
     const squareFeet = bedSqft || opts.fallbackSquareFeet;
     if (squareFeet <= 0) return null;
-    const edgingFeet = opts.edging
-      ? opts.beds.reduce((sum, b) => sum + 2 * (b.length + b.width), 0)
-      : 0;
 
     const quote = buildQuote({
       material,
@@ -198,9 +215,8 @@ async function rebuildQuote(opts: {
       depthInches: opts.depthInches,
       zip: opts.zip,
       limitedAccess: opts.limitedAccess,
-      edgingFeet,
     });
-    return { material, quote, squareFeet, edgingFeet };
+    return { material, quote, squareFeet };
   } catch (err) {
     console.error("could not rebuild quote for email:", err);
     return null;
@@ -230,7 +246,6 @@ function ownerEmail(r: {
   depthInches: number | null;
   weedFabric: boolean;
   limitedAccess: boolean;
-  edging: boolean;
   customerSaw: number | null;
   materialName: string;
   detail: QuoteDetail | null;
@@ -250,7 +265,6 @@ function ownerEmail(r: {
   const addOns = [
     r.weedFabric ? "Weed fabric" : null,
     r.limitedAccess ? "Limited access (wheelbarrow haul)" : null,
-    r.edging ? `Edging and weed pull${d?.edgingFeet ? ` (${d.edgingFeet} ft)` : ""}` : null,
   ].filter(Boolean).join(", ");
 
   // --- Customer -------------------------------------------------------------
@@ -304,7 +318,11 @@ function ownerEmail(r: {
     }
     rows += `<tr><td style="padding:10px 16px 6px 0;font-weight:bold;color:#453738;border-top:1px solid #E5DCD0;">Total</td><td style="padding:10px 0 6px;text-align:right;font-weight:bold;color:#453738;border-top:1px solid #E5DCD0;">${dollars(q.total)}</td></tr>`;
     if (q.deposit > 0) rows += row("Deposit", dollars(q.deposit));
-    if (r.customerSaw && Math.abs(r.customerSaw - q.total) >= 1) {
+    if (d && !showsPrice(d.material.category)) {
+      rows += row("Note", "They saw the quantity only, no price. Text them this total.");
+    } else if (q.fabricAmount > 0) {
+      rows += row("Note", `They saw ${dollars(q.shownTotal)} before weed fabric. The fabric price wasn't shown, so text them the full total.`);
+    } else if (r.customerSaw && Math.abs(r.customerSaw - q.total) >= 1) {
       rows += row("Note", `Their screen showed ${dollars(r.customerSaw)}. The total above uses your current prices.`);
     }
   }

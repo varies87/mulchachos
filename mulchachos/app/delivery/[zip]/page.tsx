@@ -17,9 +17,9 @@ const CTA =
   "font-medium text-white hover:bg-[var(--clay-deep)]";
 
 const STEPS = [
-  { n: "01", t: "Price your beds", b: "Measure length by width and pick a material. A real number comes up in about a minute." },
-  { n: "02", t: "We haul it in", b: "Delivery lands the morning of the job. Nothing sits in your driveway overnight." },
-  { n: "03", t: "We spread and edge", b: "Even depth, clean bed lines, walks blown off. You come home and it is done." },
+  { n: "01", t: "Measure your beds", b: "Measure length by width and pick a material. Mulch is priced on the spot. For rock, we text you a price." },
+  { n: "02", t: "We text to confirm", b: "We go over the material and the amount, and pick a morning that works for you." },
+  { n: "03", t: "Delivered and spread in one visit", b: "Spread to an even depth, walks blown off. You come home and it is done." },
 ];
 
 async function isServiced(zip: string) {
@@ -36,7 +36,7 @@ export async function generateMetadata({
   const area = neighborhoodFor(zip);
   return {
     title: `Mulch and rock delivery in ${area} (${zip})`,
-    description: `Bulk mulch, decomposed granite, and river rock delivered and spread in ${area}, ${zip}. Price your beds in under a minute and book without a site visit.`,
+    description: `Bulk mulch, decomposed granite, and river rock delivered and spread in ${area}, ${zip}. Get an estimate online in about a minute.`,
     alternates: { canonical: `/delivery/${zip}` },
   };
 }
@@ -49,7 +49,7 @@ export default async function DeliveryZipPage({
   const { zip } = await params;
   if (!/^\d{5}$/.test(zip)) notFound();
 
-  const [{ serviced, settings }, materials] = await Promise.all([
+  const [{ serviced }, materials] = await Promise.all([
     isServiced(zip),
     getActiveMaterials(),
   ]);
@@ -92,11 +92,11 @@ export default async function DeliveryZipPage({
         </h1>
         <p className="mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
           Bulk mulch, decomposed granite, and river rock, delivered and spread
-          right here in {zip}. A real price in about a minute, and you can book
-          without waiting on a site visit.
+          right here in {zip}. Most suppliers dump a pile in your driveway; we
+          spread it. Get an estimate online in about a minute.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-5">
-          <a href="/estimate" className={CTA}>Price my beds</a>
+          <a href="/estimate" className={CTA}>Get my estimate</a>
           <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
             or call {PHONE}
           </a>
@@ -138,7 +138,7 @@ export default async function DeliveryZipPage({
         </a>
       </section>
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }

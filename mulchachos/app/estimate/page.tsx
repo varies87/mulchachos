@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import Estimator from "@/components/Estimator";
+import { showsPrice } from "@/lib/pricing";
 import SiteHeader from "@/components/SiteHeader";
 import {
   getActiveMaterials,
   getDiscountTiers,
-  getFabricTiers,
   getPricingSettings,
 } from "@/lib/materials";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Price your beds",
+  title: "Get an estimate",
   description:
-    "Enter your bed sizes and pick a material for an itemized " +
-    "mulch or rock estimate in about a minute.",
+    "Enter your bed sizes and pick a material. Mulch is priced on the " +
+    "spot, and for rock you see how much you need and we text you a price.",
   alternates: { canonical: "/estimate" },
 };
 
@@ -23,16 +23,24 @@ export default async function EstimatePage({
 }: {
   searchParams: Promise<{ material?: string }>;
 }) {
-  const [{ material }, materials, settings, tiers, fabricTiers] = await Promise.all([
+  const [{ material }, materials, settings, tiers] = await Promise.all([
     searchParams,
     getActiveMaterials(),
     getPricingSettings(),
     getDiscountTiers(),
-    getFabricTiers(),
   ]);
 
   const initial =
     materials.find((m) => m.slug === material) ?? materials[0];
+
+  // Weed fabric rates never reach the browser either (fabricTiers is empty
+  // below), so the estimator's total leaves fabric out.
+  // Rock rates never reach the browser: the estimator only needs them for
+  // the quantity, and we text rock prices instead of showing them.
+  const strip = <T extends { category: string; cost_per_yard: number }>(m: T): T =>
+    showsPrice(m.category) ? m : { ...m, cost_per_yard: 0 };
+  const publicMaterials = materials.map(strip);
+  const publicInitial = initial ? strip(initial) : initial;
 
   if (!initial) {
     return (
@@ -54,15 +62,14 @@ export default async function EstimatePage({
 
       <div className="mx-auto max-w-6xl px-6 pb-10 pt-10">
         <h1 className="max-w-2xl text-4xl font-extrabold sm:text-6xl">
-          Price your beds.
+          Measure your beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Rough measurements are fine. We measure again before the
-          job, at the rate quoted here.
+          Rough measurements are fine. We check them before the job.
         </p>
       </div>
 
-      <Estimator materials={materials} settings={settings} tiers={tiers} fabricTiers={fabricTiers} initial={initial} />
+      <Estimator materials={publicMaterials} settings={settings} tiers={tiers} fabricTiers={[]} initial={publicInitial} />
     </main>
   );
 }

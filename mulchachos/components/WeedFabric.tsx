@@ -80,13 +80,12 @@ export default function WeedFabric({
       </p>
 
       <h2 className={head}>
-        Heavy duty weed fabric, under every rock job.
+        Heavy duty weed fabric, under your rock.
       </h2>
 
       <p className="mt-4 max-w-xl text-lg text-[var(--ink-soft)]">
         If you are putting stone down, put fabric under it. It is the
-        cheapest part of the job and the part you will be glad about
-        three summers from now.
+        part of the job you will be glad about three summers from now.
       </p>
 
       <dl className="mt-8 space-y-5">
@@ -106,7 +105,7 @@ export default function WeedFabric({
               {selected ? "Added to your estimate" : "Add weed fabric to my estimate"}
             </span>
             <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-              {selected ? "It is priced in above. Untick to remove it." : "Your total updates as soon as you tick this."}
+              {selected ? "It is included in your request. Untick to remove it." : "Tick this and we include it when we price your job."}
             </span>
           </span>
         </label>
@@ -117,9 +116,6 @@ export default function WeedFabric({
           <a href="/estimate" className={CTA}>
             Add it to your estimate
           </a>
-          <span className="text-sm text-[var(--muted)]">
-            From $0.50 per sq ft on larger beds
-          </span>
         </div>
       )}
     </div>

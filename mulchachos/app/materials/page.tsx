@@ -4,7 +4,7 @@ import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import WeedFabric from "@/components/WeedFabric";
 import SiteFooter from "@/components/SiteFooter";
-import { getActiveMaterials, getPricingSettings } from "@/lib/materials";
+import { getActiveMaterials } from "@/lib/materials";
 
 // Cached and refreshed every 5 minutes; admin saves refresh it immediately.
 export const revalidate = 300;
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Materials",
   description:
     "Mulch, decomposed granite, and river rock we deliver and " +
-    "spread across the Dallas–Fort Worth metroplex.",
+    "spread across Dallas and nearby cities.",
   alternates: { canonical: "/materials" },
 };
 
@@ -25,10 +25,7 @@ const BTN =
   "hover:bg-[var(--clay)] hover:text-white";
 
 export default async function MaterialsPage() {
-  const [materials, settings] = await Promise.all([
-    getActiveMaterials(),
-    getPricingSettings(),
-  ]);
+  const materials = await getActiveMaterials();
 
   const mulch = materials.filter((m) => m.category === "mulch");
   const rock = materials.filter((m) => m.category !== "mulch");
@@ -42,7 +39,7 @@ export default async function MaterialsPage() {
           What goes in the beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Mulch is priced by the bag and rock by the cubic yard,
+          Mulch is priced by the bag and rock is priced per job, both
           delivered and spread. {BILLING.both}
         </p>
       </section>
@@ -52,7 +49,7 @@ export default async function MaterialsPage() {
 
       <WeedFabric />
 
-      <SiteFooter zips={settings.service_zips} />
+      <SiteFooter />
     </main>
   );
 }
@@ -88,7 +85,7 @@ function Group({ title, items }: { title: string; items: Item[] }) {
 
             <p className="mt-2 text-[var(--ink-soft)]">{m.blurb}</p>
 
-            {!m.instant_bookable && (
+            {!m.instant_bookable && unitPrice(m).priced && (
               <p className="mt-2 text-sm text-[var(--muted)]">
                 Quoted by load and haul distance.
               </p>
@@ -96,7 +93,7 @@ function Group({ title, items }: { title: string; items: Item[] }) {
 
             <div className="mt-4 flex items-center gap-4">
               <a href={"/estimate?material=" + m.slug} className={BTN}>
-                Price this
+                Get an estimate
               </a>
               <a href={"/materials/" + m.slug} className="text-sm font-medium text-[var(--clay)]">
                 Details

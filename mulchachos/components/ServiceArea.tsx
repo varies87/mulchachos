@@ -15,12 +15,11 @@ export default function ServiceArea() {
       <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
         <div>
           <h2 className="text-3xl font-extrabold sm:text-4xl">
-            All over DFW
+            Where we work
           </h2>
           <p className="mt-4 max-w-md text-[var(--ink-soft)]">
-            We run out of Northwest Dallas and deliver across the Dallas–Fort
-            Worth metroplex — just about anywhere within 30 minutes of us. If
-            your city is on this list, we come to you.
+            We run out of Northwest Dallas and work across Dallas and the
+            cities around it. If your city is on this list, we come to you.
           </p>
           <p className="mt-4">
             <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">

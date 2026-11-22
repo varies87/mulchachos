@@ -29,7 +29,7 @@ export default function OpengraphImage() {
           <span style={{ color: "#B7655D" }}>by the weekend.</span>
         </div>
         <div style={{ fontSize: 34, marginTop: 32, color: "#6F5D5E" }}>
-          Mulch &amp; rock, delivered and spread across DFW.
+          Mulch &amp; rock, delivered and spread across Dallas.
         </div>
       </div>
     ),

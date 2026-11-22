@@ -2,18 +2,25 @@
 
 import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
-import InquiryForm from "./InquiryForm";
 import WeedFabric from "./WeedFabric";
-import { billingNote, buildQuote, money, volumeLabel } from "@/lib/pricing";
+import { BAGS_PER_YARD, FABRIC_PRICE_NOTE, ROCK_PRICE_NOTE, amountLabel, bagPrice, billingNote, buildQuote, money, showsPrice } from "@/lib/pricing";
+import { PHONE } from "./SiteHeader";
 import { encodeQuote } from "@/lib/quote-link";
 
 const MONO = "font-[family-name:var(--font-mono)]";
 
-const DEPTHS = [
-  { in: 2, label: "Topping up", hint: "Still has mulch" },
-  { in: 3, label: "Standard", hint: "Most jobs" },
-  { in: 4, label: "Bare soil", hint: "Starting over" },
-];
+const DEPTHS = {
+  mulch: [
+    { in: 2, label: "Topping up", hint: "Still has some mulch" },
+    { in: 3, label: "Standard", hint: "Most beds" },
+    { in: 4, label: "Bare soil", hint: "Starting over" },
+  ],
+  rock: [
+    { in: 2, label: "Light", hint: "Small gravel, light cover" },
+    { in: 3, label: "Standard", hint: "Most beds" },
+    { in: 4, label: "Heavy", hint: "Paths and larger stone" },
+  ],
+};
 
 const CARD = "rounded-lg border px-4 py-3 text-left";
 const ON = " border-[var(--clay)] bg-[var(--paper-warm)]";
@@ -75,7 +82,6 @@ export default function Estimator({
   const [zip, setZip] = useState("");
   const [extras, setExtras] = useState(false);
   const [access, setAccess] = useState(false);
-  const [edging, setEdging] = useState(false);
   const [fabric, setFabric] = useState(false);
 
   const squareFeet = beds.reduce(
@@ -83,13 +89,6 @@ export default function Estimator({
     0
   );
 
-  const edgingFeet = edging
-    ? beds.reduce(
-        (s, b) =>
-          s + 2 * ((Number(b.length) || 0) + (Number(b.width) || 0)),
-        0
-      )
-    : 0;
 
   const quote = useMemo(
     () =>
@@ -103,12 +102,13 @@ export default function Estimator({
         depthInches: depth,
         zip,
         limitedAccess: access,
-        edgingFeet,
       }),
-    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth, zip, access, edgingFeet]
+    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth, zip, access]
   );
 
   const ready = squareFeet > 0;
+  // Rock shows the quantity only; we text the price (see showsPrice).
+  const priced = showsPrice(material.category);
 
   // The material rate is all-in: delivery and spreading are already in it.
   // If a shop ever sets labor_per_yard above zero, it shows as its own line
@@ -129,13 +129,8 @@ export default function Estimator({
       zip,
       fabric,
       access,
-      edging,
     });
 
-  const note = ready
-    ? `${quote.billedYards.toFixed(2)} yd³ of ${material.name} at ` +
-      `$${perYard}/yd³, about $${quote.total.toFixed(0)} total`
-    : "No estimate built yet";
 
   function edit(id: number, key: "length" | "width", v: string) {
     const clean = v.replace(/[^\d.]/g, "");
@@ -188,7 +183,7 @@ export default function Estimator({
 
           <Step n="3" title="How deep?" />
           <div className="grid gap-3 sm:grid-cols-3">
-            {DEPTHS.map((d) => (
+            {(material.category === "mulch" ? DEPTHS.mulch : DEPTHS.rock).map((d) => (
               <button key={d.in} type="button" aria-pressed={depth === d.in} onClick={() => setDepth(d.in)} className={CARD + (depth === d.in ? ON : OFF)}>
                 <span className={MONO + " text-sm text-[var(--clay)]"}>
                   {d.in}&quot;
@@ -214,7 +209,6 @@ export default function Estimator({
             {extras && (
               <div className="mt-5">
                 <Check on={access} set={setAccess} label="No truck access to the beds" note="Narrow gate, or beds behind the house." />
-                <Check on={edging} set={setEdging} label="Edge and pull weeds first" note="Clean bed lines before mulch goes down." />
                 <label className="mt-4 block max-w-[180px]">
                   <span className={LABEL}>ZIP code</span>
                   <input className={FIELD} inputMode="numeric" maxLength={5} placeholder="75225" value={zip} onChange={(e) =>
@@ -229,8 +223,10 @@ export default function Estimator({
 
         <aside className="lg:sticky lg:top-24 lg:self-start" aria-live="polite">
           <div className={PANEL}>
-            {ready ? (
+            {ready && priced ? (
               <Quote quote={quote} material={material} perYard={perYard} settings={settings} href={quoteHref} />
+            ) : ready ? (
+              <QuantityOnly quote={quote} material={material} href={quoteHref} />
             ) : (
               <p className="text-[var(--ink-soft)]">
                 Enter a bed size and your estimate builds here.
@@ -240,11 +236,15 @@ export default function Estimator({
         </aside>
       </div>
 
-      <div className="mt-20 max-w-3xl">
-        <InquiryForm quoteNote={note} />
-      </div>
+      <p className="mt-16 max-w-3xl text-[var(--ink-soft)]">
+        Not sure what you need?{" "}
+        <a href={"sms:" + PHONE} className="font-medium text-[var(--clay)]">
+          Text us at {PHONE}
+        </a>{" "}
+        and we will help you figure it out.
+      </p>
 
-      {ready && <MobileBar quote={quote} perYard={perYard} href={quoteHref} />}
+      {ready && <MobileBar quote={quote} perYard={perYard} priced={priced} href={quoteHref} />}
     </div>
   );
 }
@@ -361,13 +361,13 @@ function Quote({
 
   return (
     <>
-      <p className={MONO + cap}>Your rate</p>
+      <p className={MONO + cap}>Your price</p>
       <p className="mt-2 flex items-baseline gap-2">
         <span className="tnum text-4xl font-extrabold">
-          {money(perYard)}
+          {bagPrice(perYard)}
         </span>
         <span className="text-sm text-[var(--ink-soft)]">
-          per yd³, delivered and spread
+          a bag, delivered and spread
         </span>
       </p>
 
@@ -377,7 +377,7 @@ function Quote({
         </p>
         <p className="mt-1 flex items-baseline gap-2">
           <span className="tnum text-2xl font-semibold">
-            {quote.yards.toFixed(2)} yd³
+            {amountLabel(material.category, quote.billedYards)}
           </span>
           <span className="text-sm text-[var(--ink-soft)]">
             of {material.name.toLowerCase()}
@@ -392,12 +392,12 @@ function Quote({
               {li.label}
               {li.detail && (
                 <span className="mt-0.5 block text-xs text-[var(--muted)]">
-                  {li.detail}
+                  {li.kind === "fabric" ? FABRIC_PRICE_NOTE : li.detail}
                 </span>
               )}
             </dt>
             <dd className={"tnum whitespace-nowrap " + MONO}>
-              {money(li.amount)}
+              {li.kind === "fabric" ? "Texted" : money(li.amount)}
             </dd>
           </div>
         ))}
@@ -410,7 +410,14 @@ function Quote({
       )}
 
       <div className={TOTALROW}>
-        <span className="text-lg font-semibold">Estimated total</span>
+        <span className="text-lg font-semibold">
+          Estimated total
+          {quote.lineItems.some((l) => l.kind === "fabric") && (
+            <span className="block text-xs font-normal text-[var(--muted)]">
+              Before weed fabric
+            </span>
+          )}
+        </span>
         <span className={"tnum text-2xl " + MONO}>
           {money(quote.total)}
         </span>
@@ -424,13 +431,13 @@ function Quote({
 
       {quote.upcoming && (
         <p className="mt-4 rounded-lg border border-dashed border-[var(--line-strong)] p-3 text-sm text-[var(--ink-soft)]">
-          Add {(quote.upcoming.min_yards - quote.billedYards).toFixed(2)} yd³ to reach {quote.upcoming.min_yards} yd³ and the rate drops another {money(quote.upcoming.discount_per_yard)} per yard.
+          Add {Math.ceil((quote.upcoming.min_yards - quote.billedYards) * BAGS_PER_YARD)} more bags and the price drops to {bagPrice(perYard + quote.discountPerYard - quote.upcoming.discount_per_yard)} a bag.
         </p>
       )}
 
       {quote.minimumYardsApplied && (
         <p className="mt-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs text-[var(--ink-soft)]">
-          Your beds need {volumeLabel(material.category, quote.yards)}, but our minimum is {volumeLabel(material.category, quote.minimumYards)}. You are quoted at the minimum.
+          Your beds need {amountLabel(material.category, quote.yards)}, but our minimum is {amountLabel(material.category, quote.minimumYards)}, so this is priced at the minimum.
         </p>
       )}
 
@@ -448,26 +455,116 @@ function Quote({
   );
 }
 
+/**
+ * Rock: how much the beds need and what's included, with no dollar figures.
+ * The full quote is rebuilt on the server for the owner email.
+ */
+function QuantityOnly({
+  quote,
+  material,
+  href,
+}: {
+  quote: ReturnType<typeof buildQuote>;
+  material: Material;
+  href: string;
+}) {
+  const cap = " text-xs uppercase tracking-widest text-[var(--muted)]";
+
+  return (
+    <>
+      <p className={MONO + cap}>Your beds need</p>
+      <p className="mt-2 flex items-baseline gap-2">
+        <span className="tnum text-4xl font-extrabold">
+          {amountLabel(material.category, quote.billedYards)}
+        </span>
+        <span className="text-sm text-[var(--ink-soft)]">
+          of {material.name.toLowerCase()}
+        </span>
+      </p>
+
+      {quote.lineItems.length > 0 && (
+        <ul className={ITEMS}>
+          {quote.lineItems.map((li) => (
+            <li key={li.label}>
+              {li.label}
+              {li.label === material.name ? (
+                <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                  Delivered and spread
+                </span>
+              ) : (
+                li.detail && (
+                  <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                    {li.kind === "fabric" ? "Laid and pinned before the rock" : li.detail.replace(/ at \$.*$/, "")}
+                  </span>
+                )
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {quote.minimumYardsApplied && (
+        <p className="mb-4 rounded-lg bg-[var(--paper-deep)] p-3 text-xs text-[var(--ink-soft)]">
+          Your beds need {amountLabel(material.category, quote.yards)}, but our minimum is {amountLabel(material.category, quote.minimumYards)}, so we&apos;d bring the minimum.
+        </p>
+      )}
+
+      <div className={TOTALROW}>
+        <span className="text-lg font-semibold">Price</span>
+        <span className="text-right text-sm text-[var(--ink-soft)]">
+          {ROCK_PRICE_NOTE}
+        </span>
+      </div>
+
+      <p className={NOTE}>
+        Rock prices depend on the stone, the haul, and how easy the beds are
+        to reach, so we price each job ourselves. {billingNote(material.category)}
+      </p>
+
+      <a href={href} className={PILL + " mt-6"}>
+        Send request to Mulchachos
+      </a>
+      <p className="mt-3 text-center text-xs text-[var(--muted)]">
+        No payment, nothing booked yet. We call or text with your price first.
+      </p>
+    </>
+  );
+}
+
 function MobileBar({
   quote,
   perYard,
+  priced,
   href,
 }: {
   quote: ReturnType<typeof buildQuote>;
   perYard: number;
+  priced: boolean;
   href: string;
 }) {
   return (
     <div className={BAR}>
       <div className="flex items-center justify-between gap-4">
-        <div role="status" aria-live="polite">
-          <p className={"tnum text-2xl font-extrabold " + MONO}>
-            about {money(quote.total)}
-          </p>
-          <p className="text-xs text-[var(--muted)]">
-            {quote.yards.toFixed(2)} yd³ at {money(perYard)}/yd³
-          </p>
-        </div>
+        {priced ? (
+          <div role="status" aria-live="polite">
+            <p className={"tnum text-2xl font-extrabold " + MONO}>
+              about {money(quote.total)}
+            </p>
+            <p className="text-xs text-[var(--muted)]">
+              {amountLabel("mulch", quote.billedYards)} at {bagPrice(perYard)} a bag
+              {quote.lineItems.some((l) => l.kind === "fabric") && ", plus weed fabric"}
+            </p>
+          </div>
+        ) : (
+          <div role="status" aria-live="polite">
+            <p className={"tnum text-2xl font-extrabold " + MONO}>
+              {amountLabel("rock", quote.billedYards)}
+            </p>
+            <p className="text-xs text-[var(--muted)]">
+              We&apos;ll text you a price
+            </p>
+          </div>
+        )}
         <a href={href} className={"shrink-0 " + PILL}>
           Send request
         </a>

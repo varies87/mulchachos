@@ -95,7 +95,6 @@ export async function savePricing(formData: FormData) {
       yards_per_trip: num(formData.get("yards_per_trip"), 6),
       minimum_job: num(formData.get("minimum_job")),
       limited_access_surcharge: num(formData.get("limited_access_surcharge")),
-      edging_per_foot: num(formData.get("edging_per_foot")),
       instant_book_yard_cap: num(formData.get("instant_book_yard_cap"), 12),
       deposit_rate: num(formData.get("deposit_rate"), 0.5),
       service_zips: zips,
