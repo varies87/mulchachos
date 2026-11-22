@@ -41,8 +41,11 @@ export default function PrivacyPage() {
         <p className="mt-3">
           We use the Meta Pixel so we can tell whether our Facebook and Instagram
           ads work. It lets Meta record which pages you visit here and whether a
-          job request was sent, and Meta may use that to show you our ads. The
-          details you type into our forms are never sent to Meta. You can manage
+          job request was sent, and Meta may use that to show you our ads. When you
+          send a request, your name, email, phone number, and ZIP code are also
+          shared with Meta in scrambled (hashed) form, so Meta can match the
+          request to its ad without reading those details. Your notes, photos,
+          and estimate are never sent to Meta. You can manage
           ad tracking in your Facebook or Instagram ad settings, or block it with
           your browser&apos;s tracking protection.
         </p>
