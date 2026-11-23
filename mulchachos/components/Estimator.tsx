@@ -85,9 +85,6 @@ export default function Estimator({
     setMaterial(m);
     if (m.category === "mulch" && depth > 3) setDepth(3);
   };
-  const [zip, setZip] = useState("");
-  const [extras, setExtras] = useState(false);
-  const [access, setAccess] = useState(false);
   const [fabric, setFabric] = useState(false);
 
   const squareFeet = beds.reduce(
@@ -106,10 +103,11 @@ export default function Estimator({
         weedFabric: fabric,
         squareFeet,
         depthInches: depth,
-        zip,
-        limitedAccess: access,
+        // ZIP and access are taken on the request form, not here.
+        zip: "",
+        limitedAccess: false,
       }),
-    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth, zip, access]
+    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth]
   );
 
   const ready = squareFeet > 0;
@@ -132,9 +130,9 @@ export default function Estimator({
         width: Number(b.width) || 0,
       })),
       depth,
-      zip,
+      zip: "",
       fabric,
-      access,
+      access: false,
     });
 
 
@@ -206,24 +204,6 @@ export default function Estimator({
 
           <WeedFabric selected={fabric} onSelect={setFabric} compact />
 
-          <div className="mt-10 border-t border-[var(--line)] pt-6">
-            <button type="button" onClick={() => setExtras(!extras)} className={ACTION}>
-              {extras ? "Hide extras" : "Anything unusual? Add extras"}
-            </button>
-
-            {extras && (
-              <div className="mt-5">
-                <Check on={access} set={setAccess} label="No truck access to the beds" note="Narrow gate, or beds behind the house." />
-                <label className="mt-4 block max-w-[180px]">
-                  <span className={LABEL}>ZIP code</span>
-                  <input className={FIELD} inputMode="numeric" maxLength={5} placeholder="75225" value={zip} onChange={(e) =>
-                      setZip(e.target.value.replace(/\D/g, ""))
-                    }
-                  />
-                </label>
-              </div>
-            )}
-          </div>
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start" aria-live="polite">
