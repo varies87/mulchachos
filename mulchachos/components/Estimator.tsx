@@ -10,10 +10,11 @@ import { encodeQuote } from "@/lib/quote-link";
 const MONO = "font-[family-name:var(--font-mono)]";
 
 const DEPTHS = {
+  // Estimates use the top of each range. Mulch is billed for what's spread,
+  // so the bill comes in at or under the estimate, never over.
   mulch: [
-    { in: 2, label: "Topping up", hint: "Still has some mulch" },
-    { in: 3, label: "Standard", hint: "Most beds" },
-    { in: 4, label: "Bare soil", hint: "Starting over" },
+    { in: 2, label: "Refresh", hint: "1–2 in on beds that still have mulch" },
+    { in: 3, label: "New beds", hint: "2–3 in on bare soil or new beds" },
   ],
   rock: [
     { in: 2, label: "Light", hint: "Small gravel, light cover" },
@@ -79,6 +80,11 @@ export default function Estimator({
     { id: 1, length: "", width: "" },
   ]);
   const [depth, setDepth] = useState(3);
+  // Mulch tops out at 3 in, so switching from 4 in rock to mulch drops to 3.
+  const pickMaterial = (m: Material) => {
+    setMaterial(m);
+    if (m.category === "mulch" && depth > 3) setDepth(3);
+  };
   const [zip, setZip] = useState("");
   const [extras, setExtras] = useState(false);
   const [access, setAccess] = useState(false);
@@ -174,7 +180,7 @@ export default function Estimator({
           <Step n="2" title="Which material?" />
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {materials.map((m) => (
-              <Swatch key={m.id} item={m} on={m.id === material.id} pick={setMaterial} />
+              <Swatch key={m.id} item={m} on={m.id === material.id} pick={pickMaterial} />
             ))}
           </div>
           <p className="mt-3 text-sm text-[var(--ink-soft)]">
@@ -182,7 +188,7 @@ export default function Estimator({
           </p>
 
           <Step n="3" title="How deep?" />
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className={"grid gap-3 " + (material.category === "mulch" ? "sm:grid-cols-2" : "sm:grid-cols-3")}>
             {(material.category === "mulch" ? DEPTHS.mulch : DEPTHS.rock).map((d) => (
               <button key={d.in} type="button" aria-pressed={depth === d.in} onClick={() => setDepth(d.in)} className={CARD + (depth === d.in ? ON : OFF)}>
                 <span className={MONO + " text-sm text-[var(--clay)]"}>
