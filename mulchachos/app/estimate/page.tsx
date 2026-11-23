@@ -13,8 +13,8 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Get an estimate",
   description:
-    "Enter your bed sizes and pick a material. Mulch is priced on the " +
-    "spot, and for rock you see how much you need and we text you a price.",
+    "Enter your bed sizes and pick a material. Mulch can be priced here " +
+    "or we'll send you an estimate as soon as possible for bulk rock projects.",
   alternates: { canonical: "/estimate" },
 };
 
@@ -65,7 +65,7 @@ export default async function EstimatePage({
           Measure your beds.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          Rough measurements are fine. We check them before the job.
+          Rough measurements are fine.
         </p>
       </div>
 

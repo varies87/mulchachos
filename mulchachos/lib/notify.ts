@@ -76,6 +76,7 @@ export async function confirmToCustomer(opts: {
   name: string;
   estimateLine?: string | null;
   billing?: string | null;
+  siteVisit?: boolean;
 }): Promise<void> {
   const first = opts.name.trim().split(/\s+/)[0] || "there";
   const owner = process.env.NOTIFY_EMAIL;
@@ -84,9 +85,9 @@ export async function confirmToCustomer(opts: {
     <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;color:#453738;">
       <p style="font-size:16px;">Hi ${esc(first)},</p>
       <p style="font-size:16px;line-height:1.5;">
-        Thanks for reaching out to Preston Hollow Mulchachos. We have your request
-        and we'll call or text shortly to confirm the material and pick a delivery
-        morning. Nothing is booked or charged yet.
+        ${opts.siteVisit
+          ? "Thanks for reaching out to Preston Hollow Mulchachos. We have your request for a free on-site estimate, and we'll text you shortly to set a time to come measure. Nothing is booked or charged yet."
+          : "Thanks for reaching out to Preston Hollow Mulchachos. We have your request and we'll call or text shortly to confirm the material and pick a delivery morning. Nothing is booked or charged yet."}
       </p>
       ${
         opts.estimateLine

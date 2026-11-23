@@ -19,13 +19,13 @@ export default function ServiceArea() {
           </h2>
           <p className="mt-4 max-w-md text-[var(--ink-soft)]">
             We run out of Northwest Dallas and work across Dallas and the
-            cities around it. If your city is on this list, we come to you.
+            cities around it.
           </p>
           <p className="mt-4">
             <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
               Not sure? Call {PHONE}
             </a>{" "}
-            <span className="text-[var(--muted)]">and we'll tell you straight.</span>
+            <span className="text-[var(--muted)]">for more info.</span>
           </p>
         </div>
 
@@ -36,9 +36,6 @@ export default function ServiceArea() {
               {city}
             </li>
           ))}
-          <li className={MONO + " col-span-2 mt-1 text-sm text-[var(--muted)] sm:col-span-3"}>
-            + the surrounding communities
-          </li>
         </ul>
       </div>
     </section>

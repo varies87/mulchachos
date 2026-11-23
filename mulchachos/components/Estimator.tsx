@@ -10,15 +10,16 @@ import { encodeQuote } from "@/lib/quote-link";
 const MONO = "font-[family-name:var(--font-mono)]";
 
 const DEPTHS = {
+  // Estimates use the top of each range. Mulch is billed for what's spread,
+  // so the bill comes in at or under the estimate, never over.
   mulch: [
-    { in: 2, label: "Topping up", hint: "Still has some mulch" },
-    { in: 3, label: "Standard", hint: "Most beds" },
-    { in: 4, label: "Bare soil", hint: "Starting over" },
+    { in: 2, label: "Refresh", hint: "1–2 in on beds that still have mulch" },
+    { in: 3, label: "New beds", hint: "2–3 in on bare soil or new beds" },
   ],
   rock: [
     { in: 2, label: "Light", hint: "Small gravel, light cover" },
     { in: 3, label: "Standard", hint: "Most beds" },
-    { in: 4, label: "Heavy", hint: "Paths and larger stone" },
+    { in: 4, label: "Heavy", hint: "Larger river rocks or deep beds" },
   ],
 };
 
@@ -79,9 +80,11 @@ export default function Estimator({
     { id: 1, length: "", width: "" },
   ]);
   const [depth, setDepth] = useState(3);
-  const [zip, setZip] = useState("");
-  const [extras, setExtras] = useState(false);
-  const [access, setAccess] = useState(false);
+  // Mulch tops out at 3 in, so switching from 4 in rock to mulch drops to 3.
+  const pickMaterial = (m: Material) => {
+    setMaterial(m);
+    if (m.category === "mulch" && depth > 3) setDepth(3);
+  };
   const [fabric, setFabric] = useState(false);
 
   const squareFeet = beds.reduce(
@@ -100,10 +103,11 @@ export default function Estimator({
         weedFabric: fabric,
         squareFeet,
         depthInches: depth,
-        zip,
-        limitedAccess: access,
+        // ZIP and access are taken on the request form, not here.
+        zip: "",
+        limitedAccess: false,
       }),
-    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth, zip, access]
+    [material, settings, tiers, fabricTiers, fabric, squareFeet, depth]
   );
 
   const ready = squareFeet > 0;
@@ -126,9 +130,9 @@ export default function Estimator({
         width: Number(b.width) || 0,
       })),
       depth,
-      zip,
+      zip: "",
       fabric,
-      access,
+      access: false,
     });
 
 
@@ -151,8 +155,7 @@ export default function Estimator({
         <div>
           <Step n="1" title="Measure your beds" />
           <p className="-mt-2 mb-5 text-[var(--ink-soft)]">
-            Pace them off or eyeball them. Rough numbers are fine.
-            We measure again before the job.
+            Doesn&apos;t need to be perfect. It&apos;s an estimate.
           </p>
 
           <div className="space-y-3">
@@ -174,7 +177,7 @@ export default function Estimator({
           <Step n="2" title="Which material?" />
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {materials.map((m) => (
-              <Swatch key={m.id} item={m} on={m.id === material.id} pick={setMaterial} />
+              <Swatch key={m.id} item={m} on={m.id === material.id} pick={pickMaterial} />
             ))}
           </div>
           <p className="mt-3 text-sm text-[var(--ink-soft)]">
@@ -182,7 +185,7 @@ export default function Estimator({
           </p>
 
           <Step n="3" title="How deep?" />
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className={"grid gap-3 " + (material.category === "mulch" ? "sm:grid-cols-2" : "sm:grid-cols-3")}>
             {(material.category === "mulch" ? DEPTHS.mulch : DEPTHS.rock).map((d) => (
               <button key={d.in} type="button" aria-pressed={depth === d.in} onClick={() => setDepth(d.in)} className={CARD + (depth === d.in ? ON : OFF)}>
                 <span className={MONO + " text-sm text-[var(--clay)]"}>
@@ -201,24 +204,6 @@ export default function Estimator({
 
           <WeedFabric selected={fabric} onSelect={setFabric} compact />
 
-          <div className="mt-10 border-t border-[var(--line)] pt-6">
-            <button type="button" onClick={() => setExtras(!extras)} className={ACTION}>
-              {extras ? "Hide extras" : "Anything unusual? Add extras"}
-            </button>
-
-            {extras && (
-              <div className="mt-5">
-                <Check on={access} set={setAccess} label="No truck access to the beds" note="Narrow gate, or beds behind the house." />
-                <label className="mt-4 block max-w-[180px]">
-                  <span className={LABEL}>ZIP code</span>
-                  <input className={FIELD} inputMode="numeric" maxLength={5} placeholder="75225" value={zip} onChange={(e) =>
-                      setZip(e.target.value.replace(/\D/g, ""))
-                    }
-                  />
-                </label>
-              </div>
-            )}
-          </div>
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start" aria-live="polite">
@@ -241,7 +226,12 @@ export default function Estimator({
         <a href={"sms:" + PHONE} className="font-medium text-[var(--clay)]">
           Text us at {PHONE}
         </a>{" "}
-        and we will help you figure it out.
+        and we will help you figure it out. Rather have someone look in
+        person?{" "}
+        <a href="/request-estimate?visit=1" className="font-medium text-[var(--clay)]">
+          Book a free on-site estimate
+        </a>
+        .
       </p>
 
       {ready && <MobileBar quote={quote} perYard={perYard} priced={priced} href={quoteHref} />}
@@ -294,19 +284,35 @@ function Swatch({
   on: boolean;
   pick: (m: Material) => void;
 }) {
-  const ring = on
-    ? "inset 0 0 0 3px var(--clay)"
-    : "inset 0 0 0 1px rgba(69,55,56,0.12)";
+  // The border sits on the card around the photo, not on the photo itself,
+  // so the image can't cover it.
+  const card = on
+    ? " border-[var(--clay)] bg-[var(--paper-warm)] shadow-sm"
+    : " border-transparent hover:border-[var(--line-strong)]";
 
   return (
-    <button type="button" aria-pressed={on} onClick={() => pick(item)} className="text-left">
-      <span className="block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch, boxShadow: ring }}>
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => pick(item)}
+      className={"rounded-xl border-[3px] p-1.5 text-left transition-colors" + card}
+    >
+      <span className="relative block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch }}>
         {item.image_url && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={item.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
         )}
+        {on && (
+          <span aria-hidden="true" className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--clay)] text-white shadow">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3.5 8.5l3 3 6-7" />
+            </svg>
+          </span>
+        )}
       </span>
-      <span className="mt-2 block text-sm font-medium">{item.name}</span>
+      <span className={"mt-2 block px-1 text-sm font-medium" + (on ? " text-[var(--clay)]" : "")}>
+        {item.name}
+      </span>
     </button>
   );
 }
@@ -517,8 +523,8 @@ function QuantityOnly({
       </div>
 
       <p className={NOTE}>
-        Rock prices depend on the stone, the haul, and how easy the beds are
-        to reach, so we price each job ourselves. {billingNote(material.category)}
+        Rock is priced by the stone you pick, the same anywhere we work in
+        Dallas. {billingNote(material.category)}
       </p>
 
       <a href={href} className={PILL + " mt-6"}>

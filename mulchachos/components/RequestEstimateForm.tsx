@@ -55,10 +55,16 @@ interface Record {
 export default function RequestEstimateForm({
   summary,
   record,
+  defaultVisit = false,
 }: {
   summary: Summary | null;
   record: Record;
+  /** Preselect "come measure" (arriving from a free on-site estimate link). */
+  defaultVisit?: boolean;
 }) {
+  // A free on-site estimate: a Mulchacho comes out and measures instead of
+  // (or to double-check) the customer's own numbers.
+  const [visit, setVisit] = useState(defaultVisit);
   const [shots, setShots] = useState<Shot[]>([]);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -135,9 +141,9 @@ export default function RequestEstimateForm({
       <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-warm)] p-8">
         <h2 className="text-2xl font-extrabold">Request sent.</h2>
         <p className="mt-3 text-[var(--ink-soft)]">
-          Thanks — nothing is booked or charged. We will call or text to go over
-          the material and pick a delivery morning, usually within a day. Want to
-          talk it through now? Reach us at{" "}
+          {visit
+            ? "Thanks — nothing is booked or charged. We will text you within a day to set a time to come measure. Want to talk it through now? Reach us at "
+            : "Thanks — nothing is booked or charged. We will call or text to go over the material and pick a delivery morning, usually within a day. Want to talk it through now? Reach us at "}
           <a href={"tel:" + PHONE} className="font-medium text-[var(--clay)]">
             {PHONE}
           </a>
@@ -191,6 +197,33 @@ export default function RequestEstimateForm({
       <input type="hidden" name="estimated_total" value={record.estimated_total || ""} />
       <input type="hidden" name="quote_note" value={record.quote_note} />
       <input type="hidden" name="beds" value={record.beds} />
+      <input type="hidden" name="site_visit" value={visit ? "1" : "0"} />
+
+      <fieldset>
+        <legend className="mb-2 text-sm font-medium">How should we price it?</legend>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            { on: false, label: summary ? "Use my measurements" : "From my photos and notes", note: "We confirm by call or text." },
+            { on: true, label: "Have a Mulchacho come measure", note: "Free, no obligation. We text to set a time." },
+          ].map((o) => (
+            <button
+              key={o.label}
+              type="button"
+              aria-pressed={visit === o.on}
+              onClick={() => setVisit(o.on)}
+              className={
+                "rounded-lg border-2 px-4 py-3 text-left transition-colors " +
+                (visit === o.on
+                  ? "border-[var(--clay)] bg-[var(--paper-warm)]"
+                  : "border-[var(--line)] hover:border-[var(--line-strong)]")
+              }
+            >
+              <span className="block font-medium">{o.label}</span>
+              <span className="mt-0.5 block text-sm text-[var(--ink-soft)]">{o.note}</span>
+            </button>
+          ))}
+        </div>
+      </fieldset>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

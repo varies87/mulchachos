@@ -187,10 +187,18 @@ export function buildQuote(input: QuoteInput): Quote {
   const s = settings;
 
   const rawYards = yardsNeeded(squareFeet, depthInches);
-  const yards = billableYards(rawYards);
+  // Mulch is sold by the bag, so round to the nearest whole bag (at least
+  // one). Rock rounds up to the next quarter yard.
+  const mulch = material.category === "mulch";
+  const toWholeBags = (y: number) => Math.round(y * BAGS_PER_YARD) / BAGS_PER_YARD;
+  const yards = mulch
+    ? rawYards > 0 ? Math.max(1, Math.round(rawYards * BAGS_PER_YARD)) / BAGS_PER_YARD : 0
+    : billableYards(rawYards);
 
   // Small jobs are not worth a delivery, so a minimum applies.
-  const minimumYards = minYardsFor(s, material.category);
+  const minimumYards = mulch
+    ? toWholeBags(minYardsFor(s, material.category))
+    : minYardsFor(s, material.category);
   const minimumYardsApplied = yards > 0 && yards < minimumYards;
   const billedYards = minimumYardsApplied ? minimumYards : yards;
 
@@ -215,7 +223,11 @@ export function buildQuote(input: QuoteInput): Quote {
         material.category === "mulch"
           ? `${amountLabel("mulch", billedYards)} at ${bagPrice(ratePerYard)} a bag, delivered and spread`
           : `${billedYards.toFixed(2)} yd³ at $${ratePerYard}/yd³, delivered and spread`,
-      amount: billedYards * ratePerYard,
+      // Mulch: whole bags times the per-bag price shown, so the total always
+      // equals bags × price a bag exactly.
+      amount: mulch
+        ? Math.round(billedYards * BAGS_PER_YARD) * (Math.round((ratePerYard / BAGS_PER_YARD) * 100) / 100)
+        : billedYards * ratePerYard,
     });
 
     if (weedFabric) {

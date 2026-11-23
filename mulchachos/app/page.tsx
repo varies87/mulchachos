@@ -26,15 +26,14 @@ const STEPS = [
     n: "01",
     title: "Measure online",
     body:
-      "Length times width for each bed. Mulch is priced on the spot. " +
-      "For rock, you see how much you need and we text you a price.",
+      "Length times width for each bed.",
   },
   {
     n: "02",
     title: "We text to confirm",
     body:
-      "We go over the material and the amount, and pick a morning " +
-      "that works for you.",
+      "We go over the material and the amount and reach out to " +
+      "confirm and schedule.",
   },
   {
     n: "03",
@@ -120,9 +119,9 @@ export default async function Home() {
             <p className="mt-4 text-lg text-[var(--ink-soft)]">
               Harrison started Mulchachos his freshman year of high school,
               inspired by the Boy Scouts&apos; mulch sales. Four years and
-              hundreds of jobs later, there is a regular crew and our own
-              truck. If something is not right when we leave, call and we
-              come back.
+              hundreds of jobs later, we continue to offer quality mulch and
+              rock installs across Dallas. If something is not right when we
+              leave, call and we come back.
             </p>
             <a href="/about" className="mt-6 inline-block font-medium text-[var(--clay)] underline underline-offset-4">
               Our story &rarr;

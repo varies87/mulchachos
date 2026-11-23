@@ -88,7 +88,9 @@ export default async function RequestEstimatePage({
           Send your request.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
-          {hasQuote
+          {params.visit === "1"
+            ? "Tell us where the beds are and a Mulchacho will come measure, free. We'll text to set a time, and nothing is booked or charged until you say go."
+            : hasQuote
             ? "Your estimate is attached below. Send it over with a couple of photos and we'll call or text to confirm the material and volume. Nothing is booked or charged."
             : "Tell us about the beds and add a couple of photos. We'll call or text to confirm the material and volume — nothing is booked or charged until you say go."}
         </p>
@@ -97,6 +99,7 @@ export default async function RequestEstimatePage({
       <div className="mx-auto max-w-3xl px-6 pb-24 pt-6">
         <RequestEstimateForm
           summary={summary}
+          defaultVisit={params.visit === "1"}
           record={{
             material_slug: hasQuote ? material!.slug : "",
             material_name: hasQuote ? material!.name : "",

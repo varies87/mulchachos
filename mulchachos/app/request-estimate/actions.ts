@@ -60,6 +60,7 @@ export async function submitEstimateRequest(formData: FormData) {
   const notes = s("notes");
   const weedFabric = s("weed_fabric") === "1";
   const limitedAccess = s("limited_access") === "1";
+  const siteVisit = s("site_visit") === "1";
 
   // Rebuild the quote with current prices before saving. Rock customers are
   // never shown a total, so the server's number is the one that gets stored.
@@ -88,6 +89,7 @@ export async function submitEstimateRequest(formData: FormData) {
     depth_inches: depthInches,
     weed_fabric: weedFabric,
     limited_access: limitedAccess,
+    site_visit: siteVisit,
     // The server total is the real one (it includes weed fabric, which the
     // customer never sees). Fall back to the form only if it can't be rebuilt.
     estimated_total: detail?.quote.total ?? estimatedTotal,
@@ -113,7 +115,7 @@ export async function submitEstimateRequest(formData: FormData) {
     beds,
     squareFeet,
     depthInches,
-    weedFabric, limitedAccess,
+    weedFabric, limitedAccess, siteVisit,
     customerSaw: estimatedTotal,
     materialName,
     detail,
@@ -124,7 +126,9 @@ export async function submitEstimateRequest(formData: FormData) {
     : materialName || "no estimate";
 
   await notifyOwner({
-    subject: `New job request: ${name} (${headline})`,
+    subject: siteVisit
+      ? `On-site estimate request: ${name} (${headline})`
+      : `New job request: ${name} (${headline})`,
     html,
     replyTo: email && looksLikeEmail(email) ? email : undefined,
   });
@@ -143,6 +147,7 @@ export async function submitEstimateRequest(formData: FormData) {
       name,
       estimateLine,
       billing: detail ? billingNote(detail.material.category, true) : null,
+      siteVisit,
     });
   }
 
@@ -246,6 +251,7 @@ function ownerEmail(r: {
   depthInches: number | null;
   weedFabric: boolean;
   limitedAccess: boolean;
+  siteVisit: boolean;
   customerSaw: number | null;
   materialName: string;
   detail: QuoteDetail | null;
@@ -274,6 +280,7 @@ function ownerEmail(r: {
   rows += row("Email", r.email || null);
   rows += `<tr><td style="padding:6px 16px 6px 0;color:#8A7878;vertical-align:top;">Address</td><td style="padding:6px 0;"><a href="${esc(mapUrl)}" style="color:#B7655D;">${esc(r.address)}${r.zip ? ` ${esc(r.zip)}` : ""}</a></td></tr>`;
   rows += row("Timing", r.preferredTime || null);
+  if (r.siteVisit) rows += row("On-site estimate", "Yes: they want someone to come measure (free). Text them to set a time.");
   rows += row("Photos", r.photoCount ? `${r.photoCount} attached (view in admin)` : "None");
   rows += row("Notes", r.notes || null);
 

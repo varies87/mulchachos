@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Preston Hollow Mulchachos — mulch and rock, delivered and spread",
+    title: "Preston Hollow Mulchachos: mulch and rock, delivered and spread",
     description:
-      "Get an estimate online in about a minute. Bulk mulch and rock delivered and spread across Dallas.",
+      "Get an estimate online. Bulk mulch and rock delivered and spread across Dallas.",
   },
 };
 
