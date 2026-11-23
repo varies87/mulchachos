@@ -523,8 +523,8 @@ function QuantityOnly({
       </div>
 
       <p className={NOTE}>
-        Rock prices depend on the stone, the haul, and how easy the beds are
-        to reach, so we price each job ourselves. {billingNote(material.category)}
+        Rock is priced by the stone you pick, the same anywhere we work in
+        Dallas. {billingNote(material.category)}
       </p>
 
       <a href={href} className={PILL + " mt-6"}>
