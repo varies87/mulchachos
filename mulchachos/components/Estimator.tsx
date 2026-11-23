@@ -312,7 +312,7 @@ function Swatch({
           </span>
         )}
       </span>
-      <span className={"mt-1.5 line-clamp-2 min-h-[2.5em] px-0.5 text-[13px] font-medium leading-tight" + (on ? " text-[var(--clay)]" : "")}>
+      <span className={"mt-1.5 px-0.5 text-[13px] font-medium leading-tight" + (on ? " text-[var(--clay)]" : "")}>
         {item.name}
       </span>
     </button>
