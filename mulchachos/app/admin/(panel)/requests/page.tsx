@@ -19,6 +19,7 @@ interface EstimateRequest {
   weed_fabric: boolean;
   limited_access: boolean;
   edging: boolean;
+  site_visit: boolean;
   estimated_total: number | null;
   final_total: number | null;
   source: string | null;
@@ -117,6 +118,7 @@ export default async function RequestsPage() {
               {r.weed_fabric && <span>+ fabric</span>}
               {r.limited_access && <span>+ limited access</span>}
               {r.edging && <span>+ edging</span>}
+              {r.site_visit && <span className="font-medium text-[var(--clay)]">On-site estimate requested</span>}
             </div>
 
             {r.preferred_time && (

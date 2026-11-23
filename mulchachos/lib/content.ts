@@ -97,16 +97,7 @@ export const SERVICE_CITIES: string[] = [
   "Las Colinas",
   "Coppell",
   "Richardson",
-  "Garland",
-  "Grand Prairie",
   "Plano",
-  "Grapevine",
-  "Lewisville",
-  "Flower Mound",
-  "Duncanville",
-  "DeSoto",
-  "Cedar Hill",
-  "Mesquite",
 ];
 
 /**

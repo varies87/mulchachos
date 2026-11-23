@@ -19,7 +19,7 @@ const DEPTHS = {
   rock: [
     { in: 2, label: "Light", hint: "Small gravel, light cover" },
     { in: 3, label: "Standard", hint: "Most beds" },
-    { in: 4, label: "Heavy", hint: "Paths and larger stone" },
+    { in: 4, label: "Heavy", hint: "Larger river rocks or deep beds" },
   ],
 };
 
@@ -157,8 +157,7 @@ export default function Estimator({
         <div>
           <Step n="1" title="Measure your beds" />
           <p className="-mt-2 mb-5 text-[var(--ink-soft)]">
-            Pace them off or eyeball them. Rough numbers are fine.
-            We measure again before the job.
+            Doesn&apos;t need to be perfect. It&apos;s an estimate.
           </p>
 
           <div className="space-y-3">
@@ -247,7 +246,12 @@ export default function Estimator({
         <a href={"sms:" + PHONE} className="font-medium text-[var(--clay)]">
           Text us at {PHONE}
         </a>{" "}
-        and we will help you figure it out.
+        and we will help you figure it out. Rather have someone look in
+        person?{" "}
+        <a href="/request-estimate?visit=1" className="font-medium text-[var(--clay)]">
+          Book a free on-site estimate
+        </a>
+        .
       </p>
 
       {ready && <MobileBar quote={quote} perYard={perYard} priced={priced} href={quoteHref} />}
