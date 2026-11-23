@@ -294,19 +294,35 @@ function Swatch({
   on: boolean;
   pick: (m: Material) => void;
 }) {
-  const ring = on
-    ? "inset 0 0 0 3px var(--clay)"
-    : "inset 0 0 0 1px rgba(69,55,56,0.12)";
+  // The border sits on the card around the photo, not on the photo itself,
+  // so the image can't cover it.
+  const card = on
+    ? " border-[var(--clay)] bg-[var(--paper-warm)] shadow-sm"
+    : " border-transparent hover:border-[var(--line-strong)]";
 
   return (
-    <button type="button" aria-pressed={on} onClick={() => pick(item)} className="text-left">
-      <span className="block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch, boxShadow: ring }}>
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => pick(item)}
+      className={"rounded-xl border-[3px] p-1.5 text-left transition-colors" + card}
+    >
+      <span className="relative block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch }}>
         {item.image_url && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={item.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
         )}
+        {on && (
+          <span aria-hidden="true" className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--clay)] text-white shadow">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3.5 8.5l3 3 6-7" />
+            </svg>
+          </span>
+        )}
       </span>
-      <span className="mt-2 block text-sm font-medium">{item.name}</span>
+      <span className={"mt-2 block px-1 text-sm font-medium" + (on ? " text-[var(--clay)]" : "")}>
+        {item.name}
+      </span>
     </button>
   );
 }
