@@ -60,11 +60,11 @@ export default async function EstimatePage({
     <main>
       <SiteHeader />
 
-      <div className="mx-auto max-w-6xl px-6 pb-10 pt-10">
+      <div className="mx-auto max-w-6xl px-6 pb-8 pt-8 sm:pt-10">
         <h1 className="max-w-2xl text-4xl font-extrabold sm:text-6xl">
           Measure your beds.
         </h1>
-        <p className="mt-5 max-w-xl text-lg text-[var(--ink-soft)]">
+        <p className="mt-3 max-w-xl text-lg text-[var(--ink-soft)]">
           Rough measurements are fine.
         </p>
       </div>

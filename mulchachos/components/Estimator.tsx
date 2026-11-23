@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { DiscountTier, FabricTier, Material, PricingSettings } from "@/lib/materials";
-import WeedFabric from "./WeedFabric";
 import { BAGS_PER_YARD, FABRIC_PRICE_NOTE, ROCK_PRICE_NOTE, amountLabel, bagPrice, billingNote, buildQuote, money, showsPrice } from "@/lib/pricing";
 import { PHONE } from "./SiteHeader";
 import { encodeQuote } from "@/lib/quote-link";
@@ -153,10 +152,7 @@ export default function Estimator({
     <div className="mx-auto max-w-6xl px-6 pb-40 lg:pb-24">
       <div className="grid gap-14 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
         <div>
-          <Step n="1" title="Measure your beds" />
-          <p className="-mt-2 mb-5 text-[var(--ink-soft)]">
-            Doesn&apos;t need to be perfect. It&apos;s an estimate.
-          </p>
+          <Step n="1" title="Bed sizes" note={"Doesn't need to be perfect. It's an estimate."} />
 
           <div className="space-y-3">
             {beds.map((b, i) => (
@@ -174,17 +170,25 @@ export default function Estimator({
             </p>
           )}
 
-          <Step n="2" title="Which material?" />
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-            {materials.map((m) => (
-              <Swatch key={m.id} item={m} on={m.id === material.id} pick={pickMaterial} />
-            ))}
-          </div>
-          <p className="mt-3 text-sm text-[var(--ink-soft)]">
-            {material.blurb}
+          <Step n="2" title="Pick a material" />
+          {[
+            { label: "Mulch", items: materials.filter((m) => m.category === "mulch") },
+            { label: "Rock and gravel", items: materials.filter((m) => m.category !== "mulch") },
+          ].filter((g) => g.items.length > 0).map((g) => (
+            <div key={g.label} className="mt-5 first:mt-0">
+              <p className={MONO + " mb-2 text-xs uppercase tracking-widest text-[var(--muted)]"}>{g.label}</p>
+              <div className="grid grid-cols-3 items-start gap-2 sm:grid-cols-4">
+                {g.items.map((m) => (
+                  <Swatch key={m.id} item={m} on={m.id === material.id} pick={pickMaterial} />
+                ))}
+              </div>
+            </div>
+          ))}
+          <p className="mt-4 rounded-lg bg-[var(--paper-warm)] px-4 py-3 text-sm text-[var(--ink-soft)]">
+            <span className="font-medium text-[var(--ink)]">{material.name}.</span> {material.blurb}
           </p>
 
-          <Step n="3" title="How deep?" />
+          <Step n="3" title="Depth" />
           <div className={"grid gap-3 " + (material.category === "mulch" ? "sm:grid-cols-2" : "sm:grid-cols-3")}>
             {(material.category === "mulch" ? DEPTHS.mulch : DEPTHS.rock).map((d) => (
               <button key={d.in} type="button" aria-pressed={depth === d.in} onClick={() => setDepth(d.in)} className={CARD + (depth === d.in ? ON : OFF)}>
@@ -199,10 +203,8 @@ export default function Estimator({
             ))}
           </div>
 
-          <Step n="4" title="Weed fabric?" />
+          <Step n="4" title="Weed fabric" />
           <Check on={fabric} set={setFabric} label="Lay heavy duty weed fabric first" note={material.category === "rock" ? "Strongly recommended under rock. Stone does not break down, so weeds that come up stay up." : "Optional under mulch. Most beds do better letting mulch feed the soil."} />
-
-          <WeedFabric selected={fabric} onSelect={setFabric} compact />
 
         </div>
 
@@ -255,15 +257,15 @@ function BedRow({
   return (
     <div className="flex items-end gap-3">
       <label className="flex-1">
-        <span className={LABEL}>Bed {index + 1} length (ft)</span>
-        <input className={FIELD} inputMode="decimal" placeholder="40" value={bed.length} onChange={(e) => onEdit(bed.id, "length", e.target.value)} />
+        <span className={LABEL}>{index === 0 ? "Length (ft)" : `Bed ${index + 1} length`}</span>
+        <input className={FIELD} inputMode="decimal" placeholder="ft" value={bed.length} onChange={(e) => onEdit(bed.id, "length", e.target.value)} />
       </label>
 
       <span className="pb-3 text-[var(--muted)]">×</span>
 
       <label className="flex-1">
         <span className={LABEL}>Width (ft)</span>
-        <input className={FIELD} inputMode="decimal" placeholder="6" value={bed.width} onChange={(e) => onEdit(bed.id, "width", e.target.value)} />
+        <input className={FIELD} inputMode="decimal" placeholder="ft" value={bed.width} onChange={(e) => onEdit(bed.id, "width", e.target.value)} />
       </label>
 
       {canRemove && (
@@ -295,9 +297,9 @@ function Swatch({
       type="button"
       aria-pressed={on}
       onClick={() => pick(item)}
-      className={"rounded-xl border-[3px] p-1.5 text-left transition-colors" + card}
+      className={"flex flex-col rounded-xl border-[3px] p-1 text-left transition-colors" + card}
     >
-      <span className="relative block h-20 w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch }}>
+      <span className="relative block aspect-square w-full overflow-hidden rounded-lg" style={{ backgroundColor: item.swatch }}>
         {item.image_url && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={item.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
@@ -310,18 +312,23 @@ function Swatch({
           </span>
         )}
       </span>
-      <span className={"mt-2 block px-1 text-sm font-medium" + (on ? " text-[var(--clay)]" : "")}>
+      <span className={"mt-1.5 line-clamp-2 min-h-[2.5em] px-0.5 text-[13px] font-medium leading-tight" + (on ? " text-[var(--clay)]" : "")}>
         {item.name}
       </span>
     </button>
   );
 }
 
-function Step({ n, title }: { n: string; title: string }) {
+function Step({ n, title, note }: { n: string; title: string; note?: string }) {
   return (
-    <div className="mb-4 mt-12 flex items-baseline gap-3 first:mt-0">
-      <span className={MONO + " text-xs text-[var(--clay)]"}>{n}</span>
-      <h2 className="text-xl font-semibold">{title}</h2>
+    <div className="mb-4 mt-10 first:mt-0">
+      <div className="flex items-center gap-3">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--clay)] text-sm font-semibold text-white">
+          {n}
+        </span>
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </div>
+      {note && <p className="mt-1 pl-10 text-sm text-[var(--ink-soft)]">{note}</p>}
     </div>
   );
 }
