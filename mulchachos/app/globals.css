@@ -52,11 +52,11 @@ html {
   }
 }
 
-/* No double-tap zoom anywhere (iOS Safari ignores user-scalable=no, but
-   honors touch-action). Scrolling still works normally. */
+/* Stop accidental double-tap zoom (and the tap delay that comes with it)
+   while keeping deliberate two-finger pinch-zoom for accessibility. */
 html,
 body {
-  touch-action: pan-x pan-y;
+  touch-action: manipulation;
 }
 
 /* No grey flash when tapping controls on mobile. */

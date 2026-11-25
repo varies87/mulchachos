@@ -46,12 +46,11 @@ export const metadata: Metadata = {
 };
 
 // Mobile-first: fit under the notch, tint the browser chalk to match the brand,
-// and lock zoom so taps and swipes never accidentally zoom the page.
+// and keep pinch-zoom available for accessibility (no maximum-scale lock).
+// Accidental zoom is handled in globals.css instead.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
   themeColor: "#B7655D",
 };
