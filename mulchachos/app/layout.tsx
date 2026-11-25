@@ -46,10 +46,12 @@ export const metadata: Metadata = {
 };
 
 // Mobile-first: fit under the notch, tint the browser chalk to match the brand,
-// and keep pinch-zoom available for accessibility (no maximum-scale lock).
+// and lock zoom so taps and swipes never accidentally zoom the page.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
   themeColor: "#B7655D",
 };
